@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FCPA Ladder League</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2a2f3a;
+    --txt:#e8ebf0; --muted:#9aa3b2; --accent:#b6e021; --accent2:#38bdf8;
+    --win:#22c55e; --warn:#fbbf24; --blue:#2e1f9e; --r1:#38bdf8; --r2:#a78bfa;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--txt);line-height:1.45}
+  header{padding:18px 24px;border-bottom:1px solid var(--line);background:#000;
+    display:flex;flex-wrap:wrap;align-items:center;gap:16px;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand svg{flex:none}
+  .wordmark{line-height:1}
+  .wordmark .fc{font-size:13px;font-weight:800;letter-spacing:.18em;color:#fff;display:block}
+  .wordmark .ll{font-size:26px;font-weight:900;letter-spacing:.01em;color:var(--accent);
+    text-shadow:0 0 1px var(--blue),1px 1px 0 var(--blue),-1px 1px 0 var(--blue);display:block;margin-top:1px}
+  .sub{color:var(--muted);font-size:13px;margin-top:6px}
+  .wrap{max-width:1100px;margin:0 auto;padding:18px 16px 70px}
+  .nightbar{display:flex;align-items:center;gap:12px;margin:18px 0 4px;flex-wrap:wrap}
+  .nightlabel{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .nights{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .night{padding:8px 14px;border:1px solid var(--blue);background:var(--panel2);color:var(--txt);
+    border-radius:10px;cursor:pointer;font-size:14px;font-weight:700}
+  .night.active{background:var(--blue);border-color:#4533c9;color:#fff}
+  .night.overall{border-color:var(--accent);color:var(--accent)}
+  .night.overall.active{background:var(--accent);border-color:var(--accent);color:#06240f}
+  .night.add{border-style:dashed;border-color:var(--line);color:var(--muted);font-weight:800}
+  .night small{font-weight:500;opacity:.7}
+  .tabs{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 18px}
+  .tab{padding:9px 16px;border:1px solid var(--line);background:var(--panel);color:var(--muted);
+    border-radius:999px;cursor:pointer;font-size:14px;font-weight:600}
+  .tab.active{background:var(--accent);color:#06240f;border-color:var(--accent)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:18px}
+  .card h2{margin:0 0 4px;font-size:17px}
+  .badge{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;
+    background:var(--panel2);color:var(--accent2);border:1px solid var(--line);margin-left:8px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+  .num{text-align:center;font-variant-numeric:tabular-nums}
+  .pos{width:40px;color:var(--muted);text-align:center}
+  .rating{color:var(--muted);font-size:12px}
+  .dupr{color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}
+  .dupr a{color:var(--accent2);text-decoration:none}
+  .dupr a:hover{text-decoration:underline}
+  .roundlabel{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:6px;color:#06240f}
+  .r1{background:var(--r1)} .r2{background:var(--r2)}
+  .gamerow{display:grid;grid-template-columns:74px 1fr 64px 28px 64px 1fr 70px;gap:8px;align-items:center;
+    padding:9px 8px;border-bottom:1px solid var(--line)}
+  .gamerow:last-child{border-bottom:none}
+  .team{font-weight:600}
+  .vs{text-align:center;color:var(--muted);font-size:12px}
+  input[type=number]{width:58px;background:var(--panel2);border:1px solid var(--line);color:var(--txt);
+    border-radius:8px;padding:7px;font-size:15px;text-align:center;font-variant-numeric:tabular-nums}
+  input.win{border-color:var(--win);box-shadow:0 0 0 1px var(--win) inset}
+  input[type=text],input[type=date],textarea,select{background:var(--panel2);border:1px solid var(--line);
+    color:var(--txt);border-radius:9px;padding:9px;font-size:14px;font-family:inherit}
+  textarea{width:100%;min-height:150px;resize:vertical;line-height:1.5}
+  .status{font-size:11px;text-align:center;font-weight:700;min-height:14px}
+  .status.ok{color:var(--win)} .status.bad{color:var(--warn)}
+  .sit{font-size:12px;color:var(--muted);padding:4px 8px}
+  .row-head{display:grid;grid-template-columns:74px 1fr 64px 28px 64px 1fr 70px;gap:8px;
+    padding:4px 8px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+  .btn{background:var(--panel2);border:1px solid var(--line);color:var(--txt);padding:9px 14px;
+    border-radius:9px;cursor:pointer;font-size:13px;font-weight:600}
+  .btn:hover{border-color:var(--accent)}
+  .btn.primary{background:var(--accent);color:#06240f;border-color:var(--accent)}
+  .btn.danger:hover{border-color:#ef4444;color:#ef4444}
+  .sortbtn{padding:5px 12px;font-size:12px}
+  .sortbtn.on{background:var(--accent);color:#06240f;border-color:var(--accent)}
+  .legend{font-size:12px;color:var(--muted);margin:6px 0 0}
+  .winner{color:var(--win);font-weight:700}
+  .note{font-size:12px;color:var(--warn);margin-top:8px}
+  .pf{color:var(--accent2)} .diffpos{color:var(--win)} .diffneg{color:#f87171}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px;
+    text-transform:uppercase;letter-spacing:.06em}
+  .assignrow{display:flex;align-items:center;gap:10px;padding:7px 8px;border-bottom:1px solid var(--line)}
+  .assignrow .nm{flex:1;font-weight:600}
+  .assignrow .rt{color:var(--muted);font-size:12px;min-width:70px;text-align:right}
+  .grpcol{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:6px;
+    background:var(--blue);color:#fff;margin-right:6px}
+  .sesshead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+  .hide-sm{}
+  @media(max-width:640px){
+    header{padding:13px 14px;gap:10px}
+    .brand{gap:10px}
+    .brand svg{width:46px;height:46px}
+    .wordmark .ll{font-size:20px}
+    .wordmark .fc{font-size:10px;letter-spacing:.14em}
+    .sub{font-size:11.5px;margin-top:4px}
+    .wrap{padding:14px 11px 90px}
+    .card{padding:14px 13px;border-radius:12px}
+    .card h2{font-size:16px}
+    .btn{flex:1 1 42%;text-align:center;min-height:42px}
+    .hide-sm{display:none!important}
+    th,td{padding:9px 6px}
+    th{font-size:11px}
+    .pos{width:30px}
+    /* stacked, tappable game cards */
+    .row-head{display:none}
+    .gamerow{
+      grid-template-columns:1fr 76px;
+      grid-template-areas:"label label" "teamA inA" "teamB inB" "status status";
+      gap:7px 12px;border:1px solid var(--line);border-radius:12px;
+      padding:11px 13px;margin-bottom:11px;background:var(--panel2)}
+    .g-label{grid-area:label;font-weight:800;color:var(--accent2);font-size:12px;letter-spacing:.05em}
+    .g-teamA{grid-area:teamA;align-self:center;font-size:15px}
+    .g-teamB{grid-area:teamB;align-self:center;font-size:15px}
+    .g-inA{grid-area:inA} .g-inB{grid-area:inB} .g-vs{display:none}
+    .g-status{grid-area:status;text-align:left;color:var(--muted)}
+    .gamerow input[type=number]{width:100%;font-size:19px;padding:11px 8px}
+    .sit{padding:2px 4px 10px}
+    .assignrow{flex-wrap:wrap;gap:6px 10px}
+    .assignrow .nm{flex:1 1 100%}
+    .assignrow select{flex:1}
+    textarea{min-height:170px;font-size:16px}
+    input[type=text],input[type=date]{font-size:16px;width:100%}
+    .field input[type=text]{min-width:0!important}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <svg width="60" height="60" viewBox="0 0 100 100" aria-label="Fauquier Pickleball Association">
+      <circle cx="50" cy="50" r="42" fill="#b6e021" stroke="#9ec40f" stroke-width="1.5"/>
+      <g fill="#000">
+        <ellipse cx="44" cy="18" rx="4.2" ry="3"/><ellipse cx="66" cy="24" rx="3.6" ry="2.6"/>
+        <ellipse cx="30" cy="30" rx="3.6" ry="2.8"/><ellipse cx="52" cy="34" rx="5" ry="3.6"/>
+        <ellipse cx="74" cy="44" rx="3.4" ry="2.6"/><ellipse cx="26" cy="52" rx="3.6" ry="2.8"/>
+        <ellipse cx="50" cy="56" rx="4.6" ry="3.4"/><ellipse cx="72" cy="64" rx="3.8" ry="2.8"/>
+        <ellipse cx="38" cy="72" rx="4.2" ry="3"/><ellipse cx="58" cy="78" rx="3.8" ry="2.8"/>
+      </g>
+    </svg>
+    <div class="wordmark">
+      <span class="fc">FAUQUIER · FCPA</span>
+      <span class="ll">LADDER LEAGUE</span>
+      <div class="sub">Dated sessions · paste-in rosters · round-robin · win by 2 · season leaderboard · auto-saved</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn" onclick="exportData()">Export JSON</button>
+    <button class="btn danger" onclick="resetAll()">Reset to seed</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="nightbar">
+    <span class="nightlabel">View</span>
+    <div class="nights" id="nights"></div>
+  </div>
+  <div class="tabs" id="tabs"></div>
+  <div id="content"></div>
+</div>
+
+<script>
+/* ============================================================
+   FCPA Ladder League — dated recurring sessions
+   ============================================================ */
+
+/* Round-robin schedules: [ [a,b],[c,d] ] = (a&b) vs (c&d).
+   Every player partners every other exactly once per round. */
+const SCHED = {
+  4: [ [[0,1],[2,3]], [[0,2],[1,3]], [[0,3],[1,2]] ],
+  5: [ [[0,1],[2,3]], [[0,2],[1,4]], [[0,4],[1,3]], [[0,3],[2,4]], [[1,2],[3,4]] ],
+};
+const ROUNDS = 2;                       // whole round-robin runs twice
+const STORE_KEY = "fcpa_league_v2";
+
+/* DUPR single-match-import values (validated by DUPR's importer).
+   matchType: "D" (doubles) or "S" (singles).  scoreType: "RALLY" or "SIDEOUT". */
+const DUPR_MATCH_TYPE = "D";
+const DUPR_SCORE_TYPE = "RALLY";
+const DUPR_LOCATION   = "";              // optional venue string for every row
+
+/* ---- seed: the original Monday 3.25 & Above session ---- */
+function seedSession(){
+  const P = (n,d,id)=>({n,d,id});
+  const players = [
+    P("Stephen Rhodes","4.374","6732748259"), P("Paul Sita","4.022","5724645230"),
+    P("Ian Burgess","4.257","7144989820"), P("Vern Welsted","4.106","6823717229"),
+    P("Aurelio Roca","4.019","4762427977"),
+    P("Lisa Chiccehitto","3.431","4850659732"), P("Joey Maranto","3.492","8512932882"),
+    P("Giancarlo Obando","3.402","4603330206"), P("Carl Stottlemyer","3.812","7163826084"),
+    P("Matthew Haynes","3.614","7317639978"),
+    P("Noah Portugal","3.781","5560430429"), P("Bethany Mathis","3.458","5044254669"),
+    P("John McKee","3.610","6062605718"), P("Brett Walker","3.598","8275740048"),
+    P("Stephen Catlin","3.300","6435079608"), P("Michelle Lis","3.483","6114124398"),
+    P("Brian Howells","3.453","8293692672"),
+    P("Blaine Pfannkuch","NR",""),
+    P("Leslie Restaino","3.246","7625501201"), P("Rae Lamb","3.110","4679762364"),
+    P("Mike Lis","3.151","4928397869"), P("Ron Aiani","3.198","8453179517"),
+  ];
+  const groups = [ [0,1,2,3,4], [5,6,7,8,9], [10,11,12,13], [14,15,16,17], [18,19,20,21] ];
+  return { id:"s_seed_mon", night:"Monday — 3.25 & Above", date:"2026-06-01",
+           players, groups, scores:{} };
+}
+
+/* ---------- State ---------- */
+let DB = load();
+let view = 'overall';        // 'overall' | 'new' | session index (number)
+let activeTab = 0;
+let overallSort = 'winpct';  // 'winpct' | 'wins' | 'diff'
+let draft = null;            // new/edit session working copy
+let adminOpen = false;       // per-session admin tools collapsed by default
+
+function load(){
+  try {
+    const d = JSON.parse(localStorage.getItem(STORE_KEY));
+    if(d && d.sessions) return d;
+  } catch(e){}
+  return { sessions:[ seedSession() ] };
+}
+function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(DB)); }
+
+/* ---------- Helpers ---------- */
+function rat(d){ if(!d||/^nr$/i.test(d)) return -1; const v=parseFloat(d); return isNaN(v)?-1:v; }
+function normName(n){ return (n||'').toLowerCase().replace(/[^a-z]/g,''); }
+function fmtDate(iso){
+  if(!iso) return '';
+  const dt=new Date(iso+'T00:00');
+  return (dt.getMonth()+1)+'/'+dt.getDate()+'/'+String(dt.getFullYear()).slice(2);
+}
+function fmtDateLong(iso){
+  if(!iso) return '';
+  const dt=new Date(iso+'T00:00');
+  return dt.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+}
+function nightShort(night){ return (night||'Session').split(/[ —-]/)[0]; }
+function groupTarget(size){ return size===4?12 : size===5?9 : (size<4?12:9); }
+
+/* ---------- Roster parsing ---------- */
+function parseRoster(text){
+  return text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean).map(line=>{
+    const toks = line.includes(',') ? line.split(',').map(s=>s.trim()).filter(Boolean)
+                                    : line.split(/\s+/);
+    let d='NR', id='', name=[];
+    toks.forEach(t=>{
+      if(/^\d{6,}$/.test(t)) id=t;                          // DUPR ID
+      else if(/^[0-6](\.\d{1,3})?$/.test(t)) d=t;           // doubles rating
+      else if(/^nr$/i.test(t)) d='NR';
+      else name.push(t);
+    });
+    return { n:name.join(' ').trim()||line, d, id };
+  });
+}
+
+/* ---------- Auto-grouping by DUPR ---------- */
+function partitionSizes(n){
+  // prefer exact split into 4s and 5s
+  for(let b=0;b<=Math.floor(n/5);b++){
+    const rem=n-5*b;
+    if(rem>=0 && rem%4===0){
+      return Array(b).fill(5).concat(Array(rem/4).fill(4)).sort((a,z)=>z-a);
+    }
+  }
+  // fallback (n = 6,7,11,...): even split, sizes 4-6, flagged later
+  const g=Math.max(1,Math.round(n/4.5));
+  const base=Math.floor(n/g), extra=n%g;
+  const s=Array(g).fill(base); for(let i=0;i<extra;i++) s[i]++;
+  return s;
+}
+function autoGroups(players){
+  const idx = players.map((_,i)=>i).sort((a,b)=> rat(players[b].d)-rat(players[a].d));
+  const sizes = partitionSizes(players.length);
+  const groups=[]; let k=0;
+  sizes.forEach(sz=>{ groups.push(idx.slice(k,k+sz)); k+=sz; });
+  return groups;
+}
+
+/* ---------- Games / standings (per session group) ---------- */
+function gpList(session,gi){ return session.groups[gi].map(pi=>session.players[pi]); }
+function gid(gi,r,i){ return `g${gi}_r${r}_${i}`; }
+
+function gamesFor(session,gi){
+  const size = session.groups[gi].length;
+  const sched = SCHED[size] || [];
+  const list=[];
+  for(let r=1;r<=ROUNDS;r++){
+    sched.forEach((m,idx)=>{
+      const used=new Set([...m[0],...m[1]]);
+      const sitting=session.groups[gi].map((_,i)=>i).filter(i=>!used.has(i));
+      list.push({id:gid(gi,r,idx), round:r, teamA:m[0], teamB:m[1], sitting});
+    });
+  }
+  return list;
+}
+
+function standings(session,gi){
+  const gps = gpList(session,gi);
+  const stats = gps.map((p,i)=>({i,name:p.n,gp:0,w:0,l:0,pf:0,pa:0}));
+  gamesFor(session,gi).forEach(game=>{
+    const sc=session.scores[game.id];
+    if(!sc||sc.a===''||sc.b===''||sc.a==null||sc.b==null) return;
+    const a=+sc.a,b=+sc.b; if(isNaN(a)||isNaN(b)) return;
+    const aWin=a>b,bWin=b>a;
+    game.teamA.forEach(pi=>{stats[pi].gp++;stats[pi].pf+=a;stats[pi].pa+=b;if(aWin)stats[pi].w++;else if(bWin)stats[pi].l++;});
+    game.teamB.forEach(pi=>{stats[pi].gp++;stats[pi].pf+=b;stats[pi].pa+=a;if(bWin)stats[pi].w++;else if(aWin)stats[pi].l++;});
+  });
+  stats.forEach(s=>s.diff=s.pf-s.pa);
+  stats.sort((x,y)=> y.w-x.w || y.diff-x.diff || y.pf-x.pf || x.name.localeCompare(y.name));
+  return stats;
+}
+
+function gameStatus(target,sc){
+  if(!sc||sc.a===''||sc.b===''||sc.a==null||sc.b==null) return {txt:'',cls:''};
+  const a=+sc.a,b=+sc.b; if(isNaN(a)||isNaN(b)) return {txt:'',cls:''};
+  if(a===b) return {txt:'tie?',cls:'bad'};
+  const hi=Math.max(a,b),lo=Math.min(a,b);
+  if(hi<target) return {txt:`to ${target}`,cls:'bad'};
+  if(hi-lo<2) return {txt:'win by 2',cls:'bad'};
+  return {txt:'final',cls:'ok'};
+}
+
+/* ---------- Season-cumulative leaderboard ---------- */
+function overallRows(){
+  const map=new Map();
+  DB.sessions.forEach(session=>{
+    session.groups.forEach((grp,gi)=>{
+      const gps=gpList(session,gi);
+      standings(session,gi).forEach(s=>{
+        const p=gps[s.i];
+        const key = p.id ? 'id:'+p.id : 'nm:'+normName(p.n);
+        if(!map.has(key)) map.set(key,{name:p.n,dupr:p.d,id:p.id,gp:0,w:0,l:0,pf:0,pa:0,sessions:new Set()});
+        const o=map.get(key);
+        o.gp+=s.gp; o.w+=s.w; o.l+=s.l; o.pf+=s.pf; o.pa+=s.pa;
+        if(s.gp>0) o.sessions.add(session.id);
+        if(rat(p.d)>rat(o.dupr)) o.dupr=p.d;     // keep best-known rating
+        if(p.id) o.id=p.id;
+      });
+    });
+  });
+  const rows=[...map.values()].map(o=>({
+    ...o, sess:o.sessions.size, diff:o.pf-o.pa,
+    winpct:o.gp?o.w/o.gp:0, dpg:o.gp?(o.pf-o.pa)/o.gp:0
+  }));
+  const played=rows.filter(r=>r.gp>0), unplayed=rows.filter(r=>r.gp===0);
+  const cmp={
+    winpct:(x,y)=>y.winpct-x.winpct||y.dpg-x.dpg||y.w-x.w||x.name.localeCompare(y.name),
+    wins:(x,y)=>y.w-x.w||y.winpct-x.winpct||y.dpg-x.dpg||x.name.localeCompare(y.name),
+    diff:(x,y)=>y.diff-x.diff||y.winpct-x.winpct||x.name.localeCompare(y.name),
+  }[overallSort];
+  played.sort(cmp);
+  unplayed.sort((x,y)=>rat(y.dupr)-rat(x.dupr)||x.name.localeCompare(y.name));
+  return {played,unplayed};
+}
+
+function duprTag(p){
+  if(!p.id) return 'DUPR ID: —';
+  return `DUPR ID: <a href="https://dashboard.dupr.com/dashboard/player/${p.id}" target="_blank" rel="noopener">${p.id}</a>`;
+}
+// "Stephen Rhodes" -> "Stephen R."
+function shortName(full){
+  const parts=(full||'').trim().split(/\s+/);
+  if(parts.length<2) return full||'';
+  return parts[0]+' '+parts[parts.length-1][0].toUpperCase()+'.';
+}
+// short name shown, full name on hover (title tooltip)
+function nameTag(full){
+  const safe=(full||'').replace(/"/g,'&quot;');
+  return `<span title="${safe}">${shortName(full)}</span>`;
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function render(){
+  // view selector
+  const overallPill = `<div class="night overall ${view==='overall'?'active':''}" onclick="setView('overall')">🏆 Overall</div>`;
+  const sessPills = DB.sessions.map((s,i)=>
+    `<div class="night ${view===i?'active':''}" onclick="setView(${i})">${nightShort(s.night)} <small>· ${fmtDate(s.date)}</small></div>`
+  ).join('');
+  const addPill = `<div class="night add" onclick="newSession()">+ New session</div>`;
+  document.getElementById('nights').innerHTML = overallPill + sessPills + addPill;
+
+  if(view==='overall'){ renderOverall(); document.getElementById('tabs').innerHTML=''; return; }
+  if(view==='new'){ renderEditor(); document.getElementById('tabs').innerHTML=''; return; }
+  renderSession(DB.sessions[view]);
+}
+
+function renderOverall(){
+  const {played,unplayed}=overallRows();
+  const sortBtn=(k,l)=>`<button class="btn sortbtn ${overallSort===k?'on':''}" onclick="setOverallSort('${k}')">${l}</button>`;
+  const pct=v=>(v*100).toFixed(0)+'%';
+  const dpg=v=>(v>=0?'+':'')+v.toFixed(1);
+  const rows=played.map((r,idx)=>{
+    const medal=idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':(idx+1);
+    const dc=r.diff>0?'diffpos':(r.diff<0?'diffneg':'');
+    return `<tr>
+      <td class="pos">${medal}</td>
+      <td>${nameTag(r.name)}<br><span class="dupr">DUPR ${r.dupr} · ${r.sess} session${r.sess===1?'':'s'}</span></td>
+      <td class="num"><b>${pct(r.winpct)}</b></td>
+      <td class="num">${r.w}-${r.l}</td>
+      <td class="num hide-sm">${r.gp}</td>
+      <td class="num pf hide-sm">${r.pf}</td><td class="num hide-sm">${r.pa}</td>
+      <td class="num ${dc}">${r.diff>0?'+':''}${r.diff}</td>
+      <td class="num ${r.dpg>0?'diffpos':(r.dpg<0?'diffneg':'')}">${dpg(r.dpg)}</td>
+    </tr>`;
+  }).join('');
+  const unp=unplayed.map(r=>`<tr style="opacity:.5">
+      <td class="pos">–</td><td>${nameTag(r.name)}<br><span class="dupr">DUPR ${r.dupr}</span></td>
+      <td class="num">—</td><td class="num">0-0</td><td class="num hide-sm">0</td>
+      <td class="num hide-sm">0</td><td class="num hide-sm">0</td><td class="num">0</td><td class="num">—</td></tr>`).join('');
+  document.getElementById('content').innerHTML = `
+    <div class="card">
+      <h2>🏆 Season Leaderboard <span class="badge">all sessions · cumulative</span></h2>
+      <div class="legend">Records accumulate across every session a player appears in (matched by DUPR ID, else name). Groups vary in size/target, so ranking uses <b>win %</b>, tiebreak point-diff per game. ${played.length} players active${unplayed.length?`, ${unplayed.length} idle`:''} across ${DB.sessions.length} session${DB.sessions.length===1?'':'s'}.</div>
+      <div style="margin:12px 0 4px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span class="nightlabel">Sort by</span>
+        ${sortBtn('winpct','Win %')} ${sortBtn('wins','Total Wins')} ${sortBtn('diff','Point Diff')}
+      </div>
+      <table style="margin-top:8px">
+        <thead><tr><th class="pos">#</th><th>Player</th><th class="num">Win%</th><th class="num">W-L</th>
+          <th class="num hide-sm">GP</th><th class="num hide-sm">PF</th><th class="num hide-sm">PA</th><th class="num">Diff</th><th class="num">±/Gm</th></tr></thead>
+        <tbody>${rows||`<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:22px">No games recorded yet.</td></tr>`}${unp}</tbody>
+      </table>
+    </div>`;
+}
+
+/* ---- New / edit session editor ---- */
+function newSession(){
+  draft = { editId:null, night:"Monday — 3.25 & Above", date:new Date().toISOString().slice(0,10),
+            roster:"", players:null, assign:null };
+  setView('new');
+}
+function editSession(i){
+  const s=DB.sessions[i];
+  const players=s.players.map(p=>({...p}));
+  const assign=players.map(()=>0);
+  s.groups.forEach((grp,gi)=>grp.forEach(pi=>assign[pi]=gi));
+  draft={ editId:s.id, night:s.night, date:s.date,
+          roster:players.map(p=>`${p.n}${p.d?', '+p.d:''}${p.id?', '+p.id:''}`).join('\n'),
+          players, assign };
+  setView('new');
+}
+
+function renderEditor(){
+  const phaseB = draft.players && draft.players.length;
+  let body;
+  if(!phaseB){
+    body = `
+      <div class="field"><label>Night / division</label>
+        <input type="text" id="f_night" list="nightlist" value="${draft.night.replace(/"/g,'&quot;')}" style="min-width:280px">
+        <datalist id="nightlist">
+          <option value="Monday — 3.25 & Above"><option value="Monday — Below 3.25">
+          <option value="Tuesday"><option value="Wednesday"><option value="Thursday"><option value="Friday">
+        </datalist>
+      </div>
+      <div class="field"><label>Date</label><input type="date" id="f_date" value="${draft.date}"></div>
+      <div class="field"><label>Paste roster — one player per line</label>
+        <textarea id="f_roster" placeholder="Stephen Rhodes, 4.374, 6732748259&#10;Paul Sita 4.022 5724645230&#10;Jane Doe, NR">${draft.roster||''}</textarea>
+        <div class="legend">Accepts “Name, rating, DUPR ID” (commas) or space-separated. Rating &amp; ID optional. Use NR if unrated.</div>
+      </div>
+      <button class="btn primary" onclick="parseDraft()">Parse &amp; auto-group →</button>
+      ${draft.editId?`<button class="btn" onclick="setView(findSessionIndex(draft.editId))">Cancel</button>`:''}`;
+  } else {
+    const nG = Math.max(...draft.assign)+1;
+    const sizes={}; draft.assign.forEach(g=>sizes[g]=(sizes[g]||0)+1);
+    let warn='';
+    for(let g=0;g<nG;g++){ const sz=sizes[g]||0; if(sz!==4&&sz!==5) warn+=`Group ${g+1} has ${sz} players (needs 4 or 5). `; }
+    const order=draft.players.map((p,i)=>i).sort((a,b)=>draft.assign[a]-draft.assign[b]||rat(draft.players[b].d)-rat(draft.players[a].d));
+    const opts=(sel)=>{let o='';for(let g=0;g<nG;g++)o+=`<option value="${g}" ${g===sel?'selected':''}>Group ${g+1}</option>`;o+=`<option value="${nG}">+ New group</option>`;return o;};
+    const rows=order.map(i=>{
+      const p=draft.players[i];
+      return `<div class="assignrow">
+        <span class="grpcol">G${draft.assign[i]+1}</span>
+        <span class="nm">${p.n}</span>
+        <span class="rt">${p.d==='NR'?'NR':'DUPR '+p.d}</span>
+        <select onchange="setAssign(${i},this.value)">${opts(draft.assign[i])}</select>
+      </div>`;
+    }).join('');
+    const sizeSummary=Array.from({length:nG},(_,g)=>`G${g+1}: ${sizes[g]||0}→to ${groupTarget(sizes[g]||0)}`).join(' · ');
+    body=`
+      <div class="sesshead">
+        <div><div class="field" style="margin-bottom:8px"><label>Night</label>
+          <input type="text" id="f_night2" value="${draft.night.replace(/"/g,'&quot;')}" style="min-width:260px"></div></div>
+        <div><div class="field" style="margin-bottom:8px"><label>Date</label>
+          <input type="date" id="f_date2" value="${draft.date}"></div></div>
+      </div>
+      <div class="legend" style="margin-bottom:10px">${draft.players.length} players · auto-grouped by DUPR. Reassign anyone below, then save. <b>${sizeSummary}</b></div>
+      ${warn?`<div class="note">⚠ ${warn}Groups should be 4 (to 12) or 5 (to 9) for a complete round-robin.</div>`:''}
+      <div style="margin:10px 0">${rows}</div>
+      <button class="btn primary" onclick="saveDraft()">${draft.editId?'Save changes':'Create session'}</button>
+      <button class="btn" onclick="draft.players=null;draft.assign=null;render()">← Back to roster</button>`;
+  }
+  document.getElementById('content').innerHTML = `
+    <div class="card"><h2>${draft.editId?'Edit session':'New session'}</h2>
+      <div class="legend">A session is one dated night of play. ${phaseB?'':'Enter the night, date, and paste who showed up.'}</div>
+      <div style="margin-top:14px">${body}</div>
+    </div>`;
+}
+
+function renderSession(s){
+  if(activeTab>=s.groups.length) activeTab=0;
+  document.getElementById('tabs').innerHTML = s.groups.map((g,i)=>
+    `<div class="tab ${i===activeTab?'active':''}" onclick="setTab(${i})">Group ${i+1}<span style="opacity:.7;font-weight:500"> · to ${groupTarget(g.length)}</span></div>`
+  ).join('');
+  const gi=activeTab, gps=gpList(s,gi), target=groupTarget(s.groups[gi].length);
+  const games=gamesFor(s,gi), st=standings(s,gi);
+
+  const stRows=st.map((row,idx)=>{
+    const p=gps[row.i], dc=row.diff>0?'diffpos':(row.diff<0?'diffneg':''), sg=row.diff>0?'+':'';
+    return `<tr><td class="pos">${idx+1}</td>
+      <td>${nameTag(row.name)} <span class="rating">${p.d}</span><br><span class="dupr">${duprTag(p)}</span></td>
+      <td class="num">${row.gp}</td><td class="num"><b>${row.w}</b></td><td class="num">${row.l}</td>
+      <td class="num pf hide-sm">${row.pf}</td><td class="num hide-sm">${row.pa}</td>
+      <td class="num ${dc}">${sg}${row.diff}</td></tr>`;
+  }).join('');
+
+  let gamesHtml='';
+  for(let r=1;r<=ROUNDS;r++){
+    gamesHtml+=`<div style="margin:14px 0 6px"><span class="roundlabel r${r}">ROUND ${r}</span></div>`;
+    gamesHtml+=`<div class="row-head"><span>Game</span><span>Team A</span><span class="num">A</span><span></span><span class="num">B</span><span>Team B</span><span>Status</span></div>`;
+    games.filter(x=>x.round===r).forEach((game,n)=>{
+      const sc=s.scores[game.id]||{a:'',b:''}, a=sc.a,b=sc.b;
+      const aw=(a!==''&&b!==''&&+a>+b), bw=(a!==''&&b!==''&&+b>+a);
+      const stat=gameStatus(target,sc);
+      const sit=game.sitting.length?`<div class="sit">⏸ sitting: ${game.sitting.map(i=>nameTag(gps[i].n)).join(', ')}</div>`:'';
+      gamesHtml+=`<div class="gamerow">
+        <div class="rating g-label">R${r}·G${n+1}</div>
+        <div class="team g-teamA ${aw?'winner':''}">${nameTag(gps[game.teamA[0]].n)} &amp; ${nameTag(gps[game.teamA[1]].n)}</div>
+        <input type="number" min="0" inputmode="numeric" class="g-inA ${aw?'win':''}" value="${a}" oninput="saveScore('${game.id}','a',this.value)" onchange="setScore('${game.id}','a',this.value)">
+        <div class="vs g-vs">vs</div>
+        <input type="number" min="0" inputmode="numeric" class="g-inB ${bw?'win':''}" value="${b}" oninput="saveScore('${game.id}','b',this.value)" onchange="setScore('${game.id}','b',this.value)">
+        <div class="team g-teamB ${bw?'winner':''}">${nameTag(gps[game.teamB[0]].n)} &amp; ${nameTag(gps[game.teamB[1]].n)}</div>
+        <div class="status g-status ${stat.cls}">${stat.txt}</div></div>${sit}`;
+    });
+  }
+  const warnNote=gps.some(p=>!p.id)
+    ? `<div class="note">⚠ ${gps.filter(p=>!p.id).map(p=>p.n).join(', ')} — no DUPR ID on file.</div>`:'';
+
+  document.getElementById('content').innerHTML=`
+    <div class="card">
+      <div class="sesshead">
+        <div><h2>${s.night}</h2><div class="legend">${fmtDateLong(s.date)} · ${s.players.length} players · ${s.groups.length} groups</div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+          <button class="btn ${adminOpen?'primary':''}" onclick="toggleAdmin()">⚙ Admin ${adminOpen?'▴':'▾'}</button>
+          ${adminOpen?`
+            <button class="btn" onclick="exportSessionCSV(${view})">Export DUPR CSV</button>
+            <button class="btn" onclick="simulateSession(${view})">Simulate</button>
+            <button class="btn" onclick="editSession(${view})">Edit roster / groups</button>
+            <button class="btn danger" onclick="clearSession(${view})">Clear scores</button>
+            <button class="btn danger" onclick="deleteSession(${view})">Delete</button>`:''}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Group ${gi+1} — Standings <span class="badge">games to ${target} · win by 2</span></h2>
+      <div class="legend">${gps.length} players · ${games.length} games (${(SCHED[gps.length]||[]).length} combinations × ${ROUNDS} rounds). Ranked by wins, then point differential.</div>
+      <table style="margin-top:12px"><thead><tr><th class="pos">#</th><th>Player</th><th class="num">GP</th>
+        <th class="num">W</th><th class="num">L</th><th class="num hide-sm">PF</th><th class="num hide-sm">PA</th><th class="num">Diff</th></tr></thead>
+        <tbody>${stRows}</tbody></table>
+      ${warnNote}
+    </div>
+    <div class="card">
+      <h2>Group ${gi+1} — Games &amp; Combinations</h2>
+      <div class="legend">Each player partners every other exactly once per round. Enter both scores; winner highlights automatically.</div>
+      ${(SCHED[gps.length]?gamesHtml:`<div class="note">⚠ This group has ${gps.length} players — round-robin needs 4 or 5. Edit groups to fix.</div>`)}
+    </div>`;
+}
+
+/* ---------- Actions ---------- */
+function setView(v){ view=v; activeTab=0; render(); }
+function toggleAdmin(){ adminOpen=!adminOpen; render(); }
+function setTab(i){ activeTab=i; render(); }
+function setOverallSort(k){ overallSort=k; render(); }
+function findSessionIndex(id){ return DB.sessions.findIndex(s=>s.id===id); }
+
+function parseDraft(){
+  draft.night=document.getElementById('f_night').value.trim()||'Session';
+  draft.date=document.getElementById('f_date').value||new Date().toISOString().slice(0,10);
+  draft.roster=document.getElementById('f_roster').value;
+  const players=parseRoster(draft.roster);
+  if(players.length<4){ alert('Enter at least 4 players.'); return; }
+  draft.players=players;
+  const groups=autoGroups(players);
+  const assign=players.map(()=>0);
+  groups.forEach((grp,gi)=>grp.forEach(pi=>assign[pi]=gi));
+  draft.assign=assign;
+  render();
+}
+function setAssign(i,val){
+  draft.assign[i]=+val;
+  // renumber groups to be contiguous (0..n-1)
+  const uniq=[...new Set(draft.assign)].sort((a,b)=>a-b);
+  const remap={}; uniq.forEach((g,n)=>remap[g]=n);
+  draft.assign=draft.assign.map(g=>remap[g]);
+  // keep night/date edits from phase B
+  const n2=document.getElementById('f_night2'); if(n2) draft.night=n2.value.trim()||draft.night;
+  const d2=document.getElementById('f_date2'); if(d2) draft.date=d2.value||draft.date;
+  render();
+}
+function saveDraft(){
+  const n2=document.getElementById('f_night2'); if(n2) draft.night=n2.value.trim()||draft.night;
+  const d2=document.getElementById('f_date2'); if(d2) draft.date=d2.value||draft.date;
+  const nG=Math.max(...draft.assign)+1;
+  const groups=Array.from({length:nG},()=>[]);
+  // assign then sort each group by rating desc
+  draft.players.forEach((p,i)=>groups[draft.assign[i]].push(i));
+  groups.forEach(g=>g.sort((a,b)=>rat(draft.players[b].d)-rat(draft.players[a].d)));
+
+  if(draft.editId){
+    const idx=findSessionIndex(draft.editId), old=DB.sessions[idx];
+    DB.sessions[idx]={...old, night:draft.night, date:draft.date, players:draft.players, groups, scores:old.scores||{}};
+    save(); setView(idx);
+  } else {
+    const session={ id:'s_'+Date.now(), night:draft.night, date:draft.date,
+                    players:draft.players, groups, scores:{} };
+    DB.sessions.push(session);
+    DB.sessions.sort((a,b)=> (a.date<b.date?-1:a.date>b.date?1:0));
+    save(); setView(findSessionIndex(session.id));
+  }
+  draft=null;
+}
+function deleteSession(i){
+  if(confirm(`Delete the ${nightShort(DB.sessions[i].night)} session on ${fmtDate(DB.sessions[i].date)}? Scores will be lost.`)){
+    DB.sessions.splice(i,1); save(); setView('overall');
+  }
+}
+// Persist a score immediately on every keystroke (no re-render, so typing isn't interrupted).
+function saveScore(id,side,val){
+  if(typeof view!=='number') return;
+  const s=DB.sessions[view];
+  if(!s.scores[id]) s.scores[id]={a:'',b:''};
+  s.scores[id][side]= val===''?'':val;
+  save();
+}
+// On blur/change: persist and re-render to refresh standings + winner highlights.
+function setScore(id,side,val){
+  saveScore(id,side,val);
+  render();
+}
+function sessionHasScores(s){
+  return Object.values(s.scores||{}).some(v=>v&&(v.a!==''||v.b!==''));
+}
+function simulateSession(i){
+  const s=DB.sessions[i];
+  if(sessionHasScores(s) && !confirm(`Fill the ${nightShort(s.night)} · ${fmtDate(s.date)} session with simulated scores? This OVERWRITES its existing scores.`)) return;
+  s.groups.forEach((g,gi)=>{
+    if(!SCHED[g.length]) return;
+    const t=groupTarget(g.length);
+    gamesFor(s,gi).forEach(game=>{
+      let win = t + (Math.random()<0.25 ? Math.floor(Math.random()*3) : 0);  // sometimes overtime
+      let lose = Math.floor(Math.random()*(t-1));
+      if(win-lose<2) lose=win-2;                 // enforce win by 2
+      if(lose<0) lose=0;
+      s.scores[game.id] = Math.random()<0.5 ? {a:win,b:lose} : {a:lose,b:win};
+    });
+  });
+  save(); render();
+}
+function clearSession(i){
+  const s=DB.sessions[i];
+  if(confirm(`Clear all scores for the ${nightShort(s.night)} · ${fmtDate(s.date)} session? Its roster and groups are kept. This cannot be undone.`)){
+    s.scores={}; save(); render();
+  }
+}
+function resetAll(){
+  if(confirm('Erase ALL sessions and scores and restore the seed Monday session? This cannot be undone.')){
+    localStorage.removeItem(STORE_KEY); DB=load(); view='overall'; save(); render();
+  }
+}
+function csvCell(v){ v=(v==null?'':String(v)); return /[",\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; }
+function exportSessionCSV(i){
+  const s=DB.sessions[i];
+  const header=["matchType","event","date",
+    "playerA1","playerA1DuprId","playerA1ExternalId","playerA2","playerA2DuprId","playerA2ExternalId",
+    "playerB1","playerB1DuprId","playerB1ExternalId","playerB2","playerB2DuprId","playerB2ExternalId",
+    "teamAGame1","teamBGame1","teamAGame2","teamBGame2","teamAGame3","teamBGame3",
+    "teamAGame4","teamBGame4","teamAGame5","teamBGame5","location","scoreType"];
+  const rows=[header];
+  // a game is exportable only if both scores exist and it's decisive (no tie)
+  const decisive=v=> v && v.a!=='' && v.b!=='' && v.a!=null && v.b!=null
+                     && !isNaN(+v.a) && !isNaN(+v.b) && +v.a!==+v.b;
+  const event = `${s.night} — ${fmtDateLong(s.date)}`;
+  const noId = new Set();          // players missing a DUPR ID
+  let skipped = 0;                 // games skipped because a player has no ID
+  // One DUPR match row per GAME (each round is its own single-game match) —
+  // avoids 1-1 match-level draws and empty-game gaps that DUPR rejects.
+  s.groups.forEach((grp,gi)=>{
+    const sched=SCHED[grp.length]; if(!sched) return;       // only 4/5-player round-robins
+    const gps=gpList(s,gi);
+    for(let r=1;r<=ROUNDS;r++){
+      sched.forEach((m,idx)=>{
+        const sc=s.scores[gid(gi,r,idx)];
+        if(!decisive(sc)) return;
+        const A1=gps[m[0][0]], A2=gps[m[0][1]], B1=gps[m[1][0]], B2=gps[m[1][1]];
+        const four=[A1,A2,B1,B2];
+        if(four.some(p=>!p.id)){            // DUPR needs an ID for every player
+          four.filter(p=>!p.id).forEach(p=>noId.add(p.n));
+          skipped++; return;
+        }
+        rows.push([
+          DUPR_MATCH_TYPE, event, s.date,
+          A1.n, A1.id, '', A2.n, A2.id, '',
+          B1.n, B1.id, '', B2.n, B2.id, '',
+          sc.a, sc.b, '','', '','', '','', '','',
+          DUPR_LOCATION, DUPR_SCORE_TYPE
+        ]);
+      });
+    }
+  });
+  if(rows.length===1){
+    alert(noId.size
+      ? `No exportable games. Every completed game involves a player without a DUPR ID (${[...noId].join(', ')}). Add their DUPR IDs (Edit roster / groups) and re-export.`
+      : 'No completed games in this session to export yet.');
+    return;
+  }
+  const csv=rows.map(r=>r.map(csvCell).join(',')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=`fcpa-${nightShort(s.night)}-${s.date}.csv`; a.click();
+  if(skipped){
+    alert(`Exported ${rows.length-1} games.\n\nSkipped ${skipped} game(s) involving players with no DUPR ID: ${[...noId].join(', ')}.\nDUPR can't import matches for unidentified players. Add their DUPR ID via "Edit roster / groups" and re-export to include those games.`);
+  }
+}
+function exportData(){
+  const out=DB.sessions.map((s,si)=>({
+    night:s.night, date:s.date,
+    groups:s.groups.map((grp,gi)=>{
+      const gps=gpList(s,gi);
+      return {
+        group:'Group '+(gi+1), target:groupTarget(grp.length),
+        standings:standings(s,gi).map((r,idx)=>({rank:idx+1,player:r.name,duprId:gps[r.i].id||null,dupr:gps[r.i].d,GP:r.gp,W:r.w,L:r.l,PF:r.pf,PA:r.pa,Diff:r.diff})),
+        games:gamesFor(s,gi).map(g=>({round:g.round,teamA:g.teamA.map(i=>gps[i].n),teamB:g.teamB.map(i=>gps[i].n),sitting:g.sitting.map(i=>gps[i].n),score:s.scores[g.id]||{a:'',b:''}}))
+      };
+    })
+  }));
+  const season=overallRows().played.map((r,i)=>({rank:i+1,player:r.name,duprId:r.id||null,winPct:+(r.winpct*100).toFixed(1),W:r.w,L:r.l,GP:r.gp,Diff:r.diff,sessions:r.sess}));
+  const blob=new Blob([JSON.stringify({seasonLeaderboard:season,sessions:out},null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='fcpa-ladder-results.json'; a.click();
+}
+
+// Safety nets: flush to storage if the tab is hidden/backgrounded or closed (mobile especially).
+window.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') save(); });
+window.addEventListener('pagehide', save);
+window.addEventListener('beforeunload', save);
+
+render();
+</script>
+</body>
+</html>

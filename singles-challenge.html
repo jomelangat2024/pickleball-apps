@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Singles Flex League</title>
+<style>
+  :root {
+    --bg:#0f1722; --panel:#18222f; --panel2:#1f2c3c; --line:#2b3a4d;
+    --text:#e8eef5; --muted:#9fb0c3; --accent:#4ade80; --accent-d:#22c55e;
+    --blue:#38bdf8; --warn:#fbbf24; --red:#f87171;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+  header { position:sticky; top:0; z-index:10; background:linear-gradient(180deg,#142033,#0f1722); border-bottom:1px solid var(--line); padding:16px 20px; }
+  .title { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  h1 { font-size:20px; margin:0; letter-spacing:.3px; }
+  .brand { height:46px; width:auto; display:block; }
+  .divider { width:1px; height:34px; background:var(--line); }
+  .weekchip { background:var(--panel2); border:1px solid var(--line); border-radius:999px; padding:4px 12px; font-size:12px; font-weight:700; color:var(--accent); }
+  .sub { color:var(--muted); font-size:13px; margin-top:8px; line-height:1.5; max-width:900px; }
+  .sub b { color:var(--text); }
+  .bar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:14px; }
+  button { border:none; border-radius:8px; padding:9px 16px; font-size:14px; font-weight:600; cursor:pointer; transition:filter .15s; }
+  .btn-primary { background:var(--accent-d); color:#06210f; }
+  .btn-primary:hover { filter:brightness(1.08); }
+  .btn-ghost { background:var(--panel2); color:var(--text); border:1px solid var(--line); }
+  .btn-ghost:hover { filter:brightness(1.15); }
+  .btn-sm { padding:5px 10px; font-size:12px; }
+  select, input[type=number], input[type=text] { background:var(--panel); border:1px solid var(--line); color:var(--text); padding:8px 10px; border-radius:8px; font-size:14px; }
+  main { padding:20px; max-width:1100px; margin:0 auto; }
+  .layout { display:grid; grid-template-columns:1fr; gap:24px; }
+  @media(min-width:900px){ .layout{ grid-template-columns:1.15fr .85fr; } }
+  h2 { font-size:15px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin:0 0 12px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:20px; }
+  .mtitle { font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin:14px 0 8px; }
+  .flighthd { display:flex; align-items:center; gap:8px; margin:18px 0 8px; }
+  .flighthd:first-child { margin-top:4px; }
+  .flighthd .fl { font-size:13px; font-weight:800; color:var(--blue); text-transform:uppercase; letter-spacing:.5px; }
+  .flighthd .meta { font-size:11px; color:var(--muted); }
+
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th { text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:#67839e; padding:7px 8px; border-bottom:1px solid var(--line); }
+  td { padding:7px 8px; border-bottom:1px solid #223040; }
+  tr:last-child td { border-bottom:none; }
+  .lead td { background:#16331f; }
+  tbody tr.lead td:first-child { color:var(--accent); font-weight:800; }
+  .relup td { box-shadow: inset 3px 0 0 var(--accent); }
+  .reldn td { box-shadow: inset 3px 0 0 var(--red); }
+  .pts { font-weight:800; color:var(--accent); }
+  .pos { color:var(--accent); } .neg { color:var(--red); } .muted { color:#67839e; }
+
+  .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .hint { font-size:12px; color:var(--muted); }
+  .err { font-size:12px; color:var(--warn); min-height:16px; }
+
+  .weekblock { margin-bottom:18px; }
+  .weekbar { display:flex; align-items:center; gap:8px; margin:6px 0 10px; }
+  .weekbar .wnum { font-size:13px; font-weight:800; }
+  .weekbar.now .wnum { color:var(--accent); }
+  .weekbar .pill { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; padding:2px 8px; border-radius:999px; background:var(--panel2); border:1px solid var(--line); color:var(--muted); }
+  .weekbar.now .pill { color:var(--accent); border-color:#2c5a3a; }
+
+  .match { background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px; }
+  .match.now { border-color:#2c5a3a; }
+  .match.done { opacity:.92; }
+  .match-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .match-top .wk { font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:#67839e; font-weight:700; }
+  .teams { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:8px; }
+  .team { text-align:center; }
+  .team .pl { font-weight:700; font-size:14px; }
+  .vs { font-size:12px; font-weight:800; color:var(--muted); }
+  .games { display:flex; gap:6px; justify-content:center; margin:10px 0 2px; flex-wrap:wrap; }
+  .gcol { display:flex; flex-direction:column; align-items:center; gap:3px; }
+  .gcol .glbl { font-size:9px; text-transform:uppercase; letter-spacing:.5px; color:#67839e; }
+  .grow { display:flex; align-items:center; gap:4px; }
+  .grow input { width:42px; text-align:center; padding:6px; font-size:15px; font-weight:700; }
+  .grow .dash { color:#67839e; font-weight:800; }
+  .match-actions { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+  .match-actions .btn-primary { flex:1; min-width:120px; }
+  .result { display:flex; justify-content:space-between; align-items:center; gap:10px; font-size:13px; }
+  .result .score { color:var(--muted); }
+  .winner { color:var(--accent); font-weight:800; }
+  .ffflag { color:var(--warn); font-size:11px; font-weight:700; }
+  .bye { font-size:12px; color:#67839e; padding:6px 2px; }
+  .callout { background:var(--panel2); border:1px solid var(--line); border-radius:8px; padding:8px 12px; font-size:13px; margin-bottom:10px; line-height:1.45; }
+  .callout b { color:var(--accent); }
+  .addrow { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+  .addrow #pName { flex:1; min-width:120px; }
+  .addrow #pRating { width:120px; }
+  .flbox { border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-bottom:10px; }
+  .flbox .fl { font-size:12px; font-weight:800; color:var(--blue); text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
+  .flbox .plist { display:flex; flex-direction:column; gap:3px; }
+  .flrow { display:flex; justify-content:space-between; align-items:center; font-size:13px; }
+  .moveacts { display:flex; gap:4px; }
+  .moveacts button { padding:2px 9px; font-size:13px; line-height:1.1; }
+  .btn-wa { background:#25D366; color:#04331a; font-weight:700; display:inline-flex; align-items:center; gap:7px; }
+  .finish-actions { display:flex; gap:10px; flex-wrap:wrap; }
+  .empty { color:var(--muted); font-size:13px; padding:14px; text-align:center; border:1px dashed var(--line); border-radius:10px; }
+  .addmatch { border:1px solid var(--blue); background:var(--panel2); border-radius:10px; padding:12px; margin-bottom:16px; }
+  .addmatch-title { font-size:13px; font-weight:800; color:var(--blue); margin-bottom:8px; }
+  .addmatch-row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .addmatch-row select { flex:1; min-width:120px; }
+  .addmatch-row #mWeek { flex:0 0 auto; min-width:90px; }
+  .vs-mini { color:var(--muted); font-weight:700; font-size:12px; }
+  .match-top { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  @media (max-width:560px){
+    .addmatch-row select { flex:1 1 100%; }
+    .addmatch-row #mWeek { flex:1 1 100%; }
+    .vs-mini { display:none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="title">
+    <svg class="brand" viewBox="0 0 440 96" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Life Time Pickleball">
+      <circle cx="44" cy="48" r="40" fill="#1CA9E0"/>
+      <g fill="#2b2b2b">
+        <circle cx="30" cy="28" r="5"/><circle cx="48" cy="24" r="5"/><circle cx="64" cy="33" r="5"/>
+        <circle cx="24" cy="46" r="5"/><circle cx="42" cy="44" r="5"/><circle cx="60" cy="50" r="5"/>
+        <circle cx="28" cy="63" r="5"/><circle cx="46" cy="64" r="5"/><circle cx="62" cy="67" r="5"/>
+        <circle cx="40" cy="79" r="4.5"/>
+      </g>
+      <text x="104" y="44" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="34" fill="#ffffff" letter-spacing="1">LIFE TIME</text>
+      <text x="340" y="28" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="12" fill="#ffffff">&#174;</text>
+      <text x="104" y="84" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-style="italic" font-size="34" fill="#1CA9E0" letter-spacing="1">PICKLEBALL</text>
+    </svg>
+    <div class="divider"></div>
+    <h1>Singles Flex League</h1>
+    <span class="weekchip" id="weekchip"></span>
+  </div>
+  <div class="sub">
+    Players are grouped into <b>flights</b> by level for standings. Each week you <b>create the matchups by hand</b> — pick any two players (even across flights), and the same pair can play again in a later week.
+    It's <b>flex</b>: you and your opponent coordinate your own court time and record the result by the <b>Sunday night</b> deadline.
+    <b>Match format:</b> best 2 of 3 games to 11, win by 2. <b>Standings:</b> win % → game differential → point differential → fewest points allowed.
+    Top finishers move up a flight next season; bottom finishers move down.
+  </div>
+  <div class="bar">
+    <button class="btn-ghost" id="advBtn">Advance week →</button>
+    <button class="btn-ghost" id="reseedBtn">Re-seed flights</button>
+    <button class="btn-ghost" id="promoteBtn">Start next season (promote/relegate)</button>
+    <button class="btn-ghost" id="resetBtn">Reset season</button>
+  </div>
+</header>
+
+<main>
+  <div class="card" id="leaderboardCard">
+    <h2>Standings</h2>
+    <div id="leaderboard"></div>
+  </div>
+
+  <div class="layout">
+    <div>
+      <div class="card">
+        <h2>Schedule</h2>
+        <div id="weekSummary"></div>
+        <div id="schedule"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>Flights &amp; Players</h2>
+        <div class="addrow">
+          <input id="pName" type="text" placeholder="Add player name…">
+          <input id="pRating" type="number" step="0.001" min="1" max="8" placeholder="Singles DUPR (opt)">
+          <button class="btn-primary" id="addBtn">+ Add</button>
+        </div>
+        <div class="hint" id="addHint" style="margin-bottom:12px">New players join the bottom flight. Use ↑/↓ to move them, then build matchups in the Schedule panel.</div>
+        <div id="flights"></div>
+      </div>
+
+      <div class="card">
+        <h2>Share</h2>
+        <div class="mtitle" style="margin-top:0">This week's matchups</div>
+        <div class="finish-actions" style="margin-bottom:14px">
+          <button class="btn-wa" id="waWeekBtn">Send to WhatsApp</button>
+          <button class="btn-ghost" id="copyWeekBtn">Copy</button>
+        </div>
+        <div class="mtitle">Standings</div>
+        <div class="finish-actions">
+          <button class="btn-wa" id="waBtn">Send to WhatsApp</button>
+          <button class="btn-ghost" id="copyBtn">Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+// ---- roster (singles DUPR; null = Not Rated / not found) ----
+const PLAYERS = [
+  { name:"Amit Rajesh",         s:null  },
+  { name:"Avril Baxter",        s:null  },
+  { name:"Charbel Touma",       s:3.094 },
+  { name:"Eli Azar",            s:4.101 },
+  { name:"Gopal Shah",          s:3.300 },
+  { name:"Juan Castillo",       s:null  },
+  { name:"Lesly Chavez-Lizama", s:3.378 },
+  { name:"Matt McPherson",      s:3.843 },
+  { name:"Michael Ward",        s:4.221 },
+  { name:"Mohammad Mukhtar",    s:3.470 },
+  { name:"Nataly Perez",        s:3.622 },
+  { name:"Nicolas Lion",        s:null  },
+  { name:"Nikolai Matveev",     s:3.349 },
+  { name:"Nina Manrique",       s:3.651 },
+  { name:"Nora Bauer",          s:3.605 },
+  { name:"Rob Chee",            s:4.156 },
+  { name:"Sumi Maloney",        s:3.700 },
+  { name:"Tony Gaynord",        s:3.557 },
+  { name:"Tony Zilli",          s:4.428 },
+];
+const BASE_COUNT = PLAYERS.length;
+const STORE_KEY = "pickleball-singles-flex-v8";
+// Default flight assignment. Flight 1 is seeded by DUPR (highest first);
+// players not listed in a flight join Flight 2.
+const FLIGHT_1 = ["Michael Ward","Charbel Touma","Mohammad Mukhtar","Nina Manrique","Tony Gaynord","Nikolai Matveev","Tony Zilli","Juan Castillo","Rob Chee","Nicolas Lion"];
+const FLIGHT_2 = ["Amit Rajesh","Eli Azar","Gopal Shah","Lesly Chavez-Lizama","Nataly Perez","Sumi Maloney","Nora Bauer","Matt McPherson","Avril Baxter"];
+
+let week = 1;
+let flights = [];            // [{ label, players:[name,...] }]  flights[0] = top flight
+let matches = [];            // [{ id, week, a, b }]  manually-created weekly matchups
+let results = {};            // matchId -> { a,b, winner, loser, wGames, lGames, wPts, lPts, status, week }
+
+const $ = id => document.getElementById(id);
+const names = () => PLAYERS.map(p => p.name);
+const ratingOf = n => { const p = PLAYERS.find(x => x.name === n); return p ? p.s : null; };
+const fmtR = v => v == null ? "NR" : v.toFixed(3);
+const pairKey = (a,b) => [a,b].sort().join(" ||| ");
+
+// ---- persistence ----
+function save(){
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify({
+      week, flights, matches, results, addedPlayers: PLAYERS.slice(BASE_COUNT),
+    }));
+  } catch(e){}
+}
+function load(){
+  let raw; try { raw = localStorage.getItem(STORE_KEY); } catch(e){ return; }
+  if (!raw) return;
+  let st; try { st = JSON.parse(raw); } catch(e){ return; }
+  if (PLAYERS.length === BASE_COUNT) (st.addedPlayers || []).forEach(p => PLAYERS.push(p));
+  if (st.week) week = st.week;
+  if (Array.isArray(st.flights)) flights = st.flights;
+  if (Array.isArray(st.matches)) matches = st.matches;
+  if (st.results && typeof st.results === "object") results = st.results;
+}
+
+// ---- seeding ----
+// Two flights by level. Flight 1 is ordered by DUPR (highest first).
+// Anyone on the roster not listed in a flight joins Flight 2.
+function seedFlights(){
+  const byRating = (a,b) =>
+    ((ratingOf(b) == null ? -1 : ratingOf(b)) - (ratingOf(a) == null ? -1 : ratingOf(a))) || a.localeCompare(b);
+  const roster = names();
+  const listed = new Set([...FLIGHT_1, ...FLIGHT_2]);
+  const f1 = FLIGHT_1.filter(n => roster.includes(n)).slice().sort(byRating);
+  const f2 = FLIGHT_2.filter(n => roster.includes(n))
+    .concat(roster.filter(n => !listed.has(n)));   // newly added players land here
+  flights = [
+    { label: "Flight 1", players: f1 },
+    { label: "Flight 2", players: f2 },
+  ];
+}
+
+// ---- manual schedule ----
+// Schedule is built entirely from manually-created matchups (the `matches` array).
+const flightOf = n => { const i = flights.findIndex(fl => fl.players.includes(n)); return i < 0 ? null : i; };
+function buildSchedule(){
+  return matches.slice()
+    .sort((x,y) => x.week - y.week)
+    .map(m => ({ week:m.week, a:m.a, b:m.b, key:m.id, seq:m.id, id:m.id }));
+}
+function seasonWeeks(){
+  let mx = 1;
+  matches.forEach(m => { if (m.week > mx) mx = m.week; });
+  return Math.max(mx, week, 1);
+}
+
+// ---- standings ----
+function flightStandings(fl){
+  const P = {};
+  fl.players.forEach(n => P[n] = { name:n, w:0, l:0, gf:0, ga:0, pf:0, pa:0 });
+  Object.values(results).forEach(r => {
+    if (r.status !== "completed" && r.status !== "forfeit") return;
+    if (P[r.winner]){ const p=P[r.winner]; p.w++; p.gf+=r.wGames; p.ga+=r.lGames; p.pf+=r.wPts; p.pa+=r.lPts; }
+    if (P[r.loser]){  const p=P[r.loser];  p.l++; p.gf+=r.lGames; p.ga+=r.wGames; p.pf+=r.lPts; p.pa+=r.wPts; }
+  });
+  return Object.values(P).map(p => {
+    p.played = p.w + p.l;
+    p.pct = p.played ? p.w / p.played : 0;
+    p.gdiff = p.gf - p.ga;
+    p.pdiff = p.pf - p.pa;
+    return p;
+  }).sort((a,b) =>
+    b.pct - a.pct || b.gdiff - a.gdiff || b.pdiff - a.pdiff || a.pa - b.pa || a.name.localeCompare(b.name));
+}
+
+// ---- render ----
+function render(){
+  $("weekchip").textContent = `Week ${Math.min(week, seasonWeeks())} of ${seasonWeeks()}`;
+  renderLeaderboard();
+  renderWeekSummary();
+  renderSchedule();
+  renderFlights();
+  save();
+}
+
+function renderLeaderboard(){
+  const el = $("leaderboard");
+  if (!flights.length){ el.innerHTML = `<div class="empty">No flights yet. Use “Re-seed flights by DUPR”.</div>`; return; }
+  el.innerHTML = flights.map((fl, fi) => {
+    const rows = flightStandings(fl);
+    const last = flights.length - 1;
+    return `
+      <div class="flighthd">
+        <span class="fl">${fl.label}</span>
+        <span class="meta">${fl.players.length} players${fi>0?' · top 2 promote':''}${fi<last?' · bottom 2 relegate':''}</span>
+      </div>
+      <table>
+        <thead><tr><th>#</th><th>Player</th><th>W–L</th><th>Win%</th><th>Games</th><th>Pt Diff</th></tr></thead>
+        <tbody>
+          ${rows.map((r,i) => {
+            const promote = fi>0 && i<2 && r.played>0;
+            const relegate = fi<last && i>=rows.length-2 && r.played>0;
+            const cls = (i===0 && r.played>0 ? 'lead ' : '') + (promote?'relup ':'') + (relegate?'reldn':'');
+            return `<tr class="${cls.trim()}">
+              <td>${i+1}</td>
+              <td>${r.name}</td>
+              <td>${r.w}–${r.l}</td>
+              <td class="pts">${r.played ? Math.round(r.pct*100) : 0}%</td>
+              <td class="${r.gdiff>0?'pos':r.gdiff<0?'neg':''}">${r.gf}–${r.ga}</td>
+              <td class="${r.pdiff>0?'pos':r.pdiff<0?'neg':''}">${r.pdiff>0?'+':''}${r.pdiff}</td>
+            </tr>`;
+          }).join("")}
+        </tbody>
+      </table>`;
+  }).join("");
+}
+
+function renderWeekSummary(){
+  const T = seasonWeeks();
+  const sched = buildSchedule().filter(m => m.week === week);
+  const open = sched.filter(m => !results[m.key]);
+  const txt = week > T
+    ? `Season complete — all ${T} weeks scheduled. Use “Start next season” to promote/relegate and reset.`
+    : (open.length
+        ? `<b>Week ${week}:</b> ${open.length} match${open.length===1?'':'es'} still to be played. Coordinate your court time and record results by Sunday night.`
+        : `<b>Week ${week}: all matches recorded.</b> Advance to the next week when you're ready.`);
+  $("weekSummary").innerHTML = `<div class="callout">${txt}</div>`;
+}
+
+function gInput(seq, side, g){ return `<input type="number" min="0" id="g${g}${side}-${seq}" placeholder="–">`; }
+function matchCard(m){
+  const r = results[m.key];
+  const now = m.week === week;
+  if (r){
+    const ff = r.status === "forfeit";
+    return `<div class="match done">
+      <div class="match-top"><span class="wk">Week ${m.week}${ff?' · <span class="ffflag">forfeit</span>':''}</span>
+        <span><button class="btn-ghost btn-sm" onclick="clearResult('${m.key}')">Undo</button>
+        <button class="btn-ghost btn-sm" onclick="removeMatch('${m.id}')" title="Remove matchup">✕</button></span></div>
+      <div class="result">
+        <span><span class="winner">${r.winner}</span> def. ${r.loser}</span>
+        <span class="score">${ff ? 'W by forfeit' : `${r.wGames}–${r.lGames} games · ${r.wPts}–${r.lPts} pts`}</span>
+      </div>
+    </div>`;
+  }
+  return `<div class="match ${now?'now':''}">
+    <div class="match-top"><span class="wk">Week ${m.week}${now?' · this week':''}</span>
+      <button class="btn-ghost btn-sm" onclick="removeMatch('${m.id}')" title="Remove matchup">✕</button></div>
+    <div class="teams">
+      <div class="team"><div class="pl">${m.a}</div></div>
+      <div class="vs">VS</div>
+      <div class="team"><div class="pl">${m.b}</div></div>
+    </div>
+    <div class="games">
+      ${[1,2,3].map(g => `<div class="gcol">
+        <span class="glbl">Game ${g}${g===3?' (if needed)':''}</span>
+        <div class="grow">${gInput(m.seq,'a',g)}<span class="dash">–</span>${gInput(m.seq,'b',g)}</div>
+      </div>`).join("")}
+    </div>
+    <div class="match-actions">
+      <button class="btn-primary btn-sm" onclick="recordResult('${m.seq}','${m.key}','${enc(m.a)}','${enc(m.b)}')">Record result</button>
+      <button class="btn-ghost btn-sm" onclick="forfeit('${m.key}','${enc(m.a)}','${enc(m.b)}','a')">FF: ${m.a}</button>
+      <button class="btn-ghost btn-sm" onclick="forfeit('${m.key}','${enc(m.a)}','${enc(m.b)}','b')">FF: ${m.b}</button>
+    </div>
+  </div>`;
+}
+const enc = s => s.replace(/'/g, "\\'");
+
+function optTags(selected){
+  return names().slice().sort((a,b)=>a.localeCompare(b))
+    .map(n => `<option value="${n.replace(/"/g,'&quot;')}"${n===selected?' selected':''}>${n} (${flightLabelOf(n)})</option>`).join("");
+}
+function flightLabelOf(n){ const i = flightOf(n); return i==null ? '—' : flights[i].label.replace('Flight ','F'); }
+
+function addMatchupForm(){
+  if (!names().length) return "";
+  const T = seasonWeeks();
+  let wopts = "";
+  for (let w = 1; w <= T+1; w++) wopts += `<option value="${w}"${w===week?' selected':''}>Week ${w}${w>T?' (new)':''}</option>`;
+  return `<div class="addmatch">
+    <div class="addmatch-title">➕ Add a matchup</div>
+    <div class="addmatch-row">
+      <select id="mWeek" title="Week">${wopts}</select>
+      <select id="mA">${optTags()}</select>
+      <span class="vs-mini">vs</span>
+      <select id="mB">${optTags()}</select>
+      <button class="btn-primary btn-sm" onclick="addMatch()">Add</button>
+    </div>
+    <div class="hint">Pick any two players (any flight). The same pair can be matched again in another week.</div>
+  </div>`;
+}
+
+function renderSchedule(){
+  const el = $("schedule");
+  if (!flights.length){ el.innerHTML = `<div class="empty">No flights yet. Use “Re-seed flights”.</div>`; return; }
+  const sched = buildSchedule();
+  const T = seasonWeeks();
+  let html = addMatchupForm();
+  for (let w = 1; w <= T; w++){
+    const wm = sched.filter(m => m.week === w);
+    const done = wm.filter(m => results[m.key]).length;
+    html += `<div class="weekblock">
+      <div class="weekbar ${w===week?'now':''}">
+        <span class="wnum">Week ${w}</span>
+        <span class="pill">${done}/${wm.length} played</span>
+        ${w===week?'<span class="pill">current</span>':''}
+      </div>`;
+    if (!wm.length){
+      html += `<div class="empty" style="padding:14px">No matchups yet for this week — add one above.</div>`;
+    } else {
+      html += wm.map(matchCard).join("");
+      const playing = new Set(); wm.forEach(m => { playing.add(m.a); playing.add(m.b); });
+      const off = names().filter(n => !playing.has(n));
+      if (off.length) html += `<div class="bye">Not playing Week ${w}: ${off.join(", ")}</div>`;
+    }
+    html += `</div>`;
+  }
+  el.innerHTML = html;
+}
+
+function renderFlights(){
+  if (!flights.length){ $("flights").innerHTML = `<div class="empty">No flights.</div>`; return; }
+  const last = flights.length - 1;
+  $("flights").innerHTML = flights.map((fl, fi) => `
+    <div class="flbox">
+      <div class="fl">${fl.label} <span class="hint" style="font-weight:600">· ${fl.players.length} players</span></div>
+      <div class="plist">
+        ${fl.players.map(n => `<div class="flrow">
+          <span>${n} <span class="muted">${fmtR(ratingOf(n))}</span></span>
+          <span class="moveacts">
+            ${fi>0    ? `<button class="btn-ghost" title="Move up to ${flights[fi-1].label}" onclick="movePlayer('${enc(n)}',-1)">↑</button>` : ``}
+            ${fi<last ? `<button class="btn-ghost" title="Move down to ${flights[fi+1].label}" onclick="movePlayer('${enc(n)}',1)">↓</button>` : ``}
+          </span>
+        </div>`).join("")}
+      </div>
+    </div>`).join("");
+}
+
+// ---- actions ----
+function recordResult(seq, key, a, b){
+  const games = [];
+  for (let g = 1; g <= 3; g++){
+    const ra = parseInt(($("g"+g+"a-"+seq)||{}).value, 10);
+    const rb = parseInt(($("g"+g+"b-"+seq)||{}).value, 10);
+    if (isNaN(ra) && isNaN(rb)) continue;
+    if (isNaN(ra) || isNaN(rb)){ alert(`Game ${g}: enter both scores or leave both blank.`); return; }
+    if (ra === rb){ alert(`Game ${g} can't be tied.`); return; }
+    games.push([ra, rb]);
+  }
+  if (games.length < 2){ alert("Enter at least 2 games (best 2 of 3)."); return; }
+  let winsA = 0, winsB = 0, ptsA = 0, ptsB = 0;
+  games.forEach(([ga, gb]) => { ptsA += ga; ptsB += gb; if (ga > gb) winsA++; else winsB++; });
+  if (winsA === winsB){ alert("Match must have a winner — enter the deciding game."); return; }
+  const aWon = winsA > winsB;
+  results[key] = {
+    a, b, winner: aWon ? a : b, loser: aWon ? b : a,
+    wGames: aWon ? winsA : winsB, lGames: aWon ? winsB : winsA,
+    wPts:   aWon ? ptsA  : ptsB,  lPts:   aWon ? ptsB  : ptsA,
+    status: "completed", week,
+  };
+  render();
+}
+function forfeit(key, a, b, side){
+  const winner = side === 'a' ? a : b, loser = side === 'a' ? b : a;
+  if (!confirm(`Record a forfeit — ${winner} wins (${loser} forfeits)?`)) return;
+  results[key] = { a, b, winner, loser, wGames:2, lGames:0, wPts:0, lPts:0, status:"forfeit", week };
+  render();
+}
+function clearResult(key){
+  if (!confirm("Undo this result?")) return;
+  delete results[key]; render();
+}
+
+// ---- manual matchups ----
+function addMatch(){
+  const w = parseInt(($("mWeek")||{}).value, 10) || week;
+  const a = ($("mA")||{}).value, b = ($("mB")||{}).value;
+  if (!a || !b){ alert("Pick two players."); return; }
+  if (a === b){ alert("Pick two different players."); return; }
+  matches.push({ id:"mx_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,7), week:w, a, b });
+  if (w > week && w <= seasonWeeks()) {} // keep current week; user can advance
+  render();
+}
+function removeMatch(id){
+  if (results[id] && !confirm("This matchup has a recorded result. Remove the matchup and its result?")) return;
+  if (!results[id] && !confirm("Remove this matchup?")) return;
+  matches = matches.filter(m => m.id !== id);
+  delete results[id];
+  render();
+}
+
+function addPlayer(){
+  const name = $("pName").value.trim();
+  if (!name){ $("pName").focus(); return; }
+  if (names().includes(name)){ alert("That name is already on the roster."); return; }
+  if (!flights.length){ alert("Seed flights first."); return; }
+  const rv = $("pRating").value.trim();
+  let s = null; if (rv !== ""){ const n = parseFloat(rv); if (!isNaN(n)) s = n; }
+  PLAYERS.push({ name, s });
+  flights[flights.length-1].players.push(name);   // join the bottom flight
+  $("pName").value = ""; $("pRating").value = "";
+  render();
+}
+
+// Move one player between adjacent flights (dir -1 = up, +1 = down). Reschedules forward.
+function movePlayer(name, dir){
+  const fi = flights.findIndex(fl => fl.players.includes(name));
+  const ti = fi + dir;
+  if (fi < 0 || ti < 0 || ti >= flights.length) return;
+  flights[fi].players = flights[fi].players.filter(n => n !== name);
+  flights[ti].players.push(name);
+  render();
+}
+
+// Promote/relegate: top 2 of each lower flight swap with bottom 2 of the flight above.
+function promoteRelegate(){
+  if (flights.length < 2){ alert("Need at least two flights to promote/relegate."); return; }
+  if (!confirm("Start next season? Top 2 of each flight move up, bottom 2 move down, and all matchups & results reset.")) return;
+  const ordered = flights.map(fl => flightStandings(fl).map(r => r.name));
+  for (let f = 0; f < ordered.length - 1; f++){
+    const upper = ordered[f], lower = ordered[f+1];
+    const up = lower.slice(0, 2);                 // top 2 of lower flight
+    const down = upper.slice(-2);                 // bottom 2 of upper flight
+    ordered[f]   = upper.slice(0, -2).concat(up);
+    ordered[f+1] = lower.slice(2).concat(down);
+  }
+  flights = flights.map((fl, i) => ({ label: fl.label, players: ordered[i] }));
+  matches = []; results = {}; week = 1;
+  render();
+}
+
+// ---- export ----
+function buildText(){
+  const date = new Date().toLocaleDateString([], { weekday:"long", month:"short", day:"numeric" });
+  let t = `🏓 Singles Flex League — Standings\nWeek ${Math.min(week,seasonWeeks())} of ${seasonWeeks()} · ${date}\n`;
+  flights.forEach(fl => {
+    t += `\n${fl.label}\n`;
+    flightStandings(fl).forEach((r,i) => {
+      t += `${i+1}. ${r.name} — ${r.w}-${r.l} (${r.played?Math.round(r.pct*100):0}%, ${r.pdiff>=0?'+':''}${r.pdiff})\n`;
+    });
+  });
+  t += `\nManual weekly matchups · best 2 of 3 to 11 · win by 2.`;
+  return t;
+}
+// Current week's matchups — for posting in the league WhatsApp group.
+function buildWeekText(){
+  const wk = Math.min(week, seasonWeeks());
+  const wm = buildSchedule().filter(m => m.week === wk);
+  let t = `🏓 Singles Flex League — Week ${wk} matchups\n\n`;
+  if (!wm.length){
+    t += "No matchups set yet.\n";
+  } else {
+    wm.forEach(m => {
+      const r = results[m.key];
+      t += `• ${m.a} vs ${m.b}${r ? `  — ✅ ${r.winner}` : ""}\n`;
+    });
+    const playing = new Set(); wm.forEach(m => { playing.add(m.a); playing.add(m.b); });
+    const off = names().filter(n => !playing.has(n));
+    if (off.length) t += `\n(Off this week: ${off.join(", ")})\n`;
+  }
+  t += `\nArrange your court time with your opponent and report your score by Sunday night. 🎾`;
+  return t;
+}
+function sendWhatsApp(fn){ window.open("https://wa.me/?text=" + encodeURIComponent((fn || buildText)()), "_blank"); }
+async function copyText(btn, fn){
+  const text = (fn || buildText)();
+  try { await navigator.clipboard.writeText(text); }
+  catch(e){ const ta=document.createElement("textarea"); ta.value=text; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy");}catch(_){} document.body.removeChild(ta); }
+  const o = btn.textContent; btn.textContent = "Copied ✓"; setTimeout(() => btn.textContent = o, 1500);
+}
+
+window.recordResult = recordResult;
+window.forfeit = forfeit;
+window.clearResult = clearResult;
+window.movePlayer = movePlayer;
+window.addMatch = addMatch;
+window.removeMatch = removeMatch;
+
+// ---- wiring ----
+$("addBtn").onclick = addPlayer;
+$("pName").addEventListener("keydown", e => { if (e.key === "Enter") addPlayer(); });
+$("advBtn").onclick = () => {
+  if (week >= seasonWeeks()){ alert("That's the last scheduled week of the season."); return; }
+  week++; render();
+};
+$("reseedBtn").onclick = () => {
+  if (!confirm("Reset to the default two flights by DUPR? (Your matchups and results are kept.)")) return;
+  seedFlights(); render();
+};
+$("promoteBtn").onclick = promoteRelegate;
+$("resetBtn").onclick = () => {
+  if (!confirm("Reset the season — clear all results and return to Week 1? (Matchups, flights, and roster are kept.)")) return;
+  results = {}; week = 1; render();
+};
+$("waBtn").onclick = () => sendWhatsApp(buildText);
+$("copyBtn").onclick = () => copyText($("copyBtn"), buildText);
+$("waWeekBtn").onclick = () => sendWhatsApp(buildWeekText);
+$("copyWeekBtn").onclick = () => copyText($("copyWeekBtn"), buildWeekText);
+
+// Keep flights/matches in sync with the roster: drop anyone no longer on the roster,
+// and slot any roster player missing from the flights into the right one.
+function reconcileFlights(){
+  if (!flights.length) return;
+  const roster = new Set(names());
+  // prune players removed from the roster
+  flights.forEach(fl => { fl.players = fl.players.filter(n => roster.has(n)); });
+  matches = matches.filter(m => roster.has(m.a) && roster.has(m.b));
+  Object.keys(results).forEach(id => { if (!matches.find(m => m.id === id)) delete results[id]; });
+  // add roster players not yet placed in a flight
+  const placed = new Set(flights.flatMap(fl => fl.players));
+  names().forEach(n => {
+    if (placed.has(n)) return;
+    const idx = FLIGHT_1.includes(n) ? 0 : flights.length - 1;
+    flights[idx].players.push(n);
+  });
+}
+
+// Pre-loaded Week 1 results (only used on a fresh start, before any matchups exist).
+function seedInitialMatches(){
+  const add = (id, a, b, winner, wGames, lGames, wPts, lPts) => {
+    matches.push({ id, week:1, a, b });
+    results[id] = { a, b, winner, loser: winner===a?b:a, wGames, lGames, wPts, lPts, status:"completed", week:1 };
+  };
+  // Rob beats Mohammad 15–2 (single game)
+  add("seed_rob_moh",   "Rob Chee",       "Mohammad Mukhtar", "Rob Chee",       1, 0, 15, 2);
+  // Sumi beats Gopal 11–5, 11–4
+  add("seed_sumi_gopal","Sumi Maloney",   "Gopal Shah",       "Sumi Maloney",   2, 0, 22, 9);
+  // Tony G. beats Nina 6–11, 11–9, 11–9 (Nina took game 1)
+  add("seed_nina_tony", "Nina Manrique",  "Tony Gaynord",     "Tony Gaynord",   2, 1, 28, 29);
+  // Eli beats Nora 11–4, 11–3
+  add("seed_eli_nora",  "Eli Azar",       "Nora Bauer",       "Eli Azar",       2, 0, 22, 7);
+  // Nataly beats Lesly 11–5, 11–8
+  add("seed_nataly_lesly", "Nataly Perez", "Lesly Chavez-Lizama", "Nataly Perez", 2, 0, 22, 13);
+  // Tony Z. beats Michael 11–6, 11–5
+  add("seed_tonyz_mike",   "Tony Zilli",   "Michael Ward",         "Tony Zilli",   2, 0, 22, 11);
+
+  // ---- reported results (week of July 12) ----
+  // Nikolai def. Charbel 2–1 (12–10 N, 10–12, 11–9 N)
+  add("w2_nik_charbel",  "Nikolai Matveev","Charbel Touma",   "Nikolai Matveev", 2, 1, 33, 31);
+  // Nikolai def. Gopal 2–0 (11–0, 11–5)
+  add("w2_nik_gopal",    "Nikolai Matveev","Gopal Shah",      "Nikolai Matveev", 2, 0, 22, 5);
+  // Juan def. Nikolai 2–0 (11–7, 11–4)
+  add("w2_juan_nik",     "Juan Castillo",  "Nikolai Matveev", "Juan Castillo",   2, 0, 22, 11);
+  // Matt def. Rob 2–0 (11–9, 11–1)
+  add("w2_matt_rob",     "Matt McPherson", "Rob Chee",        "Matt McPherson",  2, 0, 22, 10);
+  // Tony Z. def. Eli 2–0 (11–9, 11–2)
+  add("w2_tonyz_eli",    "Tony Zilli",     "Eli Azar",        "Tony Zilli",      2, 0, 22, 11);
+  // Tony Z. def. Rob 2–0 (11–4, 11–0)
+  add("w2_tonyz_rob",    "Tony Zilli",     "Rob Chee",        "Tony Zilli",      2, 0, 22, 4);
+  // Matt def. Eli 2–1 (Eli 11–3, Matt 11–4, Matt 11–3)
+  add("w2_matt_eli",     "Matt McPherson", "Eli Azar",        "Matt McPherson",  2, 1, 25, 18);
+  // Eli def. Rob 12–10 (single game — ran out of time)
+  add("w2_eli_rob",      "Eli Azar",       "Rob Chee",        "Eli Azar",        1, 0, 12, 10);
+  // Nikolai def. Nataly 2–0 (12–10, 11–4)
+  add("w2_nik_nataly",   "Nikolai Matveev","Nataly Perez",    "Nikolai Matveev", 2, 0, 23, 14);
+
+  // ---- latest reported results ----
+  // Nina def. Nataly 11–6, 11–5
+  add("w3_nina_nataly",   "Nina Manrique",  "Nataly Perez",    "Nina Manrique",   2, 0, 22, 11);
+  // Nina def. Avril 11–5, 11–9
+  add("w3_nina_avril",    "Nina Manrique",  "Avril Baxter",    "Nina Manrique",   2, 0, 22, 14);
+  // Tony Z. def. Nikolai 11–7, 11–1
+  add("w3_tonyz_nik",     "Tony Zilli",     "Nikolai Matveev", "Tony Zilli",      2, 0, 22, 8);
+  // Tony Z. def. Charbel 11–2, 11–1
+  add("w3_tonyz_charbel", "Tony Zilli",     "Charbel Touma",   "Tony Zilli",      2, 0, 22, 3);
+  // Tony Z. def. Nina 11–2 (single)
+  add("w3_tonyz_nina",    "Tony Zilli",     "Nina Manrique",   "Tony Zilli",      1, 0, 11, 2);
+  // Nikolai def. Charbel 11–5, 11–5
+  add("w3_nik_charbel2",  "Nikolai Matveev","Charbel Touma",   "Nikolai Matveev", 2, 0, 22, 10);
+  // Nikolai def. Nina 11–4 (single)
+  add("w3_nik_nina",      "Nikolai Matveev","Nina Manrique",   "Nikolai Matveev", 1, 0, 11, 4);
+  // Nikolai def. Nataly 11–5 (single)
+  add("w3_nik_nataly2",   "Nikolai Matveev","Nataly Perez",    "Nikolai Matveev", 1, 0, 11, 5);
+  // Juan def. Nikolai 11–9 (single)
+  add("w3_juan_nik2",     "Juan Castillo",  "Nikolai Matveev", "Juan Castillo",   1, 0, 11, 9);
+  // Eli def. Mohammad 11–2, 11–2
+  add("w3_eli_moh",       "Eli Azar",       "Mohammad Mukhtar","Eli Azar",        2, 0, 22, 4);
+  // Eli def. Tony G. 11–1, 11–0
+  add("w3_eli_tonyg",     "Eli Azar",       "Tony Gaynord",    "Eli Azar",        2, 0, 22, 1);
+  // Eli def. Nataly 11–2, 11–2
+  add("w3_eli_nataly",    "Eli Azar",       "Nataly Perez",    "Eli Azar",        2, 0, 22, 4);
+  // Juan def. Eli 2–1 (9–11, 11–8, 11–8)
+  add("w3_juan_eli",      "Juan Castillo",  "Eli Azar",        "Juan Castillo",   2, 1, 31, 27);
+  // Matt def. Michael 11–8, 11–3
+  add("w3_matt_mike",     "Matt McPherson", "Michael Ward",    "Matt McPherson",  2, 0, 22, 11);
+  // Tony Z. def. Nicolas 2–1 (11–6, 2–11, 11–4)
+  add("w3_tonyz_nicolas", "Tony Zilli",     "Nicolas Lion",    "Tony Zilli",      2, 1, 24, 21);
+  // Tony Z. def. Matt 11–5, 11–6
+  add("w3_tonyz_matt",    "Tony Zilli",     "Matt McPherson",  "Tony Zilli",      2, 0, 22, 11);
+  // Michael def. Nicolas 11–9, 11–4
+  add("w3_mike_nicolas",  "Michael Ward",   "Nicolas Lion",    "Michael Ward",    2, 0, 22, 13);
+  // Matt def. Nicolas 11–4, 11–3
+  add("w3_matt_nicolas",  "Matt McPherson", "Nicolas Lion",    "Matt McPherson",  2, 0, 22, 7);
+  // Tony Z. def. Michael 11–1, 11–1
+  add("w3_tonyz_mike2",   "Tony Zilli",     "Michael Ward",    "Tony Zilli",      2, 0, 22, 2);
+}
+
+// ---- start ----
+load();
+if (!flights.length) seedFlights();
+reconcileFlights();
+if (!matches.length) seedInitialMatches();
+render();
+</script>
+</body>
+</html>

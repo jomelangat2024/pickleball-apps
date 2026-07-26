@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tuesday Women's League</title>
+<style>
+  :root {
+    --bg: #0f1722;
+    --panel: #18222f;
+    --panel2: #1f2c3c;
+    --line: #2b3a4d;
+    --text: #e8eef5;
+    --muted: #9fb0c3;
+    --accent: #4ade80;
+    --accent-d: #22c55e;
+    --blue: #38bdf8;
+    --warn: #fbbf24;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    position: sticky; top: 0; z-index: 10;
+    background: linear-gradient(180deg, #142033, #0f1722);
+    border-bottom: 1px solid var(--line);
+    padding: 16px 20px;
+  }
+  .title { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  h1 { font-size: 20px; margin: 0; letter-spacing: .3px; }
+  .brand { height:46px; width:auto; display:block; }
+  .divider { width:1px; height:34px; background:var(--line); }
+  .weekchip { background:var(--panel2); border:1px solid var(--line); border-radius:999px; padding:4px 12px; font-size:12px; font-weight:700; color:var(--accent); }
+  .sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+  .bar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:14px; }
+  .pill { background:var(--panel2); border:1px solid var(--line); border-radius:999px; padding:6px 14px; font-size:13px; }
+  .pill b { color: var(--accent); }
+
+  .preview { margin-top:12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:13px; color:var(--muted); min-height:26px;}
+  .preview .lab { color:#67839e; text-transform:uppercase; letter-spacing:.5px; font-size:11px; }
+  .gchip { display:inline-flex; align-items:center; gap:5px; background:var(--panel2); border:1px solid var(--line); border-radius:7px; padding:4px 9px; font-weight:700; color:var(--text); }
+  .gchip.four { border-color:#2f5d7a; }
+  .gchip.four .n { color:var(--blue); }
+  .gchip.five { border-color:#2f6b3f; }
+  .gchip.five .n { color:var(--accent); }
+  .gchip.odd { border-color:#7a5a1f; }
+  .gchip.odd .n { color:var(--warn); }
+  .preview .warn { color:var(--warn); }
+  input[type=search]{
+    background:var(--panel); border:1px solid var(--line); color:var(--text);
+    padding:8px 12px; border-radius:8px; font-size:14px; min-width:180px; flex:1;
+  }
+  select{
+    background:var(--panel); border:1px solid var(--line); color:var(--text);
+    padding:8px 10px; border-radius:8px; font-size:13px;
+  }
+  button {
+    border:none; border-radius:8px; padding:9px 16px; font-size:14px; font-weight:600;
+    cursor:pointer; transition:transform .05s ease, filter .15s ease;
+  }
+  button:active { transform: translateY(1px); }
+  .btn-primary { background:var(--accent-d); color:#06210f; }
+  .btn-primary:hover { filter:brightness(1.08); }
+  .btn-ghost { background:var(--panel2); color:var(--text); border:1px solid var(--line); }
+  .btn-ghost:hover { filter:brightness(1.15); }
+
+  main { padding: 20px; max-width: 1100px; margin: 0 auto; }
+  .layout { display:grid; grid-template-columns: 1fr; gap:24px; }
+  @media(min-width: 860px){
+    .layout{ grid-template-columns: 1fr 1fr; }
+    /* collapsed: roster drops out of the grid, groups span full width */
+    .layout.roster-collapsed{ grid-template-columns: 1fr; }
+  }
+  /* collapsed roster sits as a thin row above the groups */
+  .layout.roster-collapsed #rosterSection { grid-column: 1 / -1; }
+  .collapse-btn { float:right; font-size:12px; font-weight:600; background:var(--panel2); color:var(--muted); border:1px solid var(--line); border-radius:7px; padding:3px 10px; cursor:pointer; text-transform:none; letter-spacing:0; }
+  .collapse-btn:hover { color:var(--text); border-color:#3a526b; }
+  #rosterSection.collapsed #rosterBody { display:none; }
+  #rosterSection.collapsed h2 { display:none; }
+  #rosterSection:not(.collapsed) #rosterMini { display:none; }
+  .roster-mini { display:inline-flex; align-items:center; gap:7px; background:var(--panel); border:1px solid var(--line); border-radius:999px; padding:6px 14px; font-size:13px; color:var(--muted); cursor:pointer; }
+  .roster-mini:hover { border-color:var(--blue); color:var(--text); }
+  .roster-mini b { color:var(--accent); }
+  .roster-mini .link { color:var(--blue); font-weight:600; }
+
+  h2 { font-size:15px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin:0 0 12px; }
+
+  .addrow { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+  .addrow input { background:var(--panel); border:1px solid var(--line); color:var(--text); border-radius:8px; padding:8px 12px; font-size:14px; }
+  .addrow #newName { flex:1; min-width:130px; }
+  .addrow #newRating { width:150px; }
+  .addrow #addBtn { white-space:nowrap; }
+  .sortrow { display:flex; align-items:center; gap:6px; margin-bottom:10px; font-size:12px; color:#67839e; }
+  .sortbtn { background:var(--panel); border:1px solid var(--line); color:var(--muted); border-radius:999px; padding:3px 11px; font-size:12px; font-weight:600; cursor:pointer; }
+  .sortbtn:hover { border-color:var(--blue); color:var(--text); }
+  .sortbtn.active { background:#16294a; border-color:var(--blue); color:var(--blue); }
+  .addedtag { font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:var(--accent); border:1px solid #2f6b3f; border-radius:5px; padding:1px 5px; margin-left:6px; vertical-align:1px; }
+  .rm { background:transparent; border:none; color:#67839e; font-size:14px; cursor:pointer; padding:2px 4px; line-height:1; }
+  .rm:hover { color:#f87171; }
+  .roster { display:flex; flex-direction:column; gap:8px; }
+  .player {
+    display:flex; align-items:center; gap:12px; padding:10px 12px;
+    background:var(--panel); border:1px solid var(--line); border-radius:10px; cursor:pointer;
+    transition:border-color .15s, background .15s;
+  }
+  .player:hover { border-color:#3a526b; }
+  .player.in { background:#16331f; border-color:#2f6b3f; }
+  .player.flash { animation:flash 1.5s ease-out; }
+  @keyframes flash { 0%{ box-shadow:0 0 0 2px var(--accent); background:#1d4429; } 100%{ box-shadow:none; } }
+  .check {
+    width:22px;height:22px;border-radius:6px;border:2px solid var(--line);
+    flex:none;display:flex;align-items:center;justify-content:center;font-size:14px;color:#06210f;
+  }
+  .player.in .check { background:var(--accent); border-color:var(--accent); }
+  .pname { flex:1; font-weight:600; font-size:14px; }
+  .ratings { display:flex; gap:6px; }
+  .rb { font-size:12px; padding:2px 7px; border-radius:6px; background:var(--panel2); border:1px solid var(--line); color:var(--muted); white-space:nowrap;}
+  .rb .lab { color:#67839e; margin-right:3px; }
+  .rb.d .num{ color:var(--blue); font-weight:700;}
+  .rb.edit{ cursor:pointer; }
+  .rb.edit:hover{ border-color:var(--blue); }
+  .nr { opacity:.65; }
+
+  .groups { display:flex; flex-direction:column; gap:14px; }
+  .group {
+    background:var(--panel); border:1px solid var(--line); border-radius:12px; overflow:hidden;
+  }
+  .ghead { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--panel2); border-bottom:1px solid var(--line);}
+  .ghead .gname { font-weight:700; display:inline-flex; align-items:center; gap:8px; }
+  .ghead .gavg { font-size:12px; color:var(--muted);}
+  .ghead .gavg b{ color:var(--accent);}
+  .pool-toggle { background:none; border:none; color:var(--blue); cursor:pointer; font-size:12px; font-weight:600; padding:2px 4px; }
+  .pool-toggle:hover { text-decoration:underline; }
+  .group.pcollapsed .proster { display:none; }
+  .grow { display:flex; justify-content:space-between; padding:8px 14px; border-bottom:1px solid #223040; font-size:14px;}
+  .grow:last-child{ border-bottom:none; }
+  .grow .gr { font-size:12px; color:var(--blue); font-weight:700;}
+  .grow .gleft { display:inline-flex; align-items:center; gap:8px; }
+  .grec, .nrec { font-size:11px; font-weight:700; color:var(--accent); background:#16331f; border:1px solid #2f6b3f; border-radius:999px; padding:1px 7px; letter-spacing:.3px; margin-left:6px; white-space:nowrap; }
+  .partial { color:var(--warn); }
+  .five { color:var(--blue); font-size:12px; font-weight:600; }
+  .podtag { font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:var(--accent); border:1px solid #2f6b3f; border-radius:5px; padding:1px 6px; vertical-align:2px; }
+
+  /* winner trophy */
+  .wtrophy { display:none; }
+  .team.win, [data-team].win { color:var(--accent); }
+  .team.win .wtrophy, [data-team].win .wtrophy { display:inline; margin-left:5px; }
+  .team.lose, [data-team].lose { opacity:.55; }
+  .match .team.win { position:relative; }
+  .byeline { grid-column:1 / -1; font-size:11px; color:var(--warn); padding:0 12px 10px; text-align:center; letter-spacing:.3px;}
+
+  /* match cards */
+  .matches { padding:12px 14px 14px; display:flex; flex-direction:column; gap:10px; border-top:1px solid var(--line); background:#13202f;}
+  .mtitle { font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
+  .match {
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; overflow:hidden;
+  }
+  .game-no { grid-column:1 / -1; font-size:11px; color:#67839e; padding:6px 12px 0; font-weight:700; letter-spacing:.5px;}
+  .team { padding:10px 12px; }
+  .team .pl { font-size:13px; font-weight:600; line-height:1.45; }
+  .team.right { text-align:right; }
+  .vs { font-size:11px; font-weight:800; color:var(--accent); padding:0 10px; }
+  .scorewrap { grid-column:1 / -1; display:flex; gap:8px; align-items:center; justify-content:center; padding:0 12px 10px; }
+  .scorewrap input { width:72px; text-align:center; background:var(--panel2); border:1px solid var(--line); color:var(--text); border-radius:8px; padding:12px 8px; font-size:22px; font-weight:700;}
+  .scorewrap span{ color:#67839e; font-size:12px;}
+
+  /* standings */
+  .standings { margin-top:4px; }
+  table.stand { width:100%; border-collapse:collapse; font-size:13px; background:var(--panel); border:1px solid var(--line); border-radius:8px; overflow:hidden;}
+  table.stand th { text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:#67839e; padding:7px 10px; background:var(--panel2); border-bottom:1px solid var(--line);}
+  table.stand td { padding:7px 10px; border-bottom:1px solid #223040; }
+  table.stand tr:last-child td { border-bottom:none; }
+  table.stand td:first-child { color:#67839e; width:22px; }
+  table.stand tr:first-child td:first-child { color:var(--accent); font-weight:800; }
+  table.stand .wl { font-weight:700; }
+  table.stand .pos { color:var(--accent); font-weight:700; }
+  table.stand .neg { color:#f87171; font-weight:700; }
+  table.stand .lead td { background:#16331f; }
+
+  /* courts & live queue */
+  #courts:empty { display:none; }
+  #courts { margin-bottom:26px; }
+  .courts-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; }
+  .court { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px; }
+  .court.empty { border-style:dashed; opacity:.6; display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:128px; }
+  .court.live { border-color:#2f6b3f; box-shadow:0 0 0 1px rgba(74,222,128,.15); }
+  .cnum { font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px; }
+  .cnum .cg { color:var(--blue); }
+  .cidle { color:#67839e; font-size:14px; }
+  /* each team on its own row with its score box beside the name */
+  .cteamrow { display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:15px; font-weight:600; padding:4px 0; }
+  .cteamrow .cteam-name { flex:1; }
+  .cteamrow input { width:72px; text-align:center; background:var(--panel2); border:1px solid var(--line); color:var(--text); border-radius:8px; padding:12px 8px; font-size:22px; font-weight:700; }
+  .cvs { color:var(--accent); font-size:11px; font-weight:800; margin:2px 0; }
+  .cbye { margin-top:8px; font-size:11px; color:var(--warn); }
+  .queue { margin-top:14px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .qlab { font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:#67839e; }
+  .qchip { background:var(--panel2); border:1px solid var(--line); border-radius:7px; padding:4px 9px; font-size:12px; font-weight:600; }
+  .qchip.next { border-color:var(--blue); color:var(--blue); }
+  .qchip.done { border-color:#2f6b3f; color:var(--accent); }
+  /* instant hover tooltip showing the matchup */
+  .qchip[data-tip] { position:relative; cursor:help; }
+  .qchip[data-tip]:hover::after {
+    content:attr(data-tip); white-space:pre; position:absolute; left:50%; bottom:calc(100% + 8px);
+    transform:translateX(-50%); background:#0b1622; color:var(--text); border:1px solid var(--blue);
+    border-radius:8px; padding:8px 11px; font-size:12px; font-weight:600; line-height:1.5;
+    text-align:center; z-index:50; box-shadow:0 6px 18px rgba(0,0,0,.45); pointer-events:none;
+  }
+  .qchip[data-tip]:hover::before {
+    content:""; position:absolute; left:50%; bottom:calc(100% + 2px); transform:translateX(-50%);
+    border:6px solid transparent; border-top-color:var(--blue); z-index:50; pointer-events:none;
+  }
+  .qempty { color:#67839e; font-size:12px; }
+  .finish-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+  .btn-wa { background:#25D366; color:#04331a; font-size:14px; font-weight:700; border:none; border-radius:8px; padding:9px 16px; cursor:pointer; display:inline-flex; align-items:center; gap:7px; }
+  .btn-wa:hover { filter:brightness(1.07); }
+  .results-preview { margin-top:12px; }
+  .results-preview summary { cursor:pointer; color:var(--muted); font-size:13px; }
+  .results-preview pre { white-space:pre-wrap; background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:12px; font-size:12px; color:var(--text); margin-top:8px; max-height:320px; overflow:auto; font-family:ui-monospace,Menlo,Consolas,monospace; }
+
+  /* ad hoc matches */
+  #adhocSection { margin-top:26px; padding-top:20px; border-top:1px solid var(--line); }
+  #adhocSection h2 { margin:0 0 4px; }
+  .adhoc-actions { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:12px 0; }
+  .adhoc-form { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:14px; margin-bottom:14px; }
+  .adhoc-teams { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .adhoc-team { display:flex; flex-direction:column; gap:6px; }
+  .adhoc-form select { background:var(--panel2); color:var(--text); border:1px solid var(--line); border-radius:7px; padding:6px 8px; font-size:13px; min-width:150px; }
+  .adhoc-form .vs { color:var(--muted); font-weight:700; font-size:13px; padding:0 4px; }
+  .adhoc-score { display:flex; align-items:center; gap:6px; }
+  .adhoc-score input { width:52px; text-align:center; background:var(--panel2); color:var(--text); border:1px solid var(--line); border-radius:7px; padding:6px; font-size:14px; }
+  .adhoc-list { display:flex; flex-direction:column; gap:8px; }
+  .adhoc-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:var(--panel); border:1px solid var(--line); border-radius:9px; padding:10px 12px; }
+  .adhoc-row .side { font-weight:600; font-size:13px; }
+  .adhoc-row .side.win { color:var(--accent); }
+  .adhoc-row .mid { color:var(--muted); font-size:12px; }
+  .adhoc-row input { width:46px; text-align:center; background:var(--panel2); color:var(--text); border:1px solid var(--line); border-radius:6px; padding:5px; font-size:14px; }
+  .adhoc-row .rm { margin-left:auto; }
+  .rec-grid { display:flex; flex-direction:column; gap:8px; margin:10px 0; }
+  .rec-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:#12202e; border:1px dashed var(--blue); border-radius:9px; padding:9px 12px; font-size:13px; }
+  .rec-row .tier { font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:var(--blue); font-weight:700; }
+  .rec-row .add { margin-left:auto; }
+  .adhoc-empty { color:#67839e; font-size:13px; }
+  .seed-ctrl { display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:13px; color:var(--text); margin:6px 0 12px; }
+  .seed-ctrl input, .seed-ctrl select { text-align:center; background:var(--panel2); color:var(--text); border:1px solid var(--line); border-radius:7px; padding:5px 8px; font-size:14px; }
+  .seed-ctrl .muted { color:#67839e; font-size:12px; }
+  .seed-ctrl .wlbl { display:inline-flex; align-items:center; gap:5px; }
+  .seed-ctrl .wlbl input { width:56px; }
+
+  /* this week's games log */
+  #weekGamesSection { margin-top:26px; padding-top:20px; border-top:1px solid var(--line); }
+  #weekGamesSection h2 { margin:0 0 4px; }
+  .log-list { display:flex; flex-direction:column; gap:6px; margin-top:10px; }
+  .log-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:8px 12px; }
+  .log-row .log-tag { font-size:10px; text-transform:uppercase; letter-spacing:.4px; font-weight:700; color:var(--blue); min-width:52px; }
+  .log-row .log-tag.adhoc { color:var(--accent); }
+  .log-row .side { font-weight:600; font-size:13px; flex:1; }
+  .log-row .side.b { text-align:right; }
+  .log-row .side.win { color:var(--accent); }
+  .log-row .mid { color:var(--muted); font-size:12px; }
+  .log-row input { width:46px; text-align:center; background:var(--panel2); color:var(--text); border:1px solid var(--line); border-radius:6px; padding:5px; font-size:14px; }
+
+  /* archived-week totals editor */
+  .week-edit { background:var(--panel); border:1px solid var(--blue); border-radius:10px; padding:14px; margin-top:12px; }
+  .week-edit h3 { margin:0 0 8px; font-size:15px; }
+  table.we-table { width:100%; border-collapse:collapse; font-size:13px; }
+  table.we-table th, table.we-table td { padding:5px 6px; text-align:center; border-bottom:1px solid var(--line); }
+  table.we-table th:first-child, table.we-table td:first-child { text-align:left; }
+  table.we-table input { width:52px; text-align:center; background:var(--panel2); color:var(--text); border:1px solid var(--line); border-radius:6px; padding:4px; font-size:13px; }
+  .week-edit .we-actions { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:12px; }
+  .weeks-list .qchip { display:inline-flex; align-items:center; gap:8px; }
+  .weeks-list .qchip .wk-edit { color:var(--blue); cursor:pointer; font-weight:700; }
+
+  /* season */
+  #seasonSection { margin-top:26px; padding-top:20px; border-top:1px solid var(--line); }
+  .season-head { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+  .season-head h2 { margin:0; }
+  .weeks-list { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+  .season-foot { margin-top:14px; }
+  .movers { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+  .mover { font-size:13px; background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:6px 12px; }
+  .mover.up { border-color:#2f6b3f; }
+  .mover.down { border-color:#7a3030; }
+  table.stand .muted { color:#67839e; }
+  .estbar { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    background:var(--panel2); border:1px solid var(--line); border-radius:9px; padding:8px 14px; margin-bottom:14px; font-size:13px; color:var(--text); }
+  .estbar #estimate { font-weight:600; }
+  .estbar .est-done { color:var(--accent); font-weight:700; }
+  .estbar .mpg { color:var(--muted); font-size:12px; display:flex; align-items:center; gap:6px; white-space:nowrap; }
+  .estbar .estctrls { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .estbar .mpg input { width:52px; background:var(--panel); border:1px solid var(--line); color:var(--text); border-radius:6px; padding:4px 6px; font-size:13px; text-align:center; }
+  .estbar .mpg input[type=time] { width:auto; }
+  .print-row { display:flex; justify-content:flex-end; margin-bottom:12px; }
+  @media print {
+    header .bar, #roster, .roster, #search, .print-row button { display:none; }
+    body { background:#fff; color:#000; }
+    .group, .match, .matches { break-inside: avoid; }
+  }
+  .empty { color:var(--muted); font-size:14px; padding:30px 14px; text-align:center; border:1px dashed var(--line); border-radius:12px;}
+  .note{ color:var(--muted); font-size:12px; margin-top:10px; line-height:1.5;}
+</style>
+</head>
+<body>
+<header>
+  <div class="title">
+    <svg class="brand" viewBox="0 0 440 96" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Life Time Pickleball">
+      <!-- pickleball -->
+      <g>
+        <circle cx="44" cy="48" r="40" fill="#1CA9E0"/>
+        <g fill="#2b2b2b">
+          <circle cx="30" cy="28" r="5"/>
+          <circle cx="48" cy="24" r="5"/>
+          <circle cx="64" cy="33" r="5"/>
+          <circle cx="24" cy="46" r="5"/>
+          <circle cx="42" cy="44" r="5"/>
+          <circle cx="60" cy="50" r="5"/>
+          <circle cx="28" cy="63" r="5"/>
+          <circle cx="46" cy="64" r="5"/>
+          <circle cx="62" cy="67" r="5"/>
+          <circle cx="40" cy="79" r="4.5"/>
+        </g>
+      </g>
+      <!-- LIFE TIME -->
+      <text x="104" y="44" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="34" fill="#ffffff" letter-spacing="1">LIFE TIME</text>
+      <text x="340" y="28" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="12" fill="#ffffff">&#174;</text>
+      <!-- PICKLEBALL -->
+      <text x="104" y="84" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-style="italic" font-size="34" fill="#1CA9E0" letter-spacing="1">PICKLEBALL</text>
+    </svg>
+    <div class="divider"></div>
+    <h1>Tuesday Women's League</h1>
+    <span class="weekchip" id="weekchip"></span>
+  </div>
+  <div class="sub">Week 1 seeds pools by DUPR. After that, pools re-seed by an overall Rating — a weighted blend of games-weighted win rate, strength of wins (beating tougher pools), and scoring margin per game.</div>
+  <div class="bar">
+    <input type="search" id="search" placeholder="Search players…">
+    <span class="pill">Checked in: <b id="count">0</b> / <span id="total">21</span></span>
+    <button class="btn-ghost" id="allBtn">Check in all</button>
+    <button class="btn-ghost" id="resetBtn">Reset</button>
+    <button class="btn-primary" id="genBtn">Generate groups</button>
+    <button class="btn-ghost" id="backupBtn" title="Download all data to a file">⤓ Backup</button>
+    <button class="btn-ghost" id="restoreBtn" title="Load data from a backup file">⤒ Restore</button>
+    <input type="file" id="restoreFile" accept="application/json,.json" style="display:none">
+  </div>
+  <div class="preview" id="preview"></div>
+</header>
+
+<main>
+  <div id="courts"></div>
+  <div class="layout" id="layout">
+    <section id="rosterSection">
+      <h2>Roster <button class="collapse-btn" id="rosterToggle">Collapse ▾</button></h2>
+      <div id="rosterBody">
+        <div class="addrow">
+          <input id="newName" type="text" placeholder="Add player name…">
+          <input id="newRating" type="number" step="0.001" min="1" max="8" placeholder="DUPR (blank = NR)">
+          <button class="btn-primary" id="addBtn">+ Add</button>
+        </div>
+        <div class="sortrow">Sort:
+          <button class="sortbtn" id="sortRating">Rating</button>
+          <button class="sortbtn" id="sortName">First name</button>
+        </div>
+        <div class="roster" id="roster"></div>
+      </div>
+      <div class="roster-mini" id="rosterMini"></div>
+    </section>
+    <section>
+      <h2>Pools &amp; Match Cards</h2>
+      <div class="print-row"><button class="btn-ghost" id="printBtn">🖨 Print match cards</button></div>
+      <div id="groups"></div>
+      <div class="note" id="legend"></div>
+    </section>
+  </div>
+  <section id="weekGamesSection"><div id="weekGames"></div></section>
+  <section id="adhocSection"><div id="adhoc"></div></section>
+  <section id="seasonSection"><div id="season"></div></section>
+</main>
+
+<script>
+// ---- Player data (DUPR ratings; null = Not Rated) ----
+const PLAYERS = [
+  { name:"Beenish Fatima",      d:4.339, s:3.892, loc:"Gainesville, VA" },
+  { name:"Hannan Abdel-Jalil",  d:4.331, s:null,  loc:"—" },
+  { name:"Kendra McLamb",       d:4.092, s:null,  loc:"Haymarket, VA" },
+  { name:"Nora Bauer",          d:3.827, s:null,  loc:"—" },
+  { name:"Linda Kirby",         d:3.824, s:null,  loc:"Haymarket, VA" },
+  { name:"Priscilla Glover",    d:3.816, s:null,  loc:"Bristow, VA" },
+  { name:"Kelly Mehic",         d:3.722, s:3.627, loc:"Gainesville, VA" },
+  { name:"Nataly Perez",        d:3.540, s:null,  loc:"Prince William County, VA" },
+  { name:"Courtney Graves",     d:3.521, s:3.630, loc:"Haymarket, VA" },
+  { name:"Kristen Coleman",     d:3.495, s:null,  loc:"—" },
+  { name:"Amy Hildreth",        d:3.490, s:null,  loc:"Bristow, VA" },
+  { name:"Christine Helpard",   d:3.452, s:3.367, loc:"—" },
+  { name:"Lesly Chavez-Lizama", d:3.330, s:null,  loc:"VA" },
+  { name:"Paula Harris",        d:3.276, s:3.208, loc:"Haymarket, VA" },
+  { name:"Jessica Bahou",       d:3.179, s:null,  loc:"Gainesville, VA" },
+  { name:"Thi Nguyen",          d:3.156, s:null,  loc:"Centreville, VA" },
+  { name:"Amanda Pizzola",      d:3.101, s:null,  loc:"—" },
+  { name:"Stephanie Ascari",    d:2.900, s:null,  loc:"—" },
+  { name:"Huda Khalid",         d:2.313, s:null,  loc:"Manassas, VA" },
+  { name:"Erica Liao",          d:null,  s:null,  loc:"Clifton, VA" },
+  { name:"Yasmina Quinta",      d:null,  s:null,  loc:"Lansdowne, VA" },
+  { name:"Asal A",              d:null,  s:null,  loc:"—" },
+];
+const BASE_COUNT = PLAYERS.length;   // players beyond this index were added manually
+
+const NR_DEFAULT = 3.0; // Not Rated players treated as mid (~3.0)
+
+const checkedIn = new Set();
+let lastGroups = null;     // array of groups; each entry holds player index `idx`
+let scores = {};           // { "g0-1-a": "11", ... } persisted match scores
+let courtState = null;     // { courts:[{gi,gm}|null], queue:[{gi,gm}], done:[gi], active }
+let minPerGame = 12;       // avg minutes per game incl. changeover (adjustable)
+let startTime = "18:00";   // assumed start time (24h "HH:MM"), adjustable
+let archive = [];          // [{ date, label, players:[{name,w,l,diff,played}] }] per week
+let adhoc = [];            // this week's ad hoc doubles: [{ a:[name,name], b:[name,name], sa, sb }]
+let seedConf = 95;         // games-played weight for seeding, as a confidence % (Wilson
+                           // lower bound). Higher rewards proven records over small hot streaks.
+// Composite Rating weights (relative importance of each factor; auto-normalized to sum 1).
+let wSeed = 55;            // win rate (games-weighted Seed)
+let wSoW  = 25;            // strength of wins
+let wDiff = 20;            // scoring margin per game
+let gamesView = null;      // Past-weeks browser: archived week index being viewed (or null = latest)
+let editingWeek = null;    // index of the archived week currently being edited (or null)
+const poolCollapsed = new Set();  // pool indices whose player list is collapsed
+let rosterSort = "rating";        // roster display order: "rating" (default) or "name" (first name A–Z)
+let rosterCollapsed = false;
+const SEASON_WEEKS = 6;    // length of the league
+const COURTS = 3;          // number of courts available
+const STORE_KEY = "pickleball-womens-tue-v1";
+
+const $ = id => document.getElementById(id);
+const fmt = v => v == null ? "NR" : v.toFixed(3);
+// Display name: first name + last initial (e.g. "Beenish F."). Full names stay
+// the internal key for records/seeding; this only changes what's shown.
+function dispName(full){
+  const parts = String(full).trim().split(/\s+/);
+  if (parts.length < 2) return full;
+  return `${parts[0]} ${parts[parts.length - 1][0]}.`;
+}
+// Canonical name fixes: legacy/alias name -> current name. Keeps one player's
+// record from splitting in two after a rename. (Hannan AJ = Hannan Abdel-Jalil.)
+const NAME_ALIASES = { "Hannan AJ": "Hannan Abdel-Jalil" };
+const canonName = n => NAME_ALIASES[n] || n;
+
+// ---- persistence: survives browser close via localStorage ----
+function saveState(){
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify({
+      addedPlayers: PLAYERS.slice(BASE_COUNT),
+      checkedIn: [...checkedIn],
+      groups: lastGroups ? lastGroups.map(g => g.map(x => x.idx)) : null,
+      scores,
+      courtState,
+      minPerGame,
+      startTime,
+      archive,
+      adhoc,
+      seedConf,
+      wSeed, wSoW, wDiff,
+      rosterCollapsed,
+    }));
+  } catch(e){ /* storage unavailable */ }
+}
+function loadState(){
+  let raw;
+  try { raw = localStorage.getItem(STORE_KEY); } catch(e){ return; }
+  if (!raw) return;
+  let st; try { st = JSON.parse(raw); } catch(e){ return; }
+  // restore manually-added players first (appended, so base indices stay stable)
+  if (PLAYERS.length === BASE_COUNT) (st.addedPlayers || []).forEach(p => PLAYERS.push(p));
+  (st.checkedIn || []).forEach(i => checkedIn.add(i));
+  scores = st.scores || {};
+  courtState = st.courtState || null;
+  if (st.minPerGame > 0) minPerGame = st.minPerGame;
+  if (st.startTime) startTime = st.startTime;
+  if (Array.isArray(st.archive)) archive = st.archive;
+  // normalize any legacy/aliased names in saved history so records don't split
+  archive.forEach(wk => {
+    (wk.players || []).forEach(p => { p.name = canonName(p.name); });
+    if (Array.isArray(wk.pods)) wk.pods = wk.pods.map(pod => pod.map(canonName));
+  });
+  if (Array.isArray(st.adhoc)) adhoc = st.adhoc.map(m => ({
+    a:(m.a||[]).map(canonName), b:(m.b||[]).map(canonName), sa:m.sa ?? "", sb:m.sb ?? ""
+  }));
+  if ([80,90,95,99].includes(st.seedConf)) seedConf = st.seedConf;
+  if (typeof st.wSeed === "number") wSeed = st.wSeed;
+  if (typeof st.wSoW === "number") wSoW = st.wSoW;
+  if (typeof st.wDiff === "number") wDiff = st.wDiff;
+  rosterCollapsed = !!st.rosterCollapsed;
+  if (Array.isArray(st.groups)){
+    lastGroups = st.groups.map(idxArr =>
+      idxArr.map(i => ({ idx:i, p:PLAYERS[i], ...effRating(PLAYERS[i]) }))
+    );
+  }
+}
+
+// collapse / expand the roster (auto-collapses once groups are generated)
+function applyRosterCollapsed(){
+  const sec = $("rosterSection"), lay = $("layout"), btn = $("rosterToggle");
+  if (!sec) return;
+  sec.classList.toggle("collapsed", rosterCollapsed);
+  lay.classList.toggle("roster-collapsed", rosterCollapsed);
+  if (btn) btn.textContent = rosterCollapsed ? "Show ▸" : "Collapse ▾";
+  if (rosterCollapsed) renderRosterMini();
+}
+function setRosterCollapsed(c){ rosterCollapsed = c; applyRosterCollapsed(); saveState(); }
+function renderRosterMini(){
+  const el = $("rosterMini");
+  if (el) el.innerHTML = `👥 <span class="link">Show roster</span> · <b>${checkedIn.size}</b> in`;
+}
+
+// effective rating used for grouping: doubles DUPR, NR treated as 3.0
+function effRating(p){
+  if (p.d != null) return { val: p.d, exact: true };
+  return { val: NR_DEFAULT, exact: false };
+}
+
+const firstName = name => String(name).trim().split(/\s+/)[0] || "";
+function renderRoster(){
+  const q = $("search").value.trim().toLowerCase();
+  const wrap = $("roster");
+  wrap.innerHTML = "";
+  // reflect active sort on the buttons
+  const rb = $("sortRating"), nb = $("sortName");
+  if (rb) rb.classList.toggle("active", rosterSort === "rating");
+  if (nb) nb.classList.toggle("active", rosterSort === "name");
+  // keep each player's original index (for check-in/removal); only the display order changes
+  let entries = PLAYERS.map((p, i) => ({ p, i }));
+  if (rosterSort === "name"){
+    entries = entries.slice().sort((a, b) =>
+      firstName(a.p.name).localeCompare(firstName(b.p.name)) || a.p.name.localeCompare(b.p.name));
+  }
+  entries.forEach(({ p, i }) => {
+    if (q && !p.name.toLowerCase().includes(q)) return;
+    const row = document.createElement("div");
+    row.className = "player" + (checkedIn.has(i) ? " in" : "");
+    row.dataset.idx = i;
+    row.onclick = () => { checkedIn.has(i) ? checkedIn.delete(i) : checkedIn.add(i); update(); };
+    const added = i >= BASE_COUNT;
+    const rm = (added && lastGroups == null)
+      ? `<button class="rm" title="Remove player" onclick="event.stopPropagation();removePlayer(${i})">✕</button>` : "";
+    row.innerHTML = `
+      <div class="check">${checkedIn.has(i) ? "✓" : ""}</div>
+      <div class="pname">${dispName(p.name)}${added ? ` <span class="addedtag">added</span>` : ""}<span class="nrec" data-name="${p.name.replace(/"/g,'&quot;')}" style="display:none"></span></div>
+      <div class="ratings">
+        <span class="rb d edit ${p.d==null?'nr':''}" title="Click to update DUPR" onclick="event.stopPropagation();editRating(${i})"><span class="lab">DUPR</span><span class="num">${fmt(p.d)}</span> ✎</span>
+        ${rm}
+      </div>`;
+    wrap.appendChild(row);
+  });
+}
+
+// Add a walk-in: name + optional DUPR rating (blank = Not Rated). Auto-checks them in.
+function addPlayer(){
+  const nameEl = $("newName"), ratingEl = $("newRating");
+  const name = nameEl.value.trim();
+  if (!name){ nameEl.focus(); return; }
+  if (lastGroups && !confirm(`Groups are already generated for this week. Add "${name}" to the roster anyway?\n\nThey'll be checked in, but won't be placed in a group until you press "Generate groups" again.`)) return;
+  const rv = ratingEl.value.trim();
+  let d = null;
+  if (rv !== ""){ const n = parseFloat(rv); if (!isNaN(n)) d = n; }
+  PLAYERS.push({ name, d, s:null, loc:"" });
+  checkedIn.add(PLAYERS.length - 1);
+  nameEl.value = ""; ratingEl.value = "";
+  $("search").value = "";               // clear any active filter so the new player is visible
+  saveState(); update();
+  // reveal & highlight the newly added row (it appends to the bottom of the roster)
+  const row = $("roster").querySelector(`[data-idx="${PLAYERS.length - 1}"]`);
+  if (row){ row.scrollIntoView({ behavior:"smooth", block:"center" }); row.classList.add("flash"); setTimeout(() => row.classList.remove("flash"), 1500); }
+  nameEl.focus();
+}
+
+// Update a player's DUPR (for the weekly re-import). Blank = Not Rated.
+function editRating(i){
+  const cur = PLAYERS[i].d == null ? "" : String(PLAYERS[i].d);
+  const v = prompt(`DUPR rating for ${PLAYERS[i].name}\n(blank = Not Rated):`, cur);
+  if (v === null) return;
+  const t = v.trim();
+  if (t === "") PLAYERS[i].d = null;
+  else { const n = parseFloat(t); if (!isNaN(n)) PLAYERS[i].d = n; }
+  saveState(); update();
+}
+window.editRating = editRating;
+
+// Remove a manually-added player (only before groups are generated, to keep indices safe).
+function removePlayer(k){
+  if (k < BASE_COUNT || lastGroups != null) return;
+  PLAYERS.splice(k, 1);
+  const remap = [...checkedIn].filter(i => i !== k).map(i => i > k ? i - 1 : i);
+  checkedIn.clear(); remap.forEach(i => checkedIn.add(i));
+  saveState(); update();
+}
+window.removePlayer = removePlayer;
+
+// Live preview of how the current check-ins will split, before Generate is pressed
+function renderPreview(){
+  const el = $("preview");
+  const n = checkedIn.size;
+  if (n === 0){ el.innerHTML = `<span class="lab">Plan</span><span>Check players in to see the pool plan.</span>`; return; }
+  if (n < 4){ el.innerHTML = `<span class="lab">Plan</span><span class="warn">Need at least 4 checked in (${n} so far).</span>`; return; }
+  const sizes = groupSizes(n);
+  const fours = sizes.filter(s => s === 4).length;
+  const fives = sizes.filter(s => s === 5).length;
+  const sixes = sizes.filter(s => s === 6).length;
+  const odd   = sizes.filter(s => ![4, 5, 6].includes(s));   // 4/5/6 all have a rotation
+  const chips = sizes.map(s => {
+    const cls = s === 4 ? "four" : (s === 5 || s === 6) ? "five" : "odd";
+    return `<span class="gchip ${cls}"><span class="n">${s}</span></span>`;
+  }).join("");
+  let summary = `${sizes.length} pool${sizes.length>1?"s":""}`;
+  if (fours) summary += ` · ${fours}×4`;
+  if (fives) summary += ` · ${fives}×5`;
+  if (sixes) summary += ` · ${sixes}×6`;
+  const oddNote = odd.length
+    ? ` <span class="warn">— pool of ${odd.join(" & ")} can't run a doubles rotation; handle manually.</span>`
+    : "";
+  el.innerHTML = `<span class="lab">Plan</span>${chips}<span>${summary}${oddNote}</span>`;
+}
+
+function update(){
+  $("count").textContent = checkedIn.size;
+  $("total").textContent = PLAYERS.length;
+  const wk = Math.min(archive.length + 1, SEASON_WEEKS);
+  $("weekchip").textContent = `Week ${wk} of ${SEASON_WEEKS}`;
+  renderRoster();
+  if (rosterCollapsed) renderRosterMini();
+  renderPreview();
+  renderAdhoc();
+  renderWeekGames();
+  refreshNameRecords();
+  saveState();
+}
+
+// Decide group sizes for n checked-in players: as many fours as possible, with
+// the leftover tiers bumped to fives, spread evenly across the rating tiers.
+// Returns an array of sizes in tier order (top tier first). Covers every count
+// >= 4 except 6, 7, which are handled explicitly. 11 splits 6 + 5 (both play 4 games).
+function groupSizes(n){
+  if (n <= 0) return [];
+  const special = { 6:[3,3], 7:[4,3], 11:[6,5] };
+  if (special[n]) return special[n];
+  if (n < 4) return [n];
+  const G = Math.floor(n / 4);
+  const extra = n - 4 * G;            // 0..3 players beyond all-fours
+  const sizes = Array(G).fill(4);
+  for (let i = 0; i < extra; i++){    // spread the fives across tiers
+    const pos = Math.min(G - 1, Math.floor((i + 0.5) * G / extra));
+    sizes[pos] += 1;
+  }
+  return sizes;
+}
+
+// Seed order of player indices for this week.
+// Week 1: by DUPR. Weeks 2+: by the composite Rating (see seasonTotals);
+// players with no season record yet (brand-new) seed at the bottom by DUPR.
+function seedOrder(){
+  const present = [...checkedIn];
+  const byDupr = arr => arr.map(i => ({ i, ...effRating(PLAYERS[i]) }))
+    .sort((a, b) => b.val - a.val).map(o => o.i);
+  if (archive.length === 0) return byDupr(present);
+  const rank = {}; seasonTotals().forEach((s, idx) => { rank[s.name] = { idx, s }; });
+  const ranked = [], fresh = [];
+  present.forEach(i => {
+    const r = rank[PLAYERS[i].name];
+    if (r && (r.s.w + r.s.l) > 0) ranked.push({ i, idx: r.idx }); else fresh.push(i);
+  });
+  ranked.sort((a, b) => a.idx - b.idx);   // already ranked by composite Rating
+  return ranked.map(r => r.i).concat(byDupr(fresh));
+}
+
+function generate(){
+  poolCollapsed.clear();   // fresh pools start expanded
+  const order = seedOrder();
+  if (order.length === 0){ lastGroups = []; courtState = null; renderGroups(); renderCourts(); saveState(); return; }
+  // pools are formed in seed order — do NOT re-sort
+  const list = order.map(i => ({ idx:i, p: PLAYERS[i], ...effRating(PLAYERS[i]) }));
+  const sizes = groupSizes(list.length);
+  const groups = [];
+  let cur = 0;
+  sizes.forEach(s => { groups.push(list.slice(cur, cur + s)); cur += s; });
+  lastGroups = groups;
+  initCourts();
+  renderGroups();
+  renderCourts();
+  setRosterCollapsed(true);   // free up space for pools & courts
+  saveState();
+}
+
+// ---- live court rotation ----
+// Build the queue from playable groups (game 0 each), then fill the courts.
+function initCourts(){
+  const queue = lastGroups
+    .map((g, gi) => ({ g, gi }))
+    .filter(o => rotation(o.g.length))
+    .map(o => ({ gi:o.gi, gm:0 }));
+  const courts = [];
+  for (let i = 0; i < COURTS; i++) courts.push(queue.length ? queue.shift() : null);
+  courtState = { courts, queue, done: [], active: courts.some(Boolean) };
+}
+
+// A game on court `c` finished: send that group to the back of the queue for its
+// next game (or mark it done), then pull the next waiting group onto the court.
+function advanceCourt(c){
+  const slot = courtState.courts[c];
+  if (!slot) return;
+  const total = rotation(lastGroups[slot.gi].length).length;
+  courtState.courts[c] = null;
+  const next = slot.gm + 1;
+  if (next < total) courtState.queue.push({ gi:slot.gi, gm:next });
+  else if (!courtState.done.includes(slot.gi)) courtState.done.push(slot.gi);
+  if (courtState.queue.length) courtState.courts[c] = courtState.queue.shift();
+  saveState();
+  renderCourts();
+  // cascade: if the freshly-assigned game was already scored, advance again
+  const ns = courtState.courts[c];
+  if (ns){
+    const a = scores[`g${ns.gi}-${ns.gm}-a`], b = scores[`g${ns.gi}-${ns.gm}-b`];
+    if (a != null && b != null && a !== "" && b !== "") advanceCourt(c);
+  }
+}
+
+// On reload, advance any court whose live game is already complete.
+function reconcileCourts(){
+  if (!courtState || !courtState.active) return;
+  courtState.courts.forEach((s, c) => {
+    if (!s) return;
+    const a = scores[`g${s.gi}-${s.gm}-a`], b = scores[`g${s.gi}-${s.gm}-b`];
+    if (a != null && b != null && a !== "" && b !== "") advanceCourt(c);
+  });
+}
+
+// Called after any score edit: if the completed game is the one live on a court,
+// rotate that court.
+function maybeAdvance(key){
+  if (!courtState || !courtState.active) return;
+  const m = key.match(/^g(\d+)-(\d+)-/);
+  if (!m) return;
+  const gi = +m[1], gm = +m[2];
+  const c = courtState.courts.findIndex(s => s && s.gi === gi && s.gm === gm);
+  if (c < 0) return;
+  const a = scores[`g${gi}-${gm}-a`], b = scores[`g${gi}-${gm}-b`];
+  if (a == null || b == null || a === "" || b === "") return;
+  advanceCourt(c);
+}
+
+function slotInfo(slot){
+  const g = lastGroups[slot.gi], gm = rotation(g.length)[slot.gm];
+  const nm = i => dispName(g[i].p.name);
+  return {
+    teamA: `${nm(gm.a[0])} & ${nm(gm.a[1])}`,
+    teamB: `${nm(gm.b[0])} & ${nm(gm.b[1])}`,
+    bye: byeList(gm).length ? byeList(gm).map(nm).join(" & ") : null,
+    ka: `g${slot.gi}-${slot.gm}-a`, kb: `g${slot.gi}-${slot.gm}-b`,
+  };
+}
+
+// ---- time estimate ----
+const gameComplete = (gi, gm) => {
+  const a = scores[`g${gi}-${gm}-a`], b = scores[`g${gi}-${gm}-b`];
+  return a != null && b != null && a !== "" && b !== "";
+};
+function fmtMins(m){
+  if (m <= 0) return "0 min";
+  if (m < 60) return `${m} min`;
+  const h = Math.floor(m / 60), r = m % 60;
+  return r ? `${h}h ${r}m` : `${h}h`;
+}
+// Makespan estimate: bounded by throughput (games / courts) and by the longest
+// single group (its games are sequential and can't run in parallel).
+function estimate(){
+  const playable = lastGroups.filter(g => rotation(g.length));
+  const totalGames = playable.reduce((s, g) => s + rotation(g.length).length, 0);
+  const effCourts = Math.min(COURTS, playable.length) || 1;
+  const maxGroupGames = playable.reduce((m, g) => Math.max(m, rotation(g.length).length), 0);
+  const totalMin = Math.max(Math.ceil(totalGames / effCourts), maxGroupGames) * minPerGame;
+  let done = 0;
+  lastGroups.forEach((g, gi) => {
+    if (!rotation(g.length)) return;
+    const t = rotation(g.length).length;
+    for (let gm = 0; gm < t; gm++) if (gameComplete(gi, gm)) done++;
+  });
+  const remaining = totalGames - done;
+  const remMin = Math.ceil(remaining / effCourts) * minPerGame;
+  return { totalGames, totalMin, done, remaining, remMin };
+}
+function startDate(){
+  const m = /^(\d{1,2}):(\d{2})$/.exec(startTime);
+  const hh = m ? Math.min(23, +m[1]) : 18, mm = m ? Math.min(59, +m[2]) : 0;
+  const d = new Date(); d.setHours(hh, mm, 0, 0); return d;
+}
+const clock = d => d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+
+function renderEstimate(){
+  const el = document.getElementById("estimate");
+  if (!el) return;
+  const e = estimate();
+  const courts = Math.min(COURTS, lastGroups.filter(g => rotation(g.length)).length);
+  const start = startDate();
+  const finish = clock(new Date(start.getTime() + e.totalMin * 60000));
+  if (e.remaining <= 0){
+    el.innerHTML = `<span class="est-done">All ${e.totalGames} games complete</span> · planned ${clock(start)}–${finish}`;
+    return;
+  }
+  const progress = e.done > 0 ? ` · ${e.done}/${e.totalGames} played, ~${fmtMins(e.remMin)} to go` : "";
+  el.innerHTML = `⏱ ~${fmtMins(e.totalMin)} · ${e.totalGames} games on ${courts} court${courts>1?"s":""} · `
+    + `starts ${clock(start)} → finishes ~${finish}${progress}`;
+}
+function setMinPerGame(v){
+  const n = parseInt(v, 10);
+  if (!isNaN(n) && n > 0){ minPerGame = n; saveState(); renderEstimate(); }
+}
+function setStartTime(v){
+  if (/^\d{1,2}:\d{2}$/.test(v)){ startTime = v; saveState(); renderEstimate(); }
+}
+window.setMinPerGame = setMinPerGame;
+window.setStartTime = setStartTime;
+
+// ---- results export (WhatsApp validation) ----
+const WA_ICON = `<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" style="vertical-align:-2px"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.521 5.26l-.999 3.648 3.967-1.039zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.247-.694.247-1.289.173-1.413z"/></svg>`;
+function buildResultsText(){
+  const date = new Date().toLocaleDateString([], { weekday:"long", month:"short", day:"numeric" });
+  let t = `🏓 Tuesday Women's League — Results\n${date} · start ${clock(startDate())}\n`;
+  lastGroups.forEach((g, gi) => {
+    const rot = rotation(g.length);
+    const nm = i => dispName(g[i].p.name);
+    if (!rot){
+      t += `\n*Pool ${gi+1}* (${g.length} players — run manually)\n${g.map(x => dispName(x.p.name)).join(", ")}\n`;
+      return;
+    }
+    const avg = (g.reduce((s,x) => s + x.val, 0) / g.length).toFixed(2);
+    t += `\n*POOL ${gi+1}*  (avg ${avg})\n`;
+    const rec = computeStandings(gi);
+    rec.forEach((r, i) => { t += `${i+1}. ${dispName(r.name)} — ${r.w}-${r.l} (${r.diff>=0?"+":""}${r.diff})\n`; });
+    rot.forEach((gm, idx) => {
+      const a = scores[`g${gi}-${idx}-a`], b = scores[`g${gi}-${idx}-b`];
+      const sc = (a!=null && a!=="" && b!=null && b!=="") ? `${a}-${b}` : "( – )";
+      t += `  G${idx+1}: ${nm(gm.a[0])} & ${nm(gm.a[1])}  ${sc}  ${nm(gm.b[0])} & ${nm(gm.b[1])}\n`;
+    });
+  });
+  t += `\nPlease review and confirm. ✅`;
+  return t;
+}
+// Message listing games that still need a score — to post so players report them.
+function buildRemainingText(){
+  const date = new Date().toLocaleDateString([], { weekday:"long", month:"short", day:"numeric" });
+  let count = 0, body = "";
+  (lastGroups || []).forEach((g, gi) => {
+    const rot = rotation(g.length); if (!rot) return;
+    const nm = i => dispName(g[i].p.name);
+    const lines = [];
+    rot.forEach((gm, idx) => {
+      const a = scores[`g${gi}-${idx}-a`], b = scores[`g${gi}-${idx}-b`];
+      if (a == null || a === "" || b == null || b === ""){
+        count++;
+        lines.push(`  G${idx+1}: ${nm(gm.a[0])} & ${nm(gm.a[1])}  vs  ${nm(gm.b[0])} & ${nm(gm.b[1])}   → __ – __`);
+      }
+    });
+    if (lines.length) body += `\n*Pool ${gi+1}*\n${lines.join("\n")}\n`;
+  });
+  const ah = [];
+  adhoc.forEach(m => {
+    if (m.sa === "" || m.sb === "" || m.sa == null || m.sb == null){
+      count++;
+      ah.push(`  ${m.a.map(dispName).join(" & ")}  vs  ${m.b.map(dispName).join(" & ")}   → __ – __`);
+    }
+  });
+  if (ah.length) body += `\n*Ad hoc*\n${ah.join("\n")}\n`;
+  if (count === 0) return `🏓 Tuesday Women's League\n${date}\n\nAll games are in — nothing left to play! 🎉`;
+  return `🏓 Tuesday Women's League — Games still to play\n${date}\n${body}\n👉 Please reply with your scores for the games above (e.g. 11–7). Thanks! 🎾`;
+}
+function sendRemaining(){
+  window.open("https://wa.me/?text=" + encodeURIComponent(buildRemainingText()), "_blank");
+}
+async function copyRemaining(btn){
+  const text = buildRemainingText();
+  try { await navigator.clipboard.writeText(text); }
+  catch(e){
+    const ta = document.createElement("textarea");
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); } catch(_){}
+    document.body.removeChild(ta);
+  }
+  if (btn){ const o = btn.textContent; btn.textContent = "Copied ✓"; setTimeout(() => btn.textContent = o, 1500); }
+}
+window.sendRemaining = sendRemaining;
+window.copyRemaining = copyRemaining;
+function sendWhatsApp(){
+  window.open("https://wa.me/?text=" + encodeURIComponent(buildResultsText()), "_blank");
+}
+async function copyResults(btn){
+  const text = buildResultsText();
+  try { await navigator.clipboard.writeText(text); }
+  catch(e){
+    const ta = document.createElement("textarea");
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); } catch(_){}
+    document.body.removeChild(ta);
+  }
+  if (btn){ const o = btn.textContent; btn.textContent = "Copied ✓"; setTimeout(() => btn.textContent = o, 1500); }
+}
+const escHtml = s => s.replace(/[&<>]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;" }[c]));
+window.sendWhatsApp = sendWhatsApp;
+window.copyResults = copyResults;
+
+// ---- weekly archive & season leaderboard ----
+function endWeek(){
+  const hasPools = lastGroups && lastGroups.some(g => rotation(g.length));
+  if (!hasPools && Object.keys(adhocRecMap()).length === 0){ alert("Nothing to archive yet — generate groups and play, or add ad hoc matches first."); return; }
+  const players = [];
+  const pods = [];   // finish order per pod (top pod first) — drives next week's ladder
+  (lastGroups || []).forEach((g, gi) => {
+    if (!rotation(g.length)) return;
+    const duprByName = {};
+    g.forEach(x => { duprByName[x.p.name] = x.p.d; });   // rating used this week
+    const rec = computeStandings(gi);
+    pods.push(rec.map(r => r.name));
+    rec.forEach(r => {
+      if (r.played > 0) players.push({ name:r.name, w:r.w, l:r.l, diff:r.diff, pf:r.pf, pa:r.pa, played:r.played, dupr: duprByName[r.name] ?? null });
+    });
+  });
+  // fold ad hoc doubles results into the same weekly totals (by player name)
+  Object.entries(adhocRecMap()).forEach(([name, r]) => {
+    const diff = r.pf - r.pa;
+    const existing = players.find(p => p.name === name);
+    if (existing){
+      existing.w += r.w; existing.l += r.l; existing.diff += diff;
+      existing.pf += r.pf; existing.pa += r.pa; existing.played += r.played;
+    } else {
+      const pl = PLAYERS.find(p => p.name === name);
+      players.push({ name, w:r.w, l:r.l, diff, pf:r.pf, pa:r.pa, played:r.played, dupr: pl ? (pl.d ?? null) : null });
+    }
+  });
+  if (players.length === 0 && !confirm("No scores were entered. Archive an empty week anyway?")) return;
+  if (!confirm(`Archive ${archive.length+1 <= SEASON_WEEKS ? "Week "+(archive.length+1) : "this week"} and clear the board for next week? The roster and season history are kept.`)) return;
+  const date = new Date().toLocaleDateString([], { month:"short", day:"numeric", year:"numeric" });
+  // snapshot the raw games so this week stays viewable/editable game-by-game later
+  const games = {
+    pools: (lastGroups || []).map(g => g.map(x => x.p.name)),
+    scores: JSON.parse(JSON.stringify(scores)),
+    adhoc: JSON.parse(JSON.stringify(adhoc)),
+  };
+  archive.push({ date, label:`Week ${archive.length+1}`, players, pods, games });
+  checkedIn.clear(); lastGroups = null; scores = {}; courtState = null; adhoc = [];
+  saveState();
+  update(); renderGroups(); renderCourts(); renderSeason();
+  window.scrollTo({ top:0, behavior:"smooth" });
+}
+function clearSeason(){
+  if (!confirm("Delete all archived weeks and the season leaderboard? This can't be undone.")) return;
+  archive = []; saveState(); renderSeason(); update();
+}
+// Adjust how strongly games-played counts in seeding (Wilson confidence level).
+function setSeedConf(v){
+  const n = +v;
+  if ([80,90,95,99].includes(n)){ seedConf = n; saveState(); renderSeason(); renderGroups(); }
+}
+window.setSeedConf = setSeedConf;
+// Adjust a Rating weight (values are relative; the Rating auto-normalizes them).
+function setRatingWeight(which, v){
+  const n = Math.max(0, Math.min(100, Math.round(+v || 0)));
+  if (which === "seed") wSeed = n; else if (which === "sow") wSoW = n; else if (which === "diff") wDiff = n;
+  saveState(); renderSeason();
+}
+window.setRatingWeight = setRatingWeight;
+
+// ---- ad hoc matches (manual doubles that count toward records) ----
+// Player pool for pickers: checked-in players if any, else the whole roster.
+function adhocPlayerPool(){
+  const idxs = checkedIn.size ? [...checkedIn] : PLAYERS.map((_, i) => i);
+  return idxs.map(i => PLAYERS[i].name).sort((a, b) => dispName(a).localeCompare(dispName(b)));
+}
+function adhocOptions(){
+  return `<option value="">— player —</option>` +
+    adhocPlayerPool().map(n => `<option value="${n.replace(/"/g,'&quot;')}">${dispName(n)}</option>`).join("");
+}
+function addAdhocFromForm(){
+  const g = id => $(id) ? $(id).value : "";
+  const picks = [g("ah_a1"), g("ah_a2"), g("ah_b1"), g("ah_b2")];
+  if (picks.some(p => !p)){ alert("Pick all four players first."); return; }
+  if (new Set(picks).size !== 4){ alert("Each player can only appear once in a match."); return; }
+  adhoc.push({ a:[picks[0], picks[1]], b:[picks[2], picks[3]], sa:g("ah_sa"), sb:g("ah_sb") });
+  saveState(); renderAdhoc(); refreshNameRecords(); renderSeason();
+}
+function removeAdhoc(i){ adhoc.splice(i, 1); saveState(); renderAdhoc(); refreshNameRecords(); renderSeason(); }
+function adhocScoreInput(i, side, el){
+  if (!adhoc[i]) return;
+  adhoc[i][side] = el.value;
+  saveState(); refreshNameRecords(); renderSeason();
+  const row = el.closest(".adhoc-row");
+  if (row) paintAdhocRow(row, adhoc[i]);
+}
+function paintAdhocRow(row, m){
+  const sa = +m.sa, sb = +m.sb, ok = m.sa !== "" && m.sb !== "" && !isNaN(sa) && !isNaN(sb);
+  const a = row.querySelector(".side.a"), b = row.querySelector(".side.b");
+  if (a) a.classList.toggle("win", ok && sa > sb);
+  if (b) b.classList.toggle("win", ok && sb > sa);
+}
+function renderAdhoc(){
+  const el = $("adhoc"); if (!el) return;
+  const canAdd = adhocPlayerPool().length >= 4;
+  let html = `<h2>Ad hoc matches</h2>
+    <div class="note" style="margin:0 0 4px">Add extra doubles games outside the pools. Scores count toward each player's W–L, win %, standings, and next-week seeding.</div>
+    <div class="adhoc-actions"><button class="btn-ghost" id="recBtn">✨ Recommend matches</button></div>
+    <div id="recArea"></div>`;
+  if (canAdd){
+    html += `<div class="adhoc-form"><div class="adhoc-teams">
+        <div class="adhoc-team"><select id="ah_a1">${adhocOptions()}</select><select id="ah_a2">${adhocOptions()}</select></div>
+        <span class="vs">vs</span>
+        <div class="adhoc-team"><select id="ah_b1">${adhocOptions()}</select><select id="ah_b2">${adhocOptions()}</select></div>
+        <div class="adhoc-score"><input type="number" min="0" id="ah_sa" placeholder="–"> <span class="vs">to</span> <input type="number" min="0" id="ah_sb" placeholder="–"></div>
+        <button class="btn-primary" id="ahAddBtn">+ Add match</button>
+      </div></div>`;
+  } else {
+    html += `<div class="adhoc-empty">Check in at least 4 players (or add them to the roster) to create an ad hoc match.</div>`;
+  }
+  if (adhoc.length){
+    html += `<div class="adhoc-list">` + adhoc.map((m, i) => {
+      const sa = +m.sa, sb = +m.sb, ok = m.sa !== "" && m.sb !== "" && !isNaN(sa) && !isNaN(sb);
+      const aWin = ok && sa > sb, bWin = ok && sb > sa;
+      return `<div class="adhoc-row">
+        <span class="side a${aWin?' win':''}">${m.a.map(dispName).join(" & ")}</span>
+        <input type="number" min="0" value="${m.sa ?? ''}" oninput="adhocScoreInput(${i},'sa',this)">
+        <span class="mid">–</span>
+        <input type="number" min="0" value="${m.sb ?? ''}" oninput="adhocScoreInput(${i},'sb',this)">
+        <span class="side b${bWin?' win':''}">${m.b.map(dispName).join(" & ")}</span>
+        <button class="rm" title="Remove match" onclick="removeAdhoc(${i})">✕</button>
+      </div>`;
+    }).join("") + `</div>`;
+  }
+  el.innerHTML = html;
+  const add = $("ahAddBtn"); if (add) add.onclick = addAdhocFromForm;
+  const rec = $("recBtn"); if (rec) rec.onclick = renderRecommendations;
+}
+// Recommend competitive doubles: group checked-in players by this week's win%,
+// then within each quartet pair (1&4 vs 2&3) for a balanced game.
+function renderRecommendations(){
+  const area = $("recArea"); if (!area) return;
+  const present = [...checkedIn].map(i => PLAYERS[i].name);
+  if (present.length < 4){ area.innerHTML = `<div class="adhoc-empty">Check in at least 4 players to get match recommendations.</div>`; return; }
+  const wr = weekRecMap();
+  const pct = n => { const r = wr[n]; return r && (r.w + r.l) ? r.w / (r.w + r.l) : 0; };
+  const played = n => { const r = wr[n]; return r ? r.played : 0; };
+  const fmtPct = n => { const r = wr[n]; const t = r ? r.w + r.l : 0; return t ? Math.round(r.w / t * 100) + "%" : "—"; };
+  const sorted = present.slice().sort((a, b) => pct(b) - pct(a) || played(b) - played(a) || dispName(a).localeCompare(dispName(b)));
+  const recs = [];
+  for (let i = 0; i + 3 < sorted.length; i += 4){
+    const q = sorted.slice(i, i + 4);
+    recs.push({ a:[q[0], q[3]], b:[q[1], q[2]], tier: Math.floor(i / 4) + 1 });
+  }
+  const leftover = sorted.slice(recs.length * 4);
+  let html = `<div class="note" style="margin:6px 0">Balanced doubles among players with similar records this week (win %). Top group first.</div><div class="rec-grid">`;
+  html += recs.map((r, ri) => `<div class="rec-row">
+      <span class="tier">Grp ${r.tier}</span>
+      <span>${r.a.map(n => `${dispName(n)} (${fmtPct(n)})`).join(" & ")} <b>vs</b> ${r.b.map(n => `${dispName(n)} (${fmtPct(n)})`).join(" & ")}</span>
+      <button class="btn-ghost add" onclick="addRecommended(${ri})">+ Add</button>
+    </div>`).join("");
+  html += `</div>`;
+  if (recs.length) html += `<div class="adhoc-actions"><button class="btn-primary" id="recAddAll">+ Add all ${recs.length}</button></div>`;
+  if (leftover.length) html += `<div class="adhoc-empty">Not enough for a full group: ${leftover.map(dispName).join(", ")}.</div>`;
+  area.innerHTML = html;
+  area._recs = recs;
+  const all = $("recAddAll");
+  if (all) all.onclick = () => { recs.forEach(r => adhoc.push({ a:r.a.slice(), b:r.b.slice(), sa:"", sb:"" })); saveState(); renderAdhoc(); };
+}
+function addRecommended(ri){
+  const area = $("recArea"); const recs = area && area._recs;
+  if (!recs || !recs[ri]) return;
+  const r = recs[ri];
+  adhoc.push({ a:r.a.slice(), b:r.b.slice(), sa:"", sb:"" });
+  saveState(); renderAdhoc(); renderRecommendations();
+}
+window.removeAdhoc = removeAdhoc;
+window.adhocScoreInput = adhocScoreInput;
+window.addRecommended = addRecommended;
+
+// ---- Games section: current week (live) + any past week (view/edit) ----
+function setGamesView(v){ gamesView = +v; renderWeekGames(); }
+window.setGamesView = setGamesView;
+
+// One log row (works for current and archived; `handlers` supplies the score inputs).
+function gameRowHTML(tag, tagCls, aNames, bNames, sa, sb, inputs){
+  const ok = sa != null && sa !== "" && sb != null && sb !== "" && !isNaN(+sa) && !isNaN(+sb);
+  const aWin = ok && +sa > +sb, bWin = ok && +sb > +sa;
+  return `<div class="log-row">
+    <span class="log-tag ${tagCls}">${tag}</span>
+    <span class="side a${aWin?' win':''}">${aNames}</span>
+    ${inputs}
+    <span class="side b${bWin?' win':''}">${bNames}</span>
+  </div>`;
+}
+// Recompute an archived week's players + pods from its games snapshot (after an edit).
+function recomputeArchivedWeek(wi){
+  const wk = archive[wi]; if (!wk || !wk.games) return;
+  const gm2 = {}; const add = (name, w, l, pf, pa) => {
+    const s = gm2[name] || (gm2[name] = { name, w:0, l:0, pf:0, pa:0, played:0 });
+    s.w += w; s.l += l; s.pf += pf; s.pa += pa; s.played++;
+  };
+  const pods = [];
+  (wk.games.pools || []).forEach((pool, gi) => {
+    const rot = rotation(pool.length); if (!rot) return;
+    const podRec = {}; const padd = (name,w,l,pf,pa)=>{ const s=podRec[name]||(podRec[name]={name,w:0,l:0,pf:0,pa:0,played:0}); s.w+=w;s.l+=l;s.pf+=pf;s.pa+=pa;s.played++; };
+    rot.forEach((g, idx) => {
+      const a = wk.games.scores[`g${gi}-${idx}-a`], b = wk.games.scores[`g${gi}-${idx}-b`];
+      if (a == null || a === "" || b == null || b === "") return;
+      const sa = +a, sb = +b; if (isNaN(sa) || isNaN(sb)) return;
+      const tie = sa === sb, aWin = sa > sb;
+      g.a.forEach(i => { add(pool[i], tie?0:(aWin?1:0), tie?0:(aWin?0:1), sa, sb); padd(pool[i], tie?0:(aWin?1:0), tie?0:(aWin?0:1), sa, sb); });
+      g.b.forEach(i => { add(pool[i], tie?0:(aWin?0:1), tie?0:(aWin?1:0), sb, sa); padd(pool[i], tie?0:(aWin?0:1), tie?0:(aWin?1:0), sb, sa); });
+    });
+    const podRows = Object.values(podRec).map(r => ({ ...r, diff:r.pf-r.pa }));
+    podRows.sort(seasonCmp);
+    pods.push(podRows.length ? podRows.map(r => r.name) : pool.slice());
+  });
+  (wk.games.adhoc || []).forEach(m => {
+    if (m.sa === "" || m.sb === "" || m.sa == null || m.sb == null) return;
+    const sa = +m.sa, sb = +m.sb; if (isNaN(sa) || isNaN(sb)) return;
+    const tie = sa === sb, aWin = sa > sb;
+    (m.a || []).forEach(n => add(canonName(n), tie?0:(aWin?1:0), tie?0:(aWin?0:1), sa, sb));
+    (m.b || []).forEach(n => add(canonName(n), tie?0:(aWin?0:1), tie?0:(aWin?1:0), sb, sa));
+  });
+  wk.players = Object.values(gm2).filter(r => r.played > 0).map(r => ({
+    name:r.name, w:r.w, l:r.l, diff:r.pf - r.pa, pf:r.pf, pa:r.pa, played:r.played,
+    dupr: (PLAYERS.find(p => p.name === r.name) || {}).d ?? null
+  }));
+  wk.pods = pods;
+}
+function editArchScore(wi, key, el){
+  const wk = archive[wi]; if (!wk || !wk.games) return;
+  const v = el.value;
+  if (v === "") delete wk.games.scores[key]; else wk.games.scores[key] = v;
+  recomputeArchivedWeek(wi); saveState(); renderWeekGames(); renderSeason();
+}
+function editArchAdhoc(wi, idx, side, el){
+  const wk = archive[wi]; if (!wk || !wk.games || !wk.games.adhoc[idx]) return;
+  wk.games.adhoc[idx][side] = el.value;
+  recomputeArchivedWeek(wi); saveState(); renderWeekGames(); renderSeason();
+}
+window.editArchScore = editArchScore;
+window.editArchAdhoc = editArchAdhoc;
+
+function archivedWeekBody(wi){
+  const wk = archive[wi]; if (!wk) return "";
+  if (!wk.games){
+    // legacy week — only totals were saved; show final standings read-only
+    const rows = (wk.players || []).slice().map(p => ({ ...p })).sort(seasonCmp);
+    const table = `<table class="stand"><thead><tr><th>#</th><th>Player</th><th>W–L</th><th>Diff</th></tr></thead><tbody>
+      ${rows.map((r,i)=>`<tr><td>${i+1}</td><td>${dispName(r.name)}</td><td class="wl">${r.w}–${r.l}</td><td class="${r.diff>0?'pos':r.diff<0?'neg':''}">${r.diff>0?'+':''}${r.diff}</td></tr>`).join("")}
+      </tbody></table>`;
+    return `<div class="note" style="margin:0 0 6px">Individual game scores weren't recorded for this week (archived before game history existed). Showing final standings. Use <b>✎ edit</b> on the week in the season leaderboard to correct totals.</div>${table}`;
+  }
+  const rows = [];
+  (wk.games.pools || []).forEach((pool, gi) => {
+    const rot = rotation(pool.length); if (!rot) return;
+    const nm = i => dispName(pool[i]);
+    rot.forEach((g, idx) => {
+      const ka = `g${gi}-${idx}-a`, kb = `g${gi}-${idx}-b`;
+      const sa = wk.games.scores[ka], sb = wk.games.scores[kb];
+      const inputs = `<input type="number" min="0"${sa!=null?` value="${sa}"`:''} onchange="editArchScore(${wi},'${ka}',this)">
+        <span class="mid">–</span>
+        <input type="number" min="0"${sb!=null?` value="${sb}"`:''} onchange="editArchScore(${wi},'${kb}',this)">`;
+      rows.push(gameRowHTML(`P${gi+1}·G${idx+1}`, "", `${nm(g.a[0])} & ${nm(g.a[1])}`, `${nm(g.b[0])} & ${nm(g.b[1])}`, sa, sb, inputs));
+    });
+  });
+  (wk.games.adhoc || []).forEach((m, i) => {
+    const inputs = `<input type="number" min="0" value="${m.sa ?? ''}" onchange="editArchAdhoc(${wi},${i},'sa',this)">
+      <span class="mid">–</span>
+      <input type="number" min="0" value="${m.sb ?? ''}" onchange="editArchAdhoc(${wi},${i},'sb',this)">`;
+    rows.push(gameRowHTML("Ad hoc", "adhoc", m.a.map(dispName).join(" & "), m.b.map(dispName).join(" & "), m.sa, m.sb, inputs));
+  });
+  const body = rows.length
+    ? `<div class="note" style="margin:0 0 6px">${wk.label} games — edit any score to correct it; the season standings recompute automatically.</div><div class="log-list">${rows.join("")}</div>`
+    : `<div class="adhoc-empty">No games recorded for ${wk.label}.</div>`;
+  return body;
+}
+function renderWeekGames(){
+  const el = $("weekGames"); if (!el) return;
+  if (archive.length === 0){
+    el.innerHTML = `<h2>Past weeks</h2>
+      <div class="adhoc-empty">No weeks archived yet. This week's games are edited in the pool cards above; once you press <b>End week &amp; archive</b>, each past week's games appear here to review or correct.</div>`;
+    return;
+  }
+  // default to the most recent archived week; clamp if out of range
+  if (typeof gamesView !== "number" || !archive[gamesView]) gamesView = archive.length - 1;
+  const opts = archive.map((wk, wi) => `<option value="${wi}"${gamesView===wi?" selected":""}>${wk.label} · ${wk.date}</option>`).join("");
+  el.innerHTML = `<h2>Past weeks</h2>
+    <div class="note" style="margin:0 0 6px">Review or correct games from earlier weeks. This week's games are edited in the pool cards above.</div>
+    <div class="adhoc-actions"><label style="font-size:13px;color:#67839e">Week:</label>
+      <select id="gamesViewSel" onchange="setGamesView(this.value)">${opts}</select></div>
+    ${archivedWeekBody(gamesView)}`;
+}
+
+// ---- edit totals of an already-archived week ----
+function editWeek(wi){ editingWeek = wi; renderSeason(); }
+function cancelWeekEdit(){ editingWeek = null; renderSeason(); }
+function removeWeekPlayer(i){
+  const wk = archive[editingWeek]; if (!wk) return;
+  if (!confirm(`Remove ${dispName(wk.players[i].name)} from ${wk.label}?`)) return;
+  wk.players.splice(i, 1); saveState(); renderSeason();
+}
+function addWeekPlayer(){
+  const sel = $("weAddSel"); if (!sel || !sel.value) return;
+  const wk = archive[editingWeek]; if (!wk) return;
+  const pl = PLAYERS.find(p => p.name === sel.value);
+  wk.players.push({ name: sel.value, w:0, l:0, pf:0, pa:0, played:0, diff:0, dupr: pl ? (pl.d ?? null) : null });
+  saveState(); renderSeason();
+}
+function saveWeekEdits(){
+  const wk = archive[editingWeek]; if (!wk) return;
+  wk.players.forEach((p, i) => {
+    const get = f => { const el = document.querySelector(`.we-inp[data-i="${i}"][data-f="${f}"]`); return el ? Math.max(0, Math.round(+el.value || 0)) : 0; };
+    p.w = get("w"); p.l = get("l"); p.pf = get("pf"); p.pa = get("pa");
+    p.played = p.w + p.l; p.diff = p.pf - p.pa;
+  });
+  saveState(); editingWeek = null; renderSeason();
+}
+function renderWeekEditor(){
+  const el = $("weekEditor"); if (!el) return;
+  if (editingWeek == null || !archive[editingWeek]){ el.innerHTML = ""; return; }
+  const wk = archive[editingWeek];
+  const present = new Set(wk.players.map(p => p.name));
+  const addable = PLAYERS.map(p => p.name).filter(n => !present.has(n)).sort((a,b)=>dispName(a).localeCompare(dispName(b)));
+  el.innerHTML = `<div class="week-edit">
+    <h3>Edit ${wk.label} · ${wk.date}</h3>
+    <div class="note" style="margin:0 0 8px">Adjust each player's totals. Diff (points for − against) and games are recomputed on save. This updates the season standings and next-week seeding.</div>
+    <table class="we-table">
+      <thead><tr><th>Player</th><th>W</th><th>L</th><th>Pts for</th><th>Pts against</th><th></th></tr></thead>
+      <tbody>
+        ${wk.players.map((p, i) => `<tr>
+          <td>${dispName(p.name)}</td>
+          <td><input class="we-inp" data-i="${i}" data-f="w" type="number" min="0" value="${p.w}"></td>
+          <td><input class="we-inp" data-i="${i}" data-f="l" type="number" min="0" value="${p.l}"></td>
+          <td><input class="we-inp" data-i="${i}" data-f="pf" type="number" min="0" value="${p.pf ?? 0}"></td>
+          <td><input class="we-inp" data-i="${i}" data-f="pa" type="number" min="0" value="${p.pa ?? 0}"></td>
+          <td><button class="rm" title="Remove player from this week" onclick="removeWeekPlayer(${i})">✕</button></td>
+        </tr>`).join("")}
+      </tbody>
+    </table>
+    <div class="we-actions">
+      ${addable.length ? `<select id="weAddSel"><option value="">+ add player…</option>${addable.map(n=>`<option value="${n.replace(/"/g,'&quot;')}">${dispName(n)}</option>`).join("")}</select><button class="btn-ghost" onclick="addWeekPlayer()">Add</button>` : ``}
+      <button class="btn-primary" onclick="saveWeekEdits()">Save changes</button>
+      <button class="btn-ghost" onclick="cancelWeekEdit()">Cancel</button>
+    </div>
+  </div>`;
+}
+window.editWeek = editWeek;
+window.cancelWeekEdit = cancelWeekEdit;
+window.removeWeekPlayer = removeWeekPlayer;
+window.addWeekPlayer = addWeekPlayer;
+window.saveWeekEdits = saveWeekEdits;
+// Raw win% as a 0-1 rate (shown for reference).
+const winPct = s => (s.w + s.l) ? s.w / (s.w + s.l) : 0;
+// z-score for the chosen confidence level.
+const Z_TABLE = { 80:1.2816, 90:1.6449, 95:1.9600, 99:2.5758 };
+const seedZ = () => Z_TABLE[seedConf] || 1.96;
+// Seed rating = Wilson score lower bound of the win rate. It rewards a high win % MORE
+// when it's backed by more games: extra games shrink the uncertainty and lift the bound,
+// so a proven record can outrank an unproven hot streak. Higher confidence = games matter more.
+const adjWin = s => {
+  const n = s.w + s.l; if (!n) return 0;
+  const z = seedZ(), p = s.w / n;
+  return (p + z*z/(2*n) - z*Math.sqrt((p*(1-p) + z*z/(4*n))/n)) / (1 + z*z/n);
+};
+// Point differential per game (volume-neutral) instead of raw total diff.
+const diffPerGame = s => s.played ? s.diff / s.played : 0;
+// Average rating of a pool (Not Rated players count as NR_DEFAULT).
+function poolStrength(names){
+  if (!names || !names.length) return NR_DEFAULT;
+  const vals = names.map(n => { const p = PLAYERS.find(x => x.name === canonName(n)); return p && p.d != null ? p.d : NR_DEFAULT; });
+  return vals.reduce((a, b) => a + b, 0) / vals.length;
+}
+// Strength of Wins: average strength of the pools where a player earned their wins,
+// across archived weeks. Higher = beat tougher competition. (Pools are seeded by skill,
+// so a win in the top pool weighs more than one in a lower pool.)
+function seasonSoW(){
+  const acc = {};
+  const add = (name, wins, strength) => {
+    if (wins <= 0) return;
+    const s = acc[name] || (acc[name] = { wins:0, wstr:0 });
+    s.wins += wins; s.wstr += wins * strength;
+  };
+  archive.forEach(wk => {
+    const memberPS = {};
+    (wk.pods || []).forEach(pool => { const ps = poolStrength(pool); pool.forEach(n => memberPS[canonName(n)] = ps); });
+    (wk.players || []).forEach(p => { const ps = memberPS[canonName(p.name)]; if (ps != null) add(canonName(p.name), p.w, ps); });
+  });
+  const out = {};
+  Object.entries(acc).forEach(([n, s]) => out[n] = s.wins ? +(s.wstr / s.wins).toFixed(3) : 0);
+  return out;
+}
+// Lexicographic fallback (used for pod finish order and exact-tie breaks).
+const seasonCmp = (a, b) =>
+  adjWin(b) - adjWin(a) || (b.sow || 0) - (a.sow || 0) || diffPerGame(b) - diffPerGame(a) || b.played - a.played || b.w - a.w || a.l - b.l;
+// Composite Rating (0-100): blend Seed rating, strength of wins, and diff/game. Each factor
+// is scaled 0-1 across the field (min→max), then weighted by the (normalized) weights and
+// summed. This is a single number that moves with ALL three factors, not just tiebreakers.
+function computeRatings(rows){
+  const field = rows.filter(r => r.played > 0);
+  const scaler = getVals => {
+    const vals = field.map(getVals);
+    const mn = Math.min(...vals), mx = Math.max(...vals);
+    return x => (mx > mn ? (x - mn) / (mx - mn) : 0.5);
+  };
+  const nSeed = scaler(r => adjWin(r));
+  const nSoW  = scaler(r => r.sow || 0);
+  const nDiff = scaler(r => diffPerGame(r));
+  const tot = (wSeed + wSoW + wDiff) || 1;
+  const ws = wSeed / tot, wo = wSoW / tot, wd = wDiff / tot;
+  rows.forEach(r => {
+    r.rating = r.played > 0
+      ? +((ws * nSeed(adjWin(r)) + wo * nSoW(r.sow || 0) + wd * nDiff(diffPerGame(r))) * 100).toFixed(1)
+      : 0;
+  });
+}
+function seasonTotals(){
+  const by = {};
+  archive.forEach(wk => wk.players.forEach(p => {
+    const s = by[p.name] || (by[p.name] = { name:p.name, w:0, l:0, diff:0, pf:0, pa:0, played:0, weeks:0, firstDupr:null, lastDupr:null, duprWeeks:0 });
+    s.w += p.w; s.l += p.l; s.diff += p.diff; s.pf += (p.pf || 0); s.pa += (p.pa || 0); s.played += p.played; s.weeks += 1;
+    if (p.dupr != null){ if (s.firstDupr == null) s.firstDupr = p.dupr; s.lastDupr = p.dupr; s.duprWeeks++; }
+  }));
+  // DUPR movement = latest rating - first recorded rating (needs >= 2 rated weeks)
+  Object.values(by).forEach(s => { s.dDupr = s.duprWeeks >= 2 ? +(s.lastDupr - s.firstDupr).toFixed(3) : null; });
+  // strength of wins, then the composite Rating
+  const sowMap = seasonSoW();
+  const list = Object.values(by);
+  list.forEach(s => { s.sow = sowMap[s.name] || 0; });
+  computeRatings(list);
+  // ranked by composite Rating (with a lexicographic fallback for exact ties)
+  return list.sort((a, b) => (b.rating - a.rating) || seasonCmp(a, b));
+}
+// Performance vs DUPR expectation. DUPR gives an expected finishing order; actual results
+// (rows, already sorted by seasonCmp) give the real order. The gap = how many places a
+// player is beating (or missing) their rating. Only players with a DUPR are assessed.
+function performanceMap(rows){
+  const duprOf = name => { const p = PLAYERS.find(x => x.name === name); return p && p.d != null ? p.d : null; };
+  const rated = rows.filter(r => duprOf(r.name) != null);
+  const actualRank = {}; rated.forEach((r, i) => actualRank[r.name] = i + 1);
+  const expRank = {};
+  rated.slice().sort((a, b) => duprOf(b.name) - duprOf(a.name)).forEach((r, i) => expRank[r.name] = i + 1);
+  const thr = Math.max(2, Math.round(rated.length * 0.15));   // ~15% of the field, min 2 places
+  const map = {};
+  rated.forEach(r => {
+    const delta = expRank[r.name] - actualRank[r.name];        // + = finishing above DUPR expectation
+    map[r.name] = { delta, label: delta >= thr ? "over" : delta <= -thr ? "under" : "expected" };
+  });
+  return map;
+}
+function renderSeason(){
+  const el = $("season");
+  if (!el) return;
+  const wkNum = Math.min(archive.length + 1, SEASON_WEEKS);
+  let html = `<div class="season-head"><h2>Season · Week ${wkNum} of ${SEASON_WEEKS}</h2>
+    <button class="btn-primary" onclick="endWeek()">End week &amp; archive →</button></div>`;
+  if (archive.length === 0){
+    html += `<div class="note" style="margin:0">No weeks archived yet. After tonight's play, press <b>End week &amp; archive</b> to save results and start Week 2 — the season leaderboard builds here.</div>`;
+    el.innerHTML = html;
+    return;
+  }
+  const rows = seasonTotals();
+  const pm = performanceMap(rows);
+  // biggest DUPR movers (up and down) + biggest over/under performer vs DUPR
+  const movers = rows.filter(r => r.dDupr != null && r.dDupr !== 0);
+  const fmtD = v => `${v > 0 ? "+" : "−"}${Math.abs(v).toFixed(3)}`;
+  let moverHtml = "";
+  const parts = [];
+  if (movers.length){
+    const up = movers.reduce((a,b) => b.dDupr > a.dDupr ? b : a);
+    const down = movers.reduce((a,b) => b.dDupr < a.dDupr ? b : a);
+    if (up.dDupr > 0) parts.push(`<span class="mover up">📈 Most improved: <b>${dispName(up.name)}</b> ${fmtD(up.dDupr)} DUPR</span>`);
+    if (down.dDupr < 0) parts.push(`<span class="mover down">📉 Biggest drop: <b>${dispName(down.name)}</b> ${fmtD(down.dDupr)} DUPR</span>`);
+  }
+  const perfRows = rows.filter(r => pm[r.name]);
+  if (perfRows.length){
+    const best = perfRows.reduce((a,b) => pm[b.name].delta > pm[a.name].delta ? b : a);
+    const worst = perfRows.reduce((a,b) => pm[b.name].delta < pm[a.name].delta ? b : a);
+    if (pm[best.name].delta >= 2) parts.push(`<span class="mover up">🚀 Overperforming: <b>${dispName(best.name)}</b> +${pm[best.name].delta} vs DUPR</span>`);
+    if (pm[worst.name].delta <= -2) parts.push(`<span class="mover down">🧊 Underperforming: <b>${dispName(worst.name)}</b> −${Math.abs(pm[worst.name].delta)} vs DUPR</span>`);
+  }
+  if (parts.length) moverHtml = `<div class="movers">${parts.join("")}</div>`;
+  html += `<div class="mtitle">Season leaderboard · ${archive.length} week${archive.length>1?"s":""} played</div>
+    ${moverHtml}
+    <div class="seed-ctrl">Games-played weight:
+      <select id="seedConfSel" onchange="setSeedConf(this.value)">
+        <option value="80"${seedConf==80?' selected':''}>Low</option>
+        <option value="90"${seedConf==90?' selected':''}>Medium</option>
+        <option value="95"${seedConf==95?' selected':''}>High</option>
+        <option value="99"${seedConf==99?' selected':''}>Max</option>
+      </select>
+      <span class="muted">higher rewards proven records (more games) over small hot streaks.</span></div>
+    <div class="seed-ctrl">Rating weights:
+      <span class="wlbl">Win rate <input type="number" min="0" max="100" step="5" value="${wSeed}" onchange="setRatingWeight('seed',this.value)">%</span>
+      <span class="wlbl">Strength of wins <input type="number" min="0" max="100" step="5" value="${wSoW}" onchange="setRatingWeight('sow',this.value)">%</span>
+      <span class="wlbl">Margin <input type="number" min="0" max="100" step="5" value="${wDiff}" onchange="setRatingWeight('diff',this.value)">%</span>
+      <span class="muted">how much each factor counts toward the overall Rating (auto-normalized).</span></div>
+    <table class="stand">
+      <thead><tr><th>#</th><th>Player</th><th>Wks</th><th>GP</th><th>W–L</th><th title="Overall Rating (0-100): weighted blend of win rate, strength of wins, and margin">Rating</th><th title="Confidence-based seed rating — rewards a high win % more when backed by more games">Seed</th><th title="Strength of wins — avg rating of the pools where wins were earned">SoW</th><th title="Point differential per game">Diff/G</th><th title="Raw win percentage (reference)">Win%</th><th>DUPR Δ</th><th title="Results vs what their DUPR predicts">Form</th></tr></thead>
+      <tbody>
+        ${rows.map((r,i) => {
+          const tot = r.w + r.l, pct = tot ? Math.round(r.w/tot*100) : 0;
+          const seedPct = Math.round(adjWin(r) * 100);
+          const dpg = r.played ? r.diff / r.played : 0;
+          const dCell = r.dDupr == null ? `<span class="muted">—</span>`
+            : r.dDupr === 0 ? `0.000`
+            : `<span class="${r.dDupr>0?'pos':'neg'}">${r.dDupr>0?'▲':'▼'} ${fmtD(r.dDupr)}</span>`;
+          const perf = pm[r.name];
+          const fCell = !perf ? `<span class="muted" title="No DUPR on file">—</span>`
+            : perf.label === "over" ? `<span class="pos" title="Finishing ${perf.delta} place${perf.delta>1?'s':''} above DUPR expectation">▲ Over +${perf.delta}</span>`
+            : perf.label === "under" ? `<span class="neg" title="Finishing ${Math.abs(perf.delta)} place${Math.abs(perf.delta)>1?'s':''} below DUPR expectation">▼ Under −${Math.abs(perf.delta)}</span>`
+            : `<span class="muted" title="Within ${Math.max(2, Math.round(Object.keys(pm).length*0.15))} places of DUPR expectation">= On form${perf.delta?` (${perf.delta>0?'+':''}${perf.delta})`:''}</span>`;
+          const sowCell = r.sow ? r.sow.toFixed(2) : `<span class="muted">—</span>`;
+          return `<tr class="${i===0?'lead':''}">
+            <td>${i+1}</td><td>${dispName(r.name)}</td><td>${r.weeks}</td><td>${r.played}</td>
+            <td class="wl">${r.w}–${r.l}</td>
+            <td><b>${r.rating.toFixed(1)}</b></td>
+            <td class="muted">${seedPct}</td>
+            <td>${sowCell}</td>
+            <td class="${dpg>0?'pos':dpg<0?'neg':''}">${dpg>0?'+':''}${dpg.toFixed(1)}</td>
+            <td class="muted">${pct}%</td>
+            <td>${dCell}</td>
+            <td>${fCell}</td>
+          </tr>`;
+        }).join("")}
+      </tbody>
+    </table>
+    <div class="note" style="margin:8px 0 0">Ranked (and next week's pools seeded) by the overall <b>Rating</b> — a weighted blend of three things, each scored against the field: <b>Seed</b> (games-weighted win rate; higher win % counts more when backed by more games), <b>SoW</b> (strength of wins — average rating of the pools where wins were earned), and <b>Diff/G</b> (scoring margin per game). Adjust the weights above to change what matters most. Raw Win% is shown for reference. <b>Form</b> compares each player's actual finish to what their DUPR predicts — <span class="pos">▲ Over</span> = beating their rating, <span class="neg">▼ Under</span> = below it, = On form = about as expected.</div>
+    <div class="weeks-list">${archive.map((wk, wi) => `<span class="qchip">${wk.label} · ${wk.date} · ${wk.players.length} players <span class="wk-edit" onclick="editWeek(${wi})" title="Edit this week's totals">✎ edit</span></span>`).join("")}</div>
+    <div id="weekEditor"></div>
+    <div class="season-foot"><button class="btn-ghost" onclick="clearSeason()">Clear season history</button></div>`;
+  el.innerHTML = html;
+  renderWeekEditor();
+}
+window.endWeek = endWeek;
+window.clearSeason = clearSeason;
+
+function renderCourts(){
+  const el = $("courts");
+  if (!el) return;
+  if (!courtState || !courtState.active){ el.innerHTML = ""; return; }
+  const sv = k => scores[k] != null ? ` value="${scores[k]}"` : "";
+  const estBar = `<div class="estbar">
+      <span id="estimate"></span>
+      <span class="estctrls">
+        <label class="mpg">start
+          <input type="time" value="${startTime}" oninput="setStartTime(this.value)">
+        </label>
+        <label class="mpg">min/game
+          <input type="number" min="1" max="60" value="${minPerGame}" oninput="setMinPerGame(this.value)">
+        </label>
+      </span>
+    </div>`;
+  const allDone = courtState.courts.every(s => !s) && courtState.queue.length === 0;
+  if (allDone){
+    el.innerHTML = `<h2>Courts (${COURTS}) · Live rotation</h2>${estBar}
+      <div class="empty">All matches complete — every pool finished its games.</div>
+      <div class="finish-actions">
+        <button class="btn-wa" onclick="sendWhatsApp()">${WA_ICON} Send results to WhatsApp</button>
+        <button class="btn-ghost" onclick="copyResults(this)">Copy results</button>
+      </div>
+      <details class="results-preview"><summary>Preview message</summary><pre>${escHtml(buildResultsText())}</pre></details>`;
+    renderEstimate();
+    return;
+  }
+  const courtsHtml = courtState.courts.map((slot, c) => {
+    if (!slot) return `<div class="court empty"><div class="cnum">Court ${c+1}</div><div class="cidle">Open · waiting</div></div>`;
+    const s = slotInfo(slot);
+    return `<div class="court live" data-match="${slot.gi}-${slot.gm}">
+      <div class="cnum">Court ${c+1} · <span class="cg">Pool ${slot.gi+1} · Game ${slot.gm+1}</span></div>
+      <div class="cteamrow" data-team="a">
+        <span class="cteam-name">${s.teamA}<span class="wtrophy">🏆</span></span>
+        <input type="number" min="0" placeholder="–" data-score="${s.ka}"${sv(s.ka)}>
+      </div>
+      <div class="cvs">VS</div>
+      <div class="cteamrow" data-team="b">
+        <span class="cteam-name">${s.teamB}<span class="wtrophy">🏆</span></span>
+        <input type="number" min="0" placeholder="–" data-score="${s.kb}"${sv(s.kb)}>
+      </div>
+      ${s.bye ? `<div class="cbye">Resting: ${s.bye}</div>` : ""}
+    </div>`;
+  }).join("");
+  const queueHtml = courtState.queue.length
+    ? courtState.queue.map((q,i) => {
+        const s = slotInfo(q);
+        const tip = `${s.teamA}\nvs\n${s.teamB}${s.bye ? `\n(resting: ${s.bye})` : ""}`;
+        return `<span class="qchip${i===0?' next':''}" data-tip="${tip.replace(/"/g,'&quot;')}">Pool ${q.gi+1} · G${q.gm+1}</span>`;
+      }).join("")
+    : `<span class="qempty">— none waiting —</span>`;
+  const doneHtml = courtState.done.length
+    ? `<div class="queue"><span class="qlab">Finished</span>${courtState.done.map(gi => `<span class="qchip done">Pool ${gi+1} ✓</span>`).join("")}</div>`
+    : "";
+  el.innerHTML = `<h2>Courts (${COURTS}) · Live rotation</h2>${estBar}
+    <div class="courts-grid">${courtsHtml}</div>
+    <div class="queue"><span class="qlab">Up next</span>${queueHtml}</div>
+    ${doneHtml}
+    <div class="finish-actions">
+      <button class="btn-wa" onclick="sendRemaining()">${WA_ICON} Post remaining games</button>
+      <button class="btn-ghost" onclick="copyRemaining(this)">Copy remaining</button>
+    </div>
+    <details class="results-preview"><summary>Preview message</summary><pre>${escHtml(buildRemainingText())}</pre></details>`;
+  renderEstimate();
+  paintAllWinners();
+}
+
+// Partner rotations. Each game: team a vs team b; `bye` rests (size-5 only).
+// 4 players -> 3 games, everyone partners once, faces each other twice.
+const ROT4 = [
+  { a:[0,1], b:[2,3] },
+  { a:[0,2], b:[1,3] },
+  { a:[0,3], b:[1,2] },
+];
+// 5 players -> 5 games, everyone partners once, plays 4 games, rests exactly 1.
+const ROT5 = [
+  { a:[1,4], b:[2,3], bye:0 },
+  { a:[2,0], b:[3,4], bye:1 },
+  { a:[3,1], b:[4,0], bye:2 },
+  { a:[4,2], b:[0,1], bye:3 },
+  { a:[0,3], b:[1,2], bye:4 },
+];
+// 6 players -> 6 games, everyone plays 4 & rests 2 (two rest each game), partners 4
+// distinct players with no repeated partnerships. (Used only for an 11-player night: 6 + 5.)
+const ROT6 = [
+  { a:[2,3], b:[4,5], bye:[0,1] },
+  { a:[0,4], b:[3,5], bye:[1,2] },
+  { a:[0,5], b:[1,4], bye:[2,3] },
+  { a:[0,1], b:[2,5], bye:[3,4] },
+  { a:[0,2], b:[1,3], bye:[4,5] },
+  { a:[1,2], b:[3,4], bye:[5,0] },
+];
+const rotation = n => n === 4 ? ROT4 : n === 5 ? ROT5 : n === 6 ? ROT6 : null;
+// bye can be a single index (ROT5) or an array of two (ROT6); normalize to a list.
+const byeList = gm => gm.bye == null ? [] : (Array.isArray(gm.bye) ? gm.bye : [gm.bye]);
+
+function matchCardsHTML(g, gi){
+  const rot = rotation(g.length);
+  if (!rot){
+    return `<div class="matches"><div class="mtitle">Match cards</div>
+      <div class="note" style="margin:0">Round-robin rotation supports groups of 4 or 5. This group has ${g.length} — adjust check-ins, or run it manually.</div></div>`;
+  }
+  const nm = i => g[i].p.name;
+  const pl = i => `${dispName(nm(i))}<span class="nrec" data-name="${nm(i).replace(/"/g,'&quot;')}" style="display:none"></span>`;
+  const sv = k => scores[k] != null ? ` value="${scores[k]}"` : "";
+  const games = rot.map((gm, idx) => {
+    const ka = `g${gi}-${idx}-a`, kb = `g${gi}-${idx}-b`;
+    const byes = byeList(gm);
+    const bye = byes.length ? `<div class="byeline">Resting: ${byes.map(pl).join(" & ")}</div>` : "";
+    return `
+      <div class="match" data-match="${gi}-${idx}">
+        <div class="game-no">Game ${idx+1}</div>
+        <div class="team" data-team="a"><div class="pl">${pl(gm.a[0])}</div><div class="pl">${pl(gm.a[1])}</div><span class="wtrophy">🏆</span></div>
+        <div class="vs">VS</div>
+        <div class="team right" data-team="b"><div class="pl">${pl(gm.b[0])}</div><div class="pl">${pl(gm.b[1])}</div><span class="wtrophy">🏆</span></div>
+        <div class="scorewrap"><input type="number" min="0" placeholder="–" data-score="${ka}"${sv(ka)}> <span>to</span> <input type="number" min="0" placeholder="–" data-score="${kb}"${sv(kb)}></div>
+        ${bye}
+      </div>`;
+  }).join("");
+  const tag = g.length === 5
+    ? "5 games · everyone partners once · one rests each game"
+    : "3 games · everyone partners once";
+  return `<div class="matches"><div class="mtitle">Match cards · ${tag}</div>${games}`
+    + `<div class="standings" id="standings-${gi}"></div></div>`;
+}
+
+// Which side won a given game: "a", "b", or null (incomplete/tied)
+function winnerSide(gi, gm){
+  const a = scores[`g${gi}-${gm}-a`], b = scores[`g${gi}-${gm}-b`];
+  if (a == null || b == null || a === "" || b === "") return null;
+  const na = +a, nb = +b;
+  if (isNaN(na) || isNaN(nb) || na === nb) return null;
+  return na > nb ? "a" : "b";
+}
+// Mark the winning team with a trophy anywhere this game is shown (match + court cards)
+function paintWinner(gi, gm){
+  const w = winnerSide(gi, gm);
+  document.querySelectorAll(`[data-match="${gi}-${gm}"]`).forEach(box => {
+    box.querySelectorAll("[data-team]").forEach(t => {
+      t.classList.toggle("win", w !== null && t.dataset.team === w);
+      t.classList.toggle("lose", w !== null && t.dataset.team !== w);
+    });
+  });
+}
+function paintAllWinners(){
+  if (!lastGroups) return;
+  lastGroups.forEach((g, gi) => {
+    const rot = rotation(g.length);
+    if (rot) rot.forEach((_, gm) => paintWinner(gi, gm));
+  });
+}
+
+// Tally W-L and point differential for a group from entered scores
+function computeStandings(gi){
+  const g = lastGroups[gi];
+  const rot = rotation(g.length) || [];
+  const rec = g.map(x => ({ name:x.p.name, w:0, l:0, pf:0, pa:0, played:0 }));
+  let gamesEntered = 0;
+  rot.forEach((gm, idx) => {
+    const av = scores[`g${gi}-${idx}-a`], bv = scores[`g${gi}-${idx}-b`];
+    if (av == null || bv == null || av === "" || bv === "") return;
+    const sa = +av, sb = +bv;
+    if (isNaN(sa) || isNaN(sb)) return;
+    gamesEntered++;
+    const winA = sa > sb, tie = sa === sb;
+    gm.a.forEach(i => { rec[i].pf += sa; rec[i].pa += sb; rec[i].played++; if(!tie) (winA?rec[i].w++:rec[i].l++); });
+    gm.b.forEach(i => { rec[i].pf += sb; rec[i].pa += sa; rec[i].played++; if(!tie) (winA?rec[i].l++:rec[i].w++); });
+  });
+  rec.forEach(r => r.diff = r.pf - r.pa);
+  rec.sort((a,b) => b.w - a.w || b.diff - a.diff || b.pf - a.pf);
+  rec.totalGames = rot.length;
+  rec.gamesEntered = gamesEntered;
+  return rec;
+}
+
+// Tally ad hoc doubles results into a name -> {w,l,pf,pa,played} map (completed only).
+function adhocRecMap(){
+  const map = {};
+  const add = (name, w, l, pf, pa) => {
+    const s = map[name] || (map[name] = { w:0, l:0, pf:0, pa:0, played:0 });
+    s.w += w; s.l += l; s.pf += pf; s.pa += pa; s.played++;
+  };
+  adhoc.forEach(m => {
+    if (m.sa === "" || m.sb === "" || m.sa == null || m.sb == null) return;
+    const sa = +m.sa, sb = +m.sb;
+    if (isNaN(sa) || isNaN(sb)) return;
+    const tie = sa === sb, aWin = sa > sb;
+    (m.a || []).forEach(n => add(canonName(n), tie?0:(aWin?1:0), tie?0:(aWin?0:1), sa, sb));
+    (m.b || []).forEach(n => add(canonName(n), tie?0:(aWin?0:1), tie?0:(aWin?1:0), sb, sa));
+  });
+  return map;
+}
+// This week's record only (pool games + ad hoc), excluding archived season history.
+function weekRecMap(){
+  const map = {};
+  const add = (name, w, l, played) => {
+    const s = map[name] || (map[name] = { w:0, l:0, played:0 });
+    s.w += w; s.l += l; s.played += played;
+  };
+  if (lastGroups) lastGroups.forEach((g, gi) => {
+    if (!rotation(g.length)) return;
+    computeStandings(gi).forEach(r => add(r.name, r.w, r.l, r.played));
+  });
+  Object.entries(adhocRecMap()).forEach(([n, r]) => add(n, r.w, r.l, r.played));
+  return map;
+}
+// Cumulative W–L per player = archived weeks (season history) + tonight's live games + ad hoc.
+function playerRecMap(){
+  const map = {};
+  const add = (name, w, l, played) => {
+    const s = map[name] || (map[name] = { w:0, l:0, played:0 });
+    s.w += w; s.l += l; s.played += played;
+  };
+  archive.forEach(wk => wk.players.forEach(p => add(p.name, p.w, p.l, p.played)));
+  if (lastGroups) lastGroups.forEach((g, gi) => {
+    if (!rotation(g.length)) return;
+    computeStandings(gi).forEach(r => add(r.name, r.w, r.l, r.played));
+  });
+  Object.entries(adhocRecMap()).forEach(([n, r]) => add(n, r.w, r.l, r.played));
+  return map;
+}
+// Plain-text record suffix, e.g. " (2–1)" — for court cards & hover tooltips.
+function recSuffix(name){
+  const r = playerRecMap()[name];
+  if (!r || r.played <= 0) return "";
+  const tot = r.w + r.l, pct = tot ? Math.round(r.w / tot * 100) : 0;
+  return ` (${r.w}–${r.l} · ${pct}%)`;
+}
+// Update every .nrec badge in the DOM from cumulative records (live, one pass).
+function refreshNameRecords(){
+  const recs = playerRecMap();
+  const wks = archive.length;
+  document.querySelectorAll(".nrec").forEach(el => {
+    const r = recs[el.dataset.name];
+    if (r && r.played > 0){
+      const tot = r.w + r.l, pct = tot ? Math.round(r.w / tot * 100) : 0;
+      el.textContent = `${r.w}–${r.l} · ${pct}%`;
+      el.title = wks ? `Season record (W${wks+1 <= SEASON_WEEKS ? ", incl. tonight" : ""}): ${r.w}–${r.l} (${pct}% wins)` : `Tonight: ${r.w}–${r.l} (${pct}% wins)`;
+      el.style.display = "";
+    }
+    else { el.textContent = ""; el.title = ""; el.style.display = "none"; }
+  });
+}
+// kept for existing call sites
+function renderGroupRecords(){ refreshNameRecords(); }
+
+function renderStandings(gi){
+  const el = document.getElementById(`standings-${gi}`);
+  if (!el) return;
+  const rec = computeStandings(gi);
+  if (!rec.some(r => r.played > 0)){
+    el.innerHTML = `<div class="mtitle">Standings</div><div class="note" style="margin:2px 0 0">Enter scores above to rank this group.</div>`;
+    return;
+  }
+  const complete = rec.gamesEntered === rec.totalGames;
+  el.innerHTML = `<div class="mtitle">Standings${complete?" · final":" · in progress"}</div>
+    <table class="stand">
+      <thead><tr><th>#</th><th>Player</th><th>W–L</th><th>Win%</th><th>Diff</th></tr></thead>
+      <tbody>
+        ${rec.map((r,i) => {
+          const tot = r.w + r.l, pct = tot ? Math.round(r.w / tot * 100) : 0;
+          return `
+          <tr class="${i===0 && r.w>0 ? 'lead':''}">
+            <td>${i+1}</td>
+            <td>${dispName(r.name)}</td>
+            <td class="wl">${r.w}–${r.l}</td>
+            <td>${pct}%</td>
+            <td class="${r.diff>0?'pos':r.diff<0?'neg':''}">${r.diff>0?'+':''}${r.diff}</td>
+          </tr>`; }).join("")}
+      </tbody>
+    </table>`;
+}
+
+// Collapse/expand a pool's player-name list (toggles in place — no re-render, so
+// match-card score inputs keep their focus).
+function togglePool(gi){
+  const card = document.querySelectorAll("#groups .group")[gi];
+  if (!card) return;
+  const now = card.classList.toggle("pcollapsed");
+  if (now) poolCollapsed.add(gi); else poolCollapsed.delete(gi);
+  const btn = card.querySelector(".pool-toggle");
+  if (btn) btn.textContent = now ? "Show players ▸" : "Hide players ▾";
+}
+window.togglePool = togglePool;
+
+function renderGroups(){
+  const wrap = $("groups");
+  wrap.innerHTML = "";
+  if (lastGroups == null){
+    wrap.innerHTML = `<div class="empty">Check players in, then press <b>Generate groups</b>.</div>`;
+    $("legend").textContent = "";
+    return;
+  }
+  if (lastGroups.length === 0){
+    wrap.innerHTML = `<div class="empty">No one is checked in yet.</div>`;
+    return;
+  }
+  const cont = document.createElement("div");
+  cont.className = "groups";
+  lastGroups.forEach((g, gi) => {
+    const avg = g.reduce((s,x)=>s+x.val,0)/g.length;
+    const odd = !rotation(g.length);            // not 4 or 5 -> flag it
+    const sizeLabel = g.length === 5
+      ? ` <span class="five">(5 — rotating bye)</span>`
+      : g.length === 6
+      ? ` <span class="five">(6 — 2 rest each game)</span>`
+      : odd ? ` <span class="partial">(${g.length} players)</span>` : "";
+    const card = document.createElement("div");
+    card.className = "group" + (poolCollapsed.has(gi) ? " pcollapsed" : "");
+    const collapsed = poolCollapsed.has(gi);
+    card.innerHTML = `
+      <div class="ghead">
+        <span class="gname">Pool ${gi+1}${gi===0?' <span class="podtag">top</span>':''}${sizeLabel}
+          <button class="pool-toggle" onclick="togglePool(${gi})">${collapsed ? 'Show players ▸' : 'Hide players ▾'}</button></span>
+        <span class="gavg">avg <b>${avg.toFixed(2)}</b></span>
+      </div>
+      <div class="proster">${g.map((x, j) => `
+        <div class="grow">
+          <span class="gleft">${dispName(x.p.name)}${x.exact?"":" <span class='partial' title='Estimated rating'>*</span>"}<span class="nrec" data-name="${x.p.name.replace(/"/g,'&quot;')}" style="display:none"></span></span>
+          <span class="gr">${x.p.d ?? x.val.toFixed(2)}</span>
+        </div>`).join("")}</div>
+      ${matchCardsHTML(g, gi)}`;
+    cont.appendChild(card);
+  });
+  wrap.appendChild(cont);
+  // initial standings + winner trophies for every playable group (4 or 5)
+  lastGroups.forEach((g, gi) => { if (rotation(g.length)){ renderStandings(gi); renderGroupRecords(gi); } });
+  paintAllWinners();
+  const basis = archive.length === 0
+    ? `<b>Week 1</b>: pools seeded by DUPR, highest first.`
+    : `<b>Week ${Math.min(archive.length+1, SEASON_WEEKS)}</b>: pools seeded by the overall Rating — a weighted blend of games-weighted win rate, strength of wins, and scoring margin.`;
+  $("legend").innerHTML = `${basis} Pool 1 is the top pool. ` +
+    `New players with no record yet seed at the bottom. ` +
+    `<span class="partial">*</span> = Not Rated. Saved automatically on this device.`;
+}
+
+// ---- backup / restore (save your season to a file, load it back) ----
+function backupData(){
+  saveState();
+  const data = localStorage.getItem(STORE_KEY) || "{}";
+  const blob = new Blob([data], { type:"application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `tuesday-womens-league-backup-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+function restoreData(file){
+  const reader = new FileReader();
+  reader.onload = () => {
+    try { JSON.parse(reader.result); } catch(e){ alert("That doesn't look like a valid backup file."); return; }
+    if (!confirm("Restore this backup? It replaces all data currently saved in this browser (check-ins, scores, season history).")) return;
+    try { localStorage.setItem(STORE_KEY, reader.result); } catch(e){ alert("Couldn't save the restored data."); return; }
+    location.reload();
+  };
+  reader.readAsText(file);
+}
+
+// ---- wiring ----
+$("search").addEventListener("input", renderRoster);
+$("backupBtn").onclick = backupData;
+$("restoreBtn").onclick = () => $("restoreFile").click();
+$("restoreFile").addEventListener("change", e => { const f = e.target.files[0]; if (f) restoreData(f); e.target.value = ""; });
+$("addBtn").onclick = addPlayer;
+$("sortRating").onclick = () => { rosterSort = "rating"; renderRoster(); };
+$("sortName").onclick = () => { rosterSort = "name"; renderRoster(); };
+$("newName").addEventListener("keydown", e => { if (e.key === "Enter") addPlayer(); });
+$("newRating").addEventListener("keydown", e => { if (e.key === "Enter") addPlayer(); });
+$("genBtn").onclick = generate;
+$("rosterToggle").onclick = () => setRosterCollapsed(!rosterCollapsed);
+$("rosterMini").onclick = () => setRosterCollapsed(false);
+$("allBtn").onclick = () => { PLAYERS.forEach((_,i)=>checkedIn.add(i)); update(); };
+$("resetBtn").onclick = () => {
+  if (!confirm("Clear all check-ins, groups, scores, and court rotation?")) return;
+  checkedIn.clear(); lastGroups = null; scores = {}; courtState = null;
+  setRosterCollapsed(false);
+  update(); renderGroups(); renderCourts();
+};
+$("printBtn").onclick = () => { if(!lastGroups){ generate(); } window.print(); };
+
+// Single delegated handler for every score box (court cards + match cards stay in
+// sync and standings refresh live as you type).
+document.addEventListener("input", e => {
+  const t = e.target;
+  if (!(t instanceof HTMLInputElement) || t.dataset.score == null) return;
+  const k = t.dataset.score, v = t.value;
+  if (v === "") delete scores[k]; else scores[k] = v;
+  document.querySelectorAll(`input[data-score="${k}"]`).forEach(inp => { if (inp !== t) inp.value = v; });
+  saveState();
+  const m = k.match(/^g(\d+)-(\d+)-/);
+  if (m){ renderStandings(+m[1]); renderGroupRecords(+m[1]); paintWinner(+m[1], +m[2]); }
+  renderEstimate();
+});
+// The live court rotation advances only once a box is FINISHED (blur or Enter), not on
+// every keystroke — otherwise typing "10" would submit at the "1". Pressing Enter also
+// commits so a quick keyboard entry still advances.
+document.addEventListener("change", e => {
+  const t = e.target;
+  if (!(t instanceof HTMLInputElement) || t.dataset.score == null) return;
+  maybeAdvance(t.dataset.score);
+});
+document.addEventListener("keydown", e => {
+  const t = e.target;
+  if (e.key === "Enter" && t instanceof HTMLInputElement && t.dataset.score != null) t.blur();
+});
+
+// ---- startup: restore saved session ----
+loadState();
+reconcileCourts();
+update();
+renderGroups();
+renderCourts();
+renderSeason();
+applyRosterCollapsed();
+</script>
+</body>
+</html>
