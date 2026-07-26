@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rally Time</title>
+<title>RallyTime</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -33,17 +33,19 @@
   a.card:hover { background: rgba(255,255,255,0.16); transform: translateY(-2px); }
   .card h2 { font-size: 1.05rem; margin-bottom: 4px; }
   .card p { font-size: 0.85rem; color: #a3c9b0; }
+  .card-row { display: flex; align-items: center; gap: 14px; }
+  .card-row img { width: 44px; height: 44px; border-radius: 8px; flex-shrink: 0; }
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>🥒 Rally Time</h1>
+  <h1>🥒 RallyTime</h1>
   <p class="subtitle">Pick your league</p>
   <div class="apps">
-    <a class="card" href="monday-dupr-league.html"><h2>Monday DUPR Match League</h2><p>Schedules, scores &amp; standings</p></a>
-    <a class="card" href="tuesday-womens-league.html"><h2>Tuesday Women's League</h2><p>Schedules, scores &amp; standings</p></a>
-    <a class="card" href="thursday-mens-league.html"><h2>Thursday Men's League</h2><p>Schedules, scores &amp; standings</p></a>
-    <a class="card" href="singles-challenge.html"><h2>Singles Challenge Division</h2><p>Challenge ladder &amp; results</p></a>
+    <a class="card" href="monday-dupr-league.html"><div class="card-row"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Monday DUPR Match League</h2><p>Schedules, scores &amp; standings</p></div></div></a>
+    <a class="card" href="tuesday-womens-league.html"><div class="card-row"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Tuesday Women's League</h2><p>Schedules, scores &amp; standings</p></div></div></a>
+    <a class="card" href="thursday-mens-league.html"><div class="card-row"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Thursday Men's League</h2><p>Schedules, scores &amp; standings</p></div></div></a>
+    <a class="card" href="singles-challenge.html"><div class="card-row"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Singles Challenge Division</h2><p>Challenge ladder &amp; results</p></div></div></a>
     <a class="card" href="tournament.html"><h2>Tournament</h2><p>Brackets &amp; results</p></a>
     <a class="card" href="tracker.html"><h2>Pickleball Tracker</h2><p>Match tracking</p></a>
   </div>
