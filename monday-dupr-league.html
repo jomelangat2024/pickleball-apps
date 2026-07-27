@@ -1454,5 +1454,19 @@ renderCourts();
 renderSeason();
 applyRosterCollapsed();
 </script>
-</body>
+<script>
+(function(){
+var KEY='pickleball-checkin-v1', API="/api/state/monday-dupr";
+var origSet=localStorage.setItem.bind(localStorage), t=null;
+function push(v){ clearTimeout(t); t=setTimeout(function(){ fetch(API,{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify({data:v})}).catch(function(){}); },800); }
+localStorage.setItem=function(k,v){ origSet(k,v); if(k===KEY) push(v); };
+fetch(API).then(function(r){return r.ok?r.json():null}).then(function(row){
+if(!row||typeof row.data!=="string") return;
+var local=localStorage.getItem(KEY);
+if(local===row.data){ sessionStorage.removeItem("rt-cloud-sync"); return; }
+if(!sessionStorage.getItem("rt-cloud-sync")){ origSet(KEY,row.data); sessionStorage.setItem("rt-cloud-sync","1"); location.reload(); }
+else { sessionStorage.removeItem("rt-cloud-sync"); push(local); }
+}).catch(function(){});
+})();
+</script></body>
 </html>
