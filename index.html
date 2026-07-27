@@ -31,27 +31,35 @@
   .subtitle { color: #c9d8ff; font-size: 0.95rem; margin-bottom: 26px; }
   .apps { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
   a.card {
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 18px rgba(10, 33, 81, 0.18);
+    background: rgba(255, 255, 255, 0.16);
+    -webkit-backdrop-filter: blur(22px) saturate(1.7);
+    backdrop-filter: blur(22px) saturate(1.7);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 20px;
+    box-shadow: 0 8px 28px rgba(10, 33, 81, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.45);
     padding: 18px 20px;
     text-decoration: none;
     display: flex;
     align-items: center;
     gap: 14px;
-    transition: transform 0.15s, box-shadow 0.15s;
+    transition: transform 0.15s, background 0.15s, box-shadow 0.15s;
   }
-  a.card:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(10, 33, 81, 0.28); }
-  .card img { width: 46px; height: 46px; border-radius: 10px; flex-shrink: 0; }
+  a.card:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.26);
+    box-shadow: 0 14px 34px rgba(10, 33, 81, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  }
+  .card img { width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(10, 33, 81, 0.25); }
   .card .icon {
-    width: 46px; height: 46px; border-radius: 10px; flex-shrink: 0;
-    background: #e3ebff; color: #2352e8;
+    width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.25); color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.35);
     display: flex; align-items: center; justify-content: center;
     font-size: 1.3rem; font-weight: 800;
   }
-  .card h2 { font-size: 1.02rem; font-weight: 700; color: #0a2151; margin-bottom: 3px; letter-spacing: -0.01em; }
-  .card p { font-size: 0.82rem; color: #6b7ba8; font-weight: 500; }
-  .card .chev { margin-left: auto; color: #b9c6ea; font-size: 1.2rem; font-weight: 700; }
+  .card h2 { font-size: 1.02rem; font-weight: 700; color: #fff; margin-bottom: 3px; letter-spacing: -0.01em; text-shadow: 0 1px 2px rgba(10, 33, 81, 0.25); }
+  .card p { font-size: 0.82rem; color: rgba(255, 255, 255, 0.78); font-weight: 500; }
+  .card .chev { margin-left: auto; color: rgba(255, 255, 255, 0.65); font-size: 1.2rem; font-weight: 700; }
 </style>
 </head>
 <body>
