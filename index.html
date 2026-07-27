@@ -7,47 +7,68 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(135deg, #1a3c2e 0%, #0f2419 100%);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(160deg, #1d43d8 0%, #3f6cf6 60%, #5b83f7 100%);
     min-height: 100vh;
+    padding: 16px 16px 48px;
+  }
+  .topbar {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(10, 33, 81, 0.18);
+    padding: 14px 22px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 24px;
-    color: #fff;
+    justify-content: space-between;
+    max-width: 960px;
+    margin: 8px auto 40px;
   }
-  .container { max-width: 640px; width: 100%; }
-  h1 { text-align: center; font-size: 2rem; margin-bottom: 8px; }
-  .subtitle { text-align: center; color: #a3c9b0; margin-bottom: 32px; }
-  .apps { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+  .brand { font-size: 1.35rem; font-weight: 800; color: #0a2151; letter-spacing: -0.02em; }
+  .brand span { color: #2352e8; }
+  .topbar .tag { font-size: 0.8rem; font-weight: 600; color: #6b7ba8; }
+  .container { max-width: 720px; margin: 0 auto; }
+  h1 { color: #fff; font-size: 1.7rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; }
+  .subtitle { color: #c9d8ff; font-size: 0.95rem; margin-bottom: 26px; }
+  .apps { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
   a.card {
-    display: block;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 12px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(10, 33, 81, 0.18);
     padding: 18px 20px;
     text-decoration: none;
-    color: #fff;
-    transition: background 0.15s, transform 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: transform 0.15s, box-shadow 0.15s;
   }
-  a.card:hover { background: rgba(255,255,255,0.16); transform: translateY(-2px); }
-  .card h2 { font-size: 1.05rem; margin-bottom: 4px; }
-  .card p { font-size: 0.85rem; color: #a3c9b0; }
-  .card-row { display: flex; align-items: center; gap: 14px; }
-  .card-row img { width: 44px; height: 44px; border-radius: 8px; flex-shrink: 0; }
+  a.card:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(10, 33, 81, 0.28); }
+  .card img { width: 46px; height: 46px; border-radius: 10px; flex-shrink: 0; }
+  .card .icon {
+    width: 46px; height: 46px; border-radius: 10px; flex-shrink: 0;
+    background: #e3ebff; color: #2352e8;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; font-weight: 800;
+  }
+  .card h2 { font-size: 1.02rem; font-weight: 700; color: #0a2151; margin-bottom: 3px; letter-spacing: -0.01em; }
+  .card p { font-size: 0.82rem; color: #6b7ba8; font-weight: 500; }
+  .card .chev { margin-left: auto; color: #b9c6ea; font-size: 1.2rem; font-weight: 700; }
 </style>
 </head>
 <body>
+<div class="topbar">
+  <div class="brand">🥒 Rally<span>Time</span></div>
+  <div class="tag">Life Time Gainesville</div>
+</div>
 <div class="container">
-  <h1>🥒 RallyTime</h1>
-  <p class="subtitle">Pick your league</p>
+  <h1>Leagues</h1>
+  <p class="subtitle">Pick your league to view schedules, scores &amp; standings</p>
   <div class="apps">
-    <a class="card" href="monday-dupr-league.html"><div class="card-row"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Monday DUPR Match League</h2><p>Schedules, scores &amp; standings</p></div></div></a>
-    <a class="card" href="tuesday-womens-league.html"><div class="card-row"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Tuesday Women's League</h2><p>Schedules, scores &amp; standings</p></div></div></a>
-    <a class="card" href="thursday-mens-league.html"><div class="card-row"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Thursday Men's League</h2><p>Schedules, scores &amp; standings</p></div></div></a>
-    <a class="card" href="singles-challenge.html"><div class="card-row"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Singles Challenge Division</h2><p>Challenge ladder &amp; results</p></div></div></a>
-    <a class="card" href="tournament.html"><h2>Tournament</h2><p>Brackets &amp; results</p></a>
-    <a class="card" href="tracker.html"><h2>Pickleball Tracker</h2><p>Match tracking</p></a>
+    <a class="card" href="monday-dupr-league.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Monday DUPR Match League</h2><p>Schedules, scores &amp; standings</p></div><span class="chev">›</span></a>
+    <a class="card" href="tuesday-womens-league.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Tuesday Women's League</h2><p>Schedules, scores &amp; standings</p></div><span class="chev">›</span></a>
+    <a class="card" href="thursday-mens-league.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Thursday Men's League</h2><p>Schedules, scores &amp; standings</p></div><span class="chev">›</span></a>
+    <a class="card" href="singles-challenge.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Singles Challenge Division</h2><p>Challenge ladder &amp; results</p></div><span class="chev">›</span></a>
+    <a class="card" href="tournament.html"><div class="icon">🏆</div><div><h2>Tournament</h2><p>Brackets &amp; results</p></div><span class="chev">›</span></a>
+    <a class="card" href="tracker.html"><div class="icon">📊</div><div><h2>Pickleball Tracker</h2><p>Match tracking</p></div><span class="chev">›</span></a>
   </div>
 </div>
 </body>
