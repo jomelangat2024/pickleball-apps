@@ -748,14 +748,17 @@ render();
 </script>
 <script>
 (function(){
-var KEY='fcpa_league_v2', API="/api/state/tracker";
-var origSet=localStorage.setItem.bind(localStorage), t=null;
-function doPut(v){ return fetch(API,{method:"PUT",headers:{"content-type":"application/json","x-pin":localStorage.getItem("rt-pin")||""},body:JSON.stringify({data:v})}); }
-function push(v){ clearTimeout(t); t=setTimeout(function(){ doPut(v).then(function(r){ if(r.status===403){ var p=prompt("Enter PIN to save changes:"); if(p!==null&&p!==""){ origSet("rt-pin",p); doPut(v); } } }).catch(function(){}); },800); }
-localStorage.setItem=function(k,v){ origSet(k,v); if(k===KEY) push(v); };
+var KEY='fcpa_league_v2', API="/api/state/tracker", DIRTY="rt-dirty:"+KEY;
+var origSet=localStorage.setItem.bind(localStorage), t=null, pending=null;
+function doPut(v,keep){ return fetch(API,{method:"PUT",keepalive:!!keep,headers:{"content-type":"application/json","x-pin":localStorage.getItem("rt-pin")||""},body:JSON.stringify({data:v})}); }
+function handle(r,v){ if(r.status===403){ var p=prompt("Enter PIN to save changes:"); if(p!==null&&p!==""){ origSet("rt-pin",p); return doPut(v).then(function(r2){ if(r2.ok) localStorage.removeItem(DIRTY); }); } } else if(r.ok){ localStorage.removeItem(DIRTY); } }
+function push(v){ pending=v; clearTimeout(t); t=setTimeout(function(){ pending=null; doPut(v).then(function(r){ return handle(r,v); }).catch(function(){}); },800); }
+localStorage.setItem=function(k,v){ origSet(k,v); if(k===KEY){ origSet(DIRTY,"1"); push(v); } };
+window.addEventListener("pagehide",function(){ if(pending!==null){ clearTimeout(t); doPut(pending,true).catch(function(){}); pending=null; } });
 fetch(API).then(function(r){return r.ok?r.json():null}).then(function(row){
-if(!row||typeof row.data!=="string") return;
 var local=localStorage.getItem(KEY);
+if(localStorage.getItem(DIRTY)){ if(local!==null) push(local); return; }
+if(!row||typeof row.data!=="string") return;
 if(local===row.data){ sessionStorage.removeItem("rt-cloud-sync"); return; }
 if(!sessionStorage.getItem("rt-cloud-sync")){ origSet(KEY,row.data); sessionStorage.setItem("rt-cloud-sync","1"); location.reload(); }
 else { sessionStorage.removeItem("rt-cloud-sync"); push(local); }
