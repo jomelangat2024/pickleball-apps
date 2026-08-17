@@ -91,6 +91,7 @@
   .du.bad{color:#fca5a5}
   .flag{display:inline-block;margin-left:5px;font-size:.58rem;font-weight:800;letter-spacing:.04em;
     padding:2px 6px;border-radius:999px;background:rgba(248,113,113,.22);border:1px solid rgba(248,113,113,.5);color:#fecaca}
+  .flag.near{background:rgba(251,191,36,.20);border-color:rgba(251,191,36,.5);color:#fde68a}
   .nodupr{color:var(--fade);font-weight:600}
   .alert{margin-top:10px;font-size:.72rem;line-height:1.5;color:#fecaca;
     background:rgba(248,113,113,.14);border:1px solid rgba(248,113,113,.4);border-radius:12px;padding:9px 11px}
@@ -198,8 +199,9 @@ var SEED = [
   { id:"e2", n:"Eli Azar",        d:3.929, url:"", note:"DUPR verified Aug 16 · PPE7GZ · Gainesville", added:1786982401000 },
   { id:"e3", n:"Yasir Saleem",    d:3.366, url:"", note:"DUPR verified Aug 16 · 94EJDJ · Ashburn", added:1786982402000 },
   { id:"e4", n:"John Kerstetter", d:3.027, url:"", note:"from Thursday men's league — re-verify on DUPR", added:1786982403000 },
-  { id:"e5", n:"Thomas P",        d:null,  url:"", note:"last name + DUPR needed", added:1786982404000 },
-  { id:"e6", n:"Tyler P",         d:null,  url:"", note:"last name + DUPR needed", added:1786982405000 }
+  { id:"e7", n:"Mohammad Mukhtar",d:3.718, url:"", note:"DUPR verified Aug 16 · 1RPGEM · Gainesville · 0.032 under the cap", added:1786982404000 },
+  { id:"e5", n:"Thomas Pizzola",  d:null,  url:"", note:"not in any league roster — DUPR lookup needed", added:1786982405000 },
+  { id:"e6", n:"Tyler Pizzola",   d:null,  url:"", note:"not in any league roster — DUPR lookup needed", added:1786982406000 }
 ];
 
 function load(){
@@ -225,6 +227,11 @@ function normName(s){
 }
 function fmtD(d){ return d==null ? null : Number(d).toFixed(3); }
 function outOfBand(d){ return d!=null && (Number(d) < EVENT.min || Number(d) > EVENT.max); }
+/* inside the band but within 0.05 of either edge — ratings drift, re-check before locking */
+function nearEdge(d){
+  if(d==null || outOfBand(d)) return false;
+  return (Number(d) - EVENT.min <= 0.05) || (EVENT.max - Number(d) <= 0.05);
+}
 function fmtDate(ts){
   if(!ts) return "";
   try{ return new Date(ts).toLocaleDateString(undefined,{month:"short",day:"numeric"}); }catch(e){ return ""; }
@@ -297,7 +304,8 @@ function render(){
       + '<td>'+cell+'</td>'
       + '<td>'+(e.d!=null
           ? '<span class="du'+(outOfBand(e.d)?" bad":"")+'" onclick="editD(\''+e.id+'\')" style="cursor:pointer">'+fmtD(e.d)+'</span>'
-            + (outOfBand(e.d) ? '<span class="flag">'+(e.d>EVENT.max?"OVER":"UNDER")+'</span>' : '')
+            + (outOfBand(e.d) ? '<span class="flag">'+(e.d>EVENT.max?"OVER":"UNDER")+'</span>'
+               : nearEdge(e.d) ? '<span class="flag near" title="within 0.05 of the cap">CLOSE</span>' : '')
           : '<span class="nodupr">— <button class="x" title="Add DUPR" onclick="editD(\''+e.id+'\')">✎</button></span>')+'</td>'
       + '<td>'+esc(fmtDate(e.added))+'</td>'
       + '<td><button class="x" title="Remove" onclick="rm(\''+e.id+'\')">×</button></td>'
