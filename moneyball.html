@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Moneyball — Men's 3.0–3.75 Entries</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --ink:#0a2151; --blue:#2352e8;
+    --glass:rgba(255,255,255,.16); --glassHi:rgba(255,255,255,.26);
+    --line:rgba(255,255,255,.35); --fade:rgba(255,255,255,.75);
+  }
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,sans-serif;
+    background:linear-gradient(225deg,rgb(75,151,254) 0%,rgb(1,99,208) 40%,rgb(5,21,94) 87%) fixed;
+    min-height:100vh;color:#fff;
+    padding-bottom:calc(90px + env(safe-area-inset-bottom));
+    -webkit-text-size-adjust:100%;
+  }
+  .topbar{
+    background:#fff;box-shadow:0 4px 18px rgba(5,21,94,.25);
+    padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top));
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    position:sticky;top:0;z-index:20;
+  }
+  .brand{font-size:1.05rem;font-weight:800;color:var(--ink);letter-spacing:-.02em;display:flex;align-items:center;gap:7px}
+  .brand span{color:var(--blue)}
+  .brand img{width:24px;height:24px}
+  .topbar a{font-size:.72rem;font-weight:700;color:#6b7ba8;text-decoration:none;white-space:nowrap}
+  .wrap{max-width:860px;margin:0 auto;padding:16px 12px 0}
+  h1{font-size:1.35rem;font-weight:800;letter-spacing:-.02em}
+  .sub{color:#c9d8ff;font-size:.82rem;margin-top:3px;line-height:1.5}
+  .sub a{color:#fff;text-decoration:underline;text-underline-offset:2px}
+
+  .status{
+    background:var(--glass);border:1px solid var(--line);border-radius:14px;
+    -webkit-backdrop-filter:blur(20px) saturate(1.7);backdrop-filter:blur(20px) saturate(1.7);
+    padding:11px 14px;margin:14px 0;display:flex;align-items:center;justify-content:space-between;gap:10px;
+    font-size:.8rem;font-weight:600;
+  }
+  .status .prog{color:var(--fade)}
+  .status .prog b{color:#fff;font-size:.95rem}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#4ade80;margin-right:6px;vertical-align:1px}
+  .dot.warn{background:#fbbf24}.dot.err{background:#f87171}
+
+  .card{
+    background:var(--glass);border:1px solid var(--line);border-radius:18px;
+    -webkit-backdrop-filter:blur(22px) saturate(1.7);backdrop-filter:blur(22px) saturate(1.7);
+    box-shadow:0 8px 28px rgba(10,33,81,.22),inset 0 1px 0 rgba(255,255,255,.45);
+    padding:14px;margin-bottom:16px;
+  }
+  .chd{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px}
+  .chd h2{font-size:1.05rem;font-weight:800;letter-spacing:-.01em}
+  .chd .ct{font-size:.68rem;font-weight:700;color:var(--fade);letter-spacing:.06em;text-transform:uppercase}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:4px}
+  .stat{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.20);border-radius:12px;padding:9px 8px;text-align:center}
+  .stat b{display:block;font-size:1.05rem;font-weight:800;line-height:1.25}
+  .stat span{font-size:.6rem;letter-spacing:.05em;text-transform:uppercase;color:var(--fade);font-weight:700}
+
+  .frm{display:grid;grid-template-columns:1fr 88px;gap:8px}
+  .frm .full{grid-column:1 / -1}
+  input[type=text],input[type=number],input[type=url]{
+    width:100%;height:44px;font-size:16px;font-weight:600;padding:0 12px;
+    border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.18);
+    color:#fff;font-family:inherit;-moz-appearance:textfield;
+  }
+  input::placeholder{color:rgba(255,255,255,.55);font-weight:500}
+  input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  input:focus{outline:none;background:rgba(255,255,255,.30);border-color:#fff}
+  .btn{
+    height:44px;border-radius:11px;border:1px solid var(--line);background:var(--glass);
+    color:#fff;font:inherit;font-size:.82rem;font-weight:700;cursor:pointer;
+  }
+  .btn.pri{background:#2352e8;border-color:#2352e8}
+  .btn:active{transform:translateY(1px)}
+  .hint{font-size:.68rem;color:var(--fade);margin-top:8px;line-height:1.5}
+
+  table{width:100%;border-collapse:collapse;margin-top:4px;font-size:.8rem}
+  th,td{padding:8px 4px;text-align:right;vertical-align:middle}
+  th:first-child,td:first-child{text-align:center;width:26px}
+  th:nth-child(2),td:nth-child(2){text-align:left}
+  th{font-size:.62rem;letter-spacing:.05em;text-transform:uppercase;color:var(--fade);font-weight:700;border-bottom:1px solid rgba(255,255,255,.22);cursor:pointer}
+  th.on{color:#fff}
+  td{border-bottom:1px solid rgba(255,255,255,.09)}
+  td a{color:#fff;text-decoration:none;font-weight:700;border-bottom:1px dotted rgba(255,255,255,.5)}
+  td .nm{font-weight:700}
+  td .note{display:block;font-size:.66rem;color:var(--fade);font-weight:500;margin-top:2px}
+  .du{font-weight:800}
+  .du.bad{color:#fca5a5}
+  .flag{display:inline-block;margin-left:5px;font-size:.58rem;font-weight:800;letter-spacing:.04em;
+    padding:2px 6px;border-radius:999px;background:rgba(248,113,113,.22);border:1px solid rgba(248,113,113,.5);color:#fecaca}
+  .nodupr{color:var(--fade);font-weight:600}
+  .alert{margin-top:10px;font-size:.72rem;line-height:1.5;color:#fecaca;
+    background:rgba(248,113,113,.14);border:1px solid rgba(248,113,113,.4);border-radius:12px;padding:9px 11px}
+  .x{background:none;border:none;color:rgba(255,255,255,.5);font:inherit;font-size:1rem;cursor:pointer;padding:2px 5px}
+  .x:hover{color:#fca5a5}
+  .empty{font-size:.76rem;color:var(--fade);padding:16px 4px;text-align:center;line-height:1.6}
+
+  .bar{
+    position:fixed;left:0;right:0;bottom:0;z-index:30;
+    background:rgba(5,21,94,.86);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+    border-top:1px solid var(--line);
+    padding:10px 12px;padding-bottom:calc(10px + env(safe-area-inset-bottom));
+    display:flex;gap:8px;
+  }
+  .bar button{
+    flex:1;padding:12px 6px;border-radius:12px;border:1px solid var(--line);
+    background:var(--glass);color:#fff;font:inherit;font-size:.76rem;font-weight:700;cursor:pointer;
+  }
+  .bar button.pri{background:#2352e8;border-color:#2352e8}
+  .bar button:active{transform:translateY(1px)}
+  @media(min-width:640px){
+    .wrap{padding:22px 16px 0}
+    h1{font-size:1.7rem}
+    .card{padding:18px 20px}
+    .frm{grid-template-columns:1fr 110px 110px}
+    .frm .full{grid-column:auto}
+    .frm .wide{grid-column:1 / -1}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><img src="rallytime-icon.png" alt="" onerror="this.style.display='none'">Rally<span>Time</span></div>
+  <a href="index.html">← RallyTime</a>
+</div>
+
+<div class="wrap">
+  <h1>Moneyball — Men's 3.0–3.75</h1>
+  <p class="sub" id="meta"></p>
+
+  <div class="status">
+    <span class="prog"><b id="cnt">0</b> entries tracked</span>
+    <span id="sync"><span class="dot"></span>Saved</span>
+  </div>
+
+  <div class="card">
+    <div class="chd"><h2>Field</h2><span class="ct" id="upd">—</span></div>
+    <div class="stats">
+      <div class="stat"><b id="sCnt">0</b><span>Players</span></div>
+      <div class="stat"><b id="sAvg">—</b><span>Avg DUPR</span></div>
+      <div class="stat"><b id="sHi">—</b><span>Highest</span></div>
+      <div class="stat"><b id="sLo">—</b><span>Lowest</span></div>
+    </div>
+    <div id="alert"></div>
+  </div>
+
+  <div class="card">
+    <div class="chd"><h2>Add an entry</h2></div>
+    <div class="frm">
+      <input class="wide" type="text" id="fName" placeholder="Player name (e.g. Wais Barek)" autocomplete="off">
+      <input type="number" id="fDupr" step="0.001" min="2" max="8" placeholder="DUPR" inputmode="decimal">
+      <button class="btn pri" onclick="addEntry()">Add</button>
+      <input class="full wide" type="url" id="fUrl" placeholder="pickleballtournaments.com player link (optional)" autocomplete="off">
+      <input class="full wide" type="text" id="fNote" placeholder="Note — club, who referred them, etc. (optional)" autocomplete="off">
+    </div>
+    <p class="hint">Paste a name as “Last, First” or “First Last” — both work. DUPR is doubles unless you note otherwise. Tap a column header to re-sort.</p>
+  </div>
+
+  <div class="card">
+    <div class="chd"><h2>Entries</h2><span class="ct" id="sortLbl">by DUPR</span></div>
+    <div id="list"></div>
+  </div>
+</div>
+
+<div class="bar">
+  <button onclick="expJSON()">Backup</button>
+  <button onclick="expCSV()">CSV</button>
+  <button class="pri" onclick="saveNow()">Save</button>
+  <button onclick="wipe()">Reset</button>
+</div>
+
+<script>
+/* ---------- event ---------- */
+var EVENT = {
+  name:"Men's 3.0-3.75 Moneyball Tournament",
+  date:"2026-08-27",
+  venue:"7801 Limestone Dr, Gainesville, VA",
+  fee:"$50",
+  deadline:"Aug 25, 8:00 AM ET",
+  format:"round robin pool play, top 8 to bracket — no partner needed",
+  min:3.000, max:3.750,
+  url:"https://pickleballtournaments.com/tournaments/mens-3-0-3-75-moneyball-tournament"
+};
+
+/* ---------- state ---------- */
+var KEY   = "rt-moneyball-2026-08-27";
+var API   = "/api/state/moneyball";
+var DIRTY = "rt-dirty:" + KEY;
+var entries = [];
+var sortBy = "d";   // d = DUPR desc, n = name, a = added
+
+var SEED = [
+  { id:"e1", n:"Wais Barek",      d:3.529, url:"https://pickleballtournaments.com/tournaments/mens-3-0-3-75-moneyball-tournament/player-results/wais-barek", note:"DUPR verified Aug 16", added:1786982400000 },
+  { id:"e2", n:"Eli Azar",        d:3.929, url:"", note:"DUPR verified Aug 16 · PPE7GZ · Gainesville", added:1786982401000 },
+  { id:"e3", n:"Yasir Saleem",    d:3.366, url:"", note:"DUPR verified Aug 16 · 94EJDJ · Ashburn", added:1786982402000 },
+  { id:"e4", n:"John Kerstetter", d:3.027, url:"", note:"from Thursday men's league — re-verify on DUPR", added:1786982403000 },
+  { id:"e5", n:"Thomas P",        d:null,  url:"", note:"last name + DUPR needed", added:1786982404000 },
+  { id:"e6", n:"Tyler P",         d:null,  url:"", note:"last name + DUPR needed", added:1786982405000 }
+];
+
+function load(){
+  try{
+    var r = localStorage.getItem(KEY);
+    if(r){ var o=JSON.parse(r); entries=o.entries||[]; sortBy=o.sortBy||"d"; return; }
+  }catch(e){}
+  entries = SEED.slice();
+}
+function serialize(){ return JSON.stringify({entries:entries, sortBy:sortBy, savedAt:Date.now()}); }
+
+/* ---------- helpers ---------- */
+function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+function uid(){ return "e"+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36); }
+/* "Barek, Wais" -> "Wais Barek"; leaves "Wais Barek" alone */
+function normName(s){
+  s = String(s||"").trim().replace(/\s+/g," ");
+  if(s.indexOf(",") > -1){
+    var p = s.split(",");
+    if(p.length===2 && p[1].trim()) return p[1].trim()+" "+p[0].trim();
+  }
+  return s;
+}
+function fmtD(d){ return d==null ? null : Number(d).toFixed(3); }
+function outOfBand(d){ return d!=null && (Number(d) < EVENT.min || Number(d) > EVENT.max); }
+function fmtDate(ts){
+  if(!ts) return "";
+  try{ return new Date(ts).toLocaleDateString(undefined,{month:"short",day:"numeric"}); }catch(e){ return ""; }
+}
+
+/* ---------- render ---------- */
+function sorted(){
+  var a = entries.slice();
+  a.sort(function(x,y){
+    if(sortBy==="n") return normName(x.n).split(" ").pop().localeCompare(normName(y.n).split(" ").pop());
+    if(sortBy==="a") return (y.added||0)-(x.added||0);
+    if(x.d==null && y.d==null) return (x.added||0)-(y.added||0);
+    if(x.d==null) return 1;
+    if(y.d==null) return -1;
+    return y.d - x.d;
+  });
+  return a;
+}
+
+function render(){
+  document.getElementById("meta").innerHTML =
+    new Date(EVENT.date+"T12:00:00").toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"}) +
+    " · " + esc(EVENT.venue) + "<br>" + esc(EVENT.fee) + " entry · reg closes " + esc(EVENT.deadline) +
+    " · " + esc(EVENT.format) + " · <a href=\"" + EVENT.url + "\" target=\"_blank\" rel=\"noopener\">tournament page</a>";
+
+  var A = sorted();
+  var rated = A.filter(function(e){ return e.d!=null; }).map(function(e){ return Number(e.d); });
+  var avg = rated.length ? rated.reduce(function(s,v){return s+v;},0)/rated.length : null;
+
+  document.getElementById("cnt").textContent  = entries.length;
+  document.getElementById("sCnt").textContent = entries.length;
+  document.getElementById("sAvg").textContent = avg==null ? "—" : avg.toFixed(3);
+  document.getElementById("sHi").textContent  = rated.length ? Math.max.apply(null,rated).toFixed(3) : "—";
+  document.getElementById("sLo").textContent  = rated.length ? Math.min.apply(null,rated).toFixed(3) : "—";
+  document.getElementById("sortLbl").textContent =
+    sortBy==="n" ? "by last name" : sortBy==="a" ? "newest first" : "by DUPR";
+
+  var unrated = entries.length - rated.length;
+  document.getElementById("upd").textContent =
+    unrated ? unrated + " missing DUPR" : (entries.length ? "all rated" : "—");
+
+  var bad = A.filter(function(e){ return outOfBand(e.d); });
+  document.getElementById("alert").innerHTML = bad.length
+    ? '<div class="alert"><b>' + bad.length + ' outside the ' + EVENT.min.toFixed(2) + '–' + EVENT.max.toFixed(2) + ' band:</b> '
+      + bad.map(function(e){ return esc(normName(e.n)) + " " + fmtD(e.d); }).join(", ")
+      + ' — confirm with the TD before counting them in the field.</div>'
+    : '';
+
+  if(!entries.length){
+    document.getElementById("list").innerHTML =
+      '<div class="empty">No entries yet.<br>Add the first player above.</div>';
+    return;
+  }
+
+  var h = '<table><thead><tr>'
+    + '<th>#</th>'
+    + '<th class="'+(sortBy==="n"?"on":"")+'" onclick="setSort(\'n\')">Player</th>'
+    + '<th class="'+(sortBy==="d"?"on":"")+'" onclick="setSort(\'d\')">DUPR</th>'
+    + '<th class="'+(sortBy==="a"?"on":"")+'" onclick="setSort(\'a\')">Added</th>'
+    + '<th></th></tr></thead><tbody>';
+
+  A.forEach(function(e,i){
+    var nm = esc(normName(e.n));
+    var cell = e.url
+      ? '<a href="'+esc(e.url)+'" target="_blank" rel="noopener">'+nm+'</a>'
+      : '<span class="nm">'+nm+'</span>';
+    if(e.note) cell += '<span class="note">'+esc(e.note)+'</span>';
+    h += '<tr>'
+      + '<td>'+(i+1)+'</td>'
+      + '<td>'+cell+'</td>'
+      + '<td>'+(e.d!=null
+          ? '<span class="du'+(outOfBand(e.d)?" bad":"")+'" onclick="editD(\''+e.id+'\')" style="cursor:pointer">'+fmtD(e.d)+'</span>'
+            + (outOfBand(e.d) ? '<span class="flag">'+(e.d>EVENT.max?"OVER":"UNDER")+'</span>' : '')
+          : '<span class="nodupr">— <button class="x" title="Add DUPR" onclick="editD(\''+e.id+'\')">✎</button></span>')+'</td>'
+      + '<td>'+esc(fmtDate(e.added))+'</td>'
+      + '<td><button class="x" title="Remove" onclick="rm(\''+e.id+'\')">×</button></td>'
+      + '</tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById("list").innerHTML = h;
+}
+
+function setSort(s){ sortBy = s; persist(); render(); }
+
+/* ---------- edit ---------- */
+function addEntry(){
+  var n = document.getElementById("fName").value.trim();
+  if(!n){ document.getElementById("fName").focus(); return; }
+  var dRaw = document.getElementById("fDupr").value.trim();
+  var d = dRaw==="" ? null : Number(dRaw);
+  if(d!=null && (isNaN(d) || d<2 || d>8)) d = null;
+  var u = document.getElementById("fUrl").value.trim();
+  var note = document.getElementById("fNote").value.trim();
+
+  var key = normName(n).toLowerCase();
+  var dup = entries.filter(function(e){ return normName(e.n).toLowerCase()===key; })[0];
+  if(dup){
+    if(!confirm(normName(n)+" is already on the list. Add anyway?")) return;
+  }
+
+  entries.push({ id:uid(), n:normName(n), d:d, url:u, note:note, added:Date.now() });
+  document.getElementById("fName").value = "";
+  document.getElementById("fDupr").value = "";
+  document.getElementById("fUrl").value  = "";
+  document.getElementById("fNote").value = "";
+  persist(); render();
+  document.getElementById("fName").focus();
+}
+
+function editD(id){
+  var e = entries.filter(function(x){return x.id===id;})[0];
+  if(!e) return;
+  var v = prompt("DUPR for "+normName(e.n)+":", e.d!=null?e.d:"");
+  if(v===null) return;
+  v = v.trim();
+  var d = v==="" ? null : Number(v);
+  e.d = (d!=null && !isNaN(d) && d>=2 && d<=8) ? d : null;
+  persist(); render();
+}
+
+function rm(id){
+  var e = entries.filter(function(x){return x.id===id;})[0];
+  if(!e) return;
+  if(!confirm("Remove "+normName(e.n)+" from the list?")) return;
+  entries = entries.filter(function(x){return x.id!==id;});
+  persist(); render();
+}
+
+document.addEventListener("keydown", function(ev){
+  if(ev.key!=="Enter") return;
+  var id = document.activeElement && document.activeElement.id;
+  if(id==="fName" || id==="fDupr" || id==="fUrl" || id==="fNote") addEntry();
+});
+
+/* ---------- save ---------- */
+var timer=null;
+function persist(){
+  var v = serialize();
+  try{ localStorage.setItem(KEY,v); localStorage.setItem(DIRTY,"1"); }catch(e){}
+  flag("warn","Saving…");
+  clearTimeout(timer);
+  timer = setTimeout(function(){ push(v,false); }, 800);
+}
+function saveNow(){ var v=serialize(); try{localStorage.setItem(KEY,v);}catch(e){} push(v,false); }
+
+function push(v,keep){
+  if(location.protocol==="file:"){ flag("ok","Saved on this device"); try{localStorage.removeItem(DIRTY);}catch(e){} return; }
+  return fetch(API,{
+    method:"PUT", keepalive:!!keep,
+    headers:{"content-type":"application/json","x-pin":localStorage.getItem("rt-pin")||""},
+    body:JSON.stringify({data:v})
+  }).then(function(r){
+    if(r.status===403){
+      var p = prompt("Enter the RallyTime PIN to save:");
+      if(p){ localStorage.setItem("rt-pin",p.trim()); return push(v,keep); }
+      flag("err","Not saved — PIN needed"); return;
+    }
+    if(!r.ok){ flag("err","Not saved — offline?"); return; }
+    try{ localStorage.removeItem(DIRTY); }catch(e){}
+    flag("ok","Saved to cloud");
+  }).catch(function(){ flag("err","Saved on this device only"); });
+}
+
+function flag(kind,msg){
+  document.getElementById("sync").innerHTML =
+    '<span class="dot '+(kind==="ok"?"":kind)+'"></span>'+msg;
+}
+
+function pull(){
+  if(location.protocol==="file:") return;
+  fetch(API).then(function(r){return r.json();}).then(function(o){
+    if(!o || !o.data) return;
+    if(localStorage.getItem(DIRTY)==="1") return;   // local edits win
+    var mine=null; try{ mine=JSON.parse(localStorage.getItem(KEY)||"null"); }catch(e){}
+    var theirs=null; try{ theirs=JSON.parse(o.data); }catch(e){ return; }
+    if(!theirs) return;
+    if(mine && mine.savedAt && theirs.savedAt && mine.savedAt > theirs.savedAt) return;
+    entries = theirs.entries||[]; sortBy = theirs.sortBy||sortBy;
+    try{ localStorage.setItem(KEY,o.data); }catch(e){}
+    render(); flag("ok","Synced");
+  }).catch(function(){});
+}
+
+window.addEventListener("pagehide",function(){
+  if(localStorage.getItem(DIRTY)==="1") push(serialize(),true);
+});
+
+/* ---------- export ---------- */
+function dl(name,text,type){
+  var b = new Blob([text],{type:type||"text/plain"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(b); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function expJSON(){ dl("moneyball-"+EVENT.date+"-backup.json", serialize(), "application/json"); }
+function expCSV(){
+  var rows = [["#","Player","DUPR","Profile","Note","Added"]];
+  sorted().forEach(function(e,i){
+    rows.push([i+1, normName(e.n), e.d!=null?fmtD(e.d):"", e.url||"", e.note||"",
+      e.added ? new Date(e.added).toISOString().slice(0,10) : ""]);
+  });
+  var csv = rows.map(function(r){
+    return r.map(function(c){ c=String(c); return /[",\n]/.test(c) ? '"'+c.replace(/"/g,'""')+'"' : c; }).join(",");
+  }).join("\n");
+  dl("moneyball-"+EVENT.date+"-entries.csv", csv, "text/csv");
+}
+function wipe(){
+  if(!confirm("Clear the whole entry list? Export a backup first if you want to keep it.")) return;
+  entries = []; persist(); render();
+}
+
+/* ---------- go ---------- */
+load(); render(); pull();
+</script>
+</body>
+</html>
