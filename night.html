@@ -160,6 +160,29 @@
   .sheet .btn{flex:1}
   .sheet .btn.go{background:#25D366;border-color:#25D366;color:#05341a}
   .hide{display:none}
+  .chgrow{display:grid;grid-template-columns:52px 1fr 46px 1fr 62px;gap:6px;align-items:center;
+    border-top:1px solid rgba(255,255,255,.13);padding:9px 0 4px}
+  .chgrow:first-of-type{border-top:none}
+  .chgrow label{font-size:.62rem;font-weight:800;color:var(--fade);letter-spacing:.04em;text-transform:uppercase}
+  .hint{font-size:.64rem;color:var(--fade);line-height:1.45;padding-bottom:4px}
+  .logline{font-size:.68rem;color:#c9d8ff;line-height:1.6;border-top:1px solid rgba(255,255,255,.09);padding:4px 0}
+  .logline span{color:var(--fade);font-weight:700;margin-right:6px}
+  .cmdwrap{background:var(--glass);border:1px solid var(--line);border-radius:15px;
+    padding:11px 13px;margin-bottom:14px}
+  .cmdbar{display:grid;grid-template-columns:1fr 66px 60px;gap:7px}
+  .cmdbar input{height:44px;font-size:16px}
+  .cmdmsg{font-size:.72rem;line-height:1.5;margin-top:8px;font-weight:600}
+  .cmdmsg.ok{color:#bbf7d0}.cmdmsg.err{color:#fca5a5}.cmdmsg.ask{color:#fde68a}
+  .cmdmsg .opt{display:inline-block;background:rgba(255,255,255,.2);border:1px solid var(--line);
+    border-radius:8px;padding:3px 8px;margin:3px 4px 0 0;font-size:.7rem;font-weight:700;cursor:pointer}
+  .cmdhelp{font-size:.64rem;color:var(--fade);line-height:1.6;margin-top:8px}
+  .cmdhelp code{background:rgba(255,255,255,.16);border-radius:5px;padding:1px 5px;font-size:.66rem}
+  @media(max-width:520px){
+    .chgrow{grid-template-columns:1fr 1fr;grid-auto-rows:auto}
+    .chgrow label{grid-column:1/-1;padding-top:2px}
+    .chgrow select{grid-column:1/-1}
+    .chgrow button{grid-column:1/-1}
+  }
   @media(min-width:640px){
     .wrap{padding:20px 16px 0}h1{font-size:1.6rem}.card{padding:17px 19px}
     .tm{font-size:.87rem}th,td{padding:6px 6px}
@@ -266,8 +289,19 @@ var S = {
   inn:[],                 /* player ids playing */
   pools:[],               /* [{name, ids:[]}] — court/slot derived */
   scores:{},              /* teamSignature -> {a,b} */
+  log:[],                 /* audit trail of roster/pool changes */
   tab:"play"
 };
+
+/* Every roster or pool change is logged. Mid-night substitutions are exactly
+   the thing people argue about afterwards, so keep a record of what changed
+   and when. */
+function logIt(msg){
+  S.log = S.log || [];
+  var d=new Date();
+  S.log.unshift({t:d.getHours()+":"+(d.getMinutes()<10?"0":"")+d.getMinutes(), m:msg});
+  if(S.log.length>40) S.log.length=40;
+}
 
 /* Wednesday Aug 26 as designed: Men's 5 / Calibration 5 / Women's 5 */
 function seedDefault(){
@@ -572,6 +606,213 @@ function poolQual(ids){
   return {spread:ds[0]-ds[ds.length-1], gap:gap, nr:nr, rated:ds.length};
 }
 
+/* ==========================================================================
+   Command bar
+
+   No LLM — this is a local grammar with fuzzy name matching. Deliberate:
+   it has to work on a phone, on court, possibly with no signal, instantly.
+   Ambiguous names come back as tappable choices rather than a guess, and
+   every command is undoable because free text will occasionally misfire.
+   ========================================================================== */
+var CMD = {msg:"", kind:"", opts:null};
+var UNDO = [];
+function snapshot(){ UNDO.push(JSON.stringify(S)); if(UNDO.length>15) UNDO.shift(); }
+function undo(){
+  if(!UNDO.length){ CMD={msg:"Nothing to undo.",kind:"err",opts:null}; render(); return; }
+  S=JSON.parse(UNDO.pop());
+  CMD={msg:"Undone.",kind:"ok",opts:null};
+  persist(); render();
+}
+
+function norm(s){ return String(s||"").trim().toLowerCase().replace(/[^a-z0-9 .'-]/g,""); }
+/* Resolve a typed name. scope: "all" | "in" (playing) | "out" (available). */
+function findP(q, scope){
+  q=norm(q); if(!q) return [];
+  var innSet={}; S.inn.forEach(function(i){innSet[i]=1;});
+  var pool=ROSTER.filter(function(p){
+    if(scope==="in") return !!innSet[p.id];
+    if(scope==="out") return !innSet[p.id];
+    return true;
+  });
+  var score=function(p){
+    var n=norm(p.n), parts=n.split(/\s+/);
+    if(n===q) return 100;
+    if(parts[0]===q) return 90;
+    if(parts.length>1 && parts[parts.length-1]===q) return 85;
+    if(n.replace(/\s+/g,"")===q.replace(/\s+/g,"")) return 95;
+    if(n.indexOf(q)===0) return 70;
+    if(parts.some(function(x){return x.indexOf(q)===0;})) return 60;
+    if(n.indexOf(q)>-1) return 40;
+    return 0;
+  };
+  var hits=pool.map(function(p){return {p:p,s:score(p)};})
+               .filter(function(x){return x.s>0;})
+               .sort(function(a,b){return b.s-a.s;});
+  if(!hits.length) return [];
+  var top=hits[0].s;
+  return hits.filter(function(x){return x.s===top;}).map(function(x){return x.p;});
+}
+function findPool(q){
+  q=norm(q); if(!q) return -1;
+  var exact=-1, part=-1;
+  S.pools.forEach(function(p,i){
+    var n=norm(p.name);
+    if(n===q) exact=i;
+    else if(n.indexOf(q)===0 || n.replace(/[^a-z]/g,"").indexOf(q.replace(/[^a-z]/g,""))===0) { if(part<0) part=i; }
+  });
+  if(exact>-1) return exact;
+  if(part>-1) return part;
+  var n=parseInt(q,10);
+  if(!isNaN(n) && n>=1 && n<=S.pools.length) return n-1;
+  return -1;
+}
+function one(q, scope, label){
+  var h=findP(q,scope);
+  if(!h.length) return {err:'No'+(scope==="in"?" player in a pool":scope==="out"?" available player":"one")
+    +' matching “'+q+'”.'};
+  if(h.length>1) return {err:'“'+q+'” could be '+h.map(function(p){return ab(p.id);}).join(" or ")
+    +'. Be more specific.', opts:h.map(function(p){return {label:ab(p.id), fill:p.n};})};
+  return {id:h[0].id};
+}
+
+function runCmd(raw){
+  var t=String(raw||"").trim();
+  if(!t) return;
+  var lower=t.toLowerCase();
+  var m, r, r2, pi;
+  var say=function(kind,msg,opts){ CMD={msg:msg,kind:kind,opts:opts||null}; };
+
+  /* score:  "court 1 11-9"  |  "1 11-9"  */
+  if((m=lower.match(/^(?:court\s*)?(\d+)\s+(\d+)\s*[-:to]+\s*(\d+)$/))){
+    var c=+m[1], cur=onCourt(c);
+    if(!cur) return say("err","Court "+c+" has nothing on it.");
+    snapshot();
+    S.scores[cur.key]={a:+m[2], b:+m[3]};
+    say("ok","Court "+c+": "+nm(cur.A[0])+" + "+nm(cur.A[1])+" "+m[2]+"–"+m[3]+" "
+      +nm(cur.B[0])+" + "+nm(cur.B[1])+".");
+    persist(); render(); return;
+  }
+  /* config */
+  if((m=lower.match(/^courts?\s+(\d+)$/))){ snapshot(); S.cfg.courts=Math.max(1,+m[1]);
+    say("ok","Courts set to "+S.cfg.courts+"."); persist(); render(); return; }
+  if((m=lower.match(/^(?:first\s*ball|start)\s+(\d{1,2}:\d{2})$/))){ snapshot(); S.cfg.firstBall=m[1];
+    say("ok","First ball "+m[1]+"."); persist(); render(); return; }
+  if((m=lower.match(/^horn\s+(\d+)$/))){ snapshot(); S.cfg.horn=Math.max(1,+m[1]);
+    say("ok","Horn at "+S.cfg.horn+" min."); persist(); render(); return; }
+  if(/^(regen|regenerate|rebuild|redo pools)/.test(lower)){
+    var a=autoPools();
+    if(a.err) return say("err",a.err);
+    snapshot(); S.pools=a.pools; logIt("pools regenerated");
+    say("ok","Pools regenerated: "+S.pools.map(function(p){return p.name+" ("+p.ids.length+")";}).join(", ")+".");
+    persist(); render(); return;
+  }
+  if(/^undo$/.test(lower)){ undo(); return; }
+
+  /* sub:  "sub Rae for Stephanie"  |  "Rae in for Stephanie" */
+  if((m=t.match(/^(?:sub(?:stitute)?)\s+(.+?)\s+(?:in\s+)?for\s+(.+)$/i))
+   ||(m=t.match(/^(.+?)\s+in\s+for\s+(.+)$/i))){
+    r=one(m[1],"out"); if(r.err) return say("err",r.err,r.opts);
+    r2=one(m[2],"in"); if(r2.err) return say("err",r2.err,r2.opts);
+    var bad=whyNotSub(r2.id, r.id); if(bad) return say("err",bad);
+    snapshot(); subPlayer(r2.id, r.id);
+    return say("ok",ab(r.id)+" in for "+ab(r2.id)+" — same seat, other pools untouched.");
+  }
+  /* swap: "swap Yasir with Juan" | "switch Yasir and Juan" */
+  if((m=t.match(/^(?:swap|switch|trade)\s+(.+?)\s+(?:with|and|for|<?->?|⇄)\s+(.+)$/i))){
+    r=one(m[1],"in"); if(r.err) return say("err",r.err,r.opts);
+    r2=one(m[2],"in"); if(r2.err) return say("err",r2.err,r2.opts);
+    var bad2=whyNotSwap(r.id, r2.id); if(bad2) return say("err",bad2);
+    snapshot(); swapPlayers(r.id, r2.id);
+    return say("ok",ab(r.id)+" ⇄ "+ab(r2.id)+".");
+  }
+  /* move: "move Yasir to calibration" */
+  if((m=t.match(/^move\s+(.+?)\s+to\s+(.+)$/i))){
+    r=one(m[1],"in"); if(r.err) return say("err",r.err,r.opts);
+    pi=findPool(m[2]);
+    if(pi<0) return say("err",'No pool matching “'+m[2]+'”. Pools: '
+      +S.pools.map(function(p){return p.name;}).join(", ")+".");
+    snapshot(); movePlayer(r.id, String(pi));
+    return say("ok",ab(r.id)+" → "+S.pools[pi].name+" ("+S.pools[pi].ids.length+" players).");
+  }
+  /* rating: "Yasir 3.35" | "set Vijay to 3.2" | "Dylan NR" */
+  if((m=t.match(/^(?:set\s+)?(.+?)\s+(?:to\s+)?(\d\.\d{1,3}|\d|nr)$/i))){
+    r=one(m[1],"all");
+    if(!r.err){
+      snapshot();
+      var v=/^nr$/i.test(m[2]) ? "" : m[2];
+      setD(r.id, v);
+      return say("ok",ab(r.id)+" rated "+(v===""?"NR":parseFloat(v).toFixed(3))+".");
+    }
+  }
+  /* drop: "drop Huda" | "remove Huda" | "-huda" */
+  if((m=t.match(/^(?:drop|remove|out)\s+(.+)$/i))||(m=t.match(/^-\s*(.+)$/))){
+    r=one(m[1],"in"); if(r.err) return say("err",r.err,r.opts);
+    snapshot(); var pn=poolOf(r.id)>-1?S.pools[poolOf(r.id)].name:null;
+    movePlayer(r.id,"out");
+    return say("ok",ab(r.id)+" dropped"+(pn?" from "+pn:"")+".");
+  }
+  /* add: "add Trey" | "add Trey to womens" | "+trey" */
+  if((m=t.match(/^(?:add|\+)\s*(.+?)(?:\s+to\s+(.+))?$/i))){
+    r=one(m[1],"out"); if(r.err) return say("err",r.err,r.opts);
+    if(m[2]){
+      pi=findPool(m[2]);
+      if(pi<0) return say("err",'No pool matching “'+m[2]+'”. Pools: '
+        +S.pools.map(function(p){return p.name;}).join(", ")+".");
+    } else {
+      /* no pool given — put them where they fit best on rating and gender */
+      var g=P(r.id).g, best=-1, bg=1e9;
+      S.pools.forEach(function(p,i){
+        if(p.ids.length>=7) return;
+        if(S.cfg.womenSep && p.ids.length && p.ids.every(function(x){return P(x).g==="F";}) && g!=="F") return;
+        if(S.cfg.womenSep && p.ids.length && p.ids.every(function(x){return P(x).g!=="F";}) && g==="F") return;
+        var rt=p.ids.map(dOf).filter(function(v){return v!=null;});
+        var mean=rt.length?rt.reduce(function(a,b){return a+b;},0)/rt.length:3.4;
+        var gap=dOf(r.id)==null?50:Math.abs(dOf(r.id)-mean);
+        if(gap<bg){ bg=gap; best=i; }
+      });
+      if(best<0) return say("err","Nowhere to put "+ab(r.id)
+        +" — every eligible pool is full at 7. Move someone first, or add a pool.");
+      pi=best;
+    }
+    snapshot(); addTo(pi, r.id);
+    return say("ok",ab(r.id)+" added to "+S.pools[pi].name+" ("+S.pools[pi].ids.length+" players)"
+      +(m[2]?"":" — closest fit on rating."));
+  }
+  say("err","Didn't understand that. Try “add Trey”, “drop Huda”, “sub Rae for Stephanie”, "
+    +"“swap Yasir with Juan”, “move Yasir to calibration”, “Vijay 3.25”, or “court 1 11-9”.");
+}
+function doCmd(){
+  var el=document.getElementById("cmd");
+  var v=el?el.value:"";
+  runCmd(v);
+  if(CMD.kind==="ok"){ var e2=document.getElementById("cmd"); if(e2) e2.value=""; }
+  render();
+}
+function fillCmd(txt){
+  var el=document.getElementById("cmd");
+  if(el){ el.value=txt; el.focus(); }
+}
+function vCmd(){
+  var h='<div class="cmdwrap"><div class="cmdbar">'
+   + '<input type="text" id="cmd" placeholder="Type a change… e.g. sub Rae for Stephanie" '
+   + 'onkeydown="if(event.key===\'Enter\'){event.preventDefault();doCmd();}">'
+   + '<button class="btn pri" onclick="doCmd()">Run</button>'
+   + '<button class="btn" onclick="undo()">Undo</button></div>';
+  if(CMD.msg){
+    h+='<div class="cmdmsg '+CMD.kind+'">'+esc(CMD.msg);
+    if(CMD.opts) h+='<br>'+CMD.opts.map(function(o){
+      return '<span class="opt" onclick="fillCmd(\''+esc(o.fill).replace(/'/g,"\\'")+'\')">'
+        +esc(o.label)+'</span>'; }).join("");
+    h+='</div>';
+  } else {
+    h+='<div class="cmdhelp"><code>add Trey</code> <code>drop Huda</code> '
+     + '<code>sub Rae for Stephanie</code> <code>swap Yasir with Juan</code> '
+     + '<code>move Yasir to calibration</code> <code>Vijay 3.25</code> '
+     + '<code>court 1 11-9</code> <code>courts 3</code> <code>regen</code> <code>undo</code></div>';
+  }
+  return h+'</div>';
+}
+
 /* ---------- render ---------- */
 var TABS=[["roster","Roster"],["pools","Pools"],["play","Play"],["stand","Standings"]];
 function render(){
@@ -588,10 +829,11 @@ function render(){
     return '<button class="'+(S.tab===t[0]?"on":"")+'" onclick="go(\''+t[0]+'\')">'+t[1]+b+'</button>';
   }).join("");
   var v=document.getElementById("view");
-  if(S.tab==="roster") v.innerHTML=vRoster();
-  else if(S.tab==="pools") v.innerHTML=vPools();
-  else if(S.tab==="stand") v.innerHTML=vStand();
-  else v.innerHTML=vPlay();
+  var body = S.tab==="roster" ? vRoster()
+           : S.tab==="pools"  ? vPools()
+           : S.tab==="stand"  ? vStand()
+           : vPlay();
+  v.innerHTML = vCmd() + body;      /* command bar on every tab */
 }
 function go(t){ S.tab=t; persist(); render(); }
 
@@ -780,7 +1022,114 @@ function addTo(pi,id){
   if(S.inn.indexOf(id)<0) S.inn.push(id);
   S.pools.forEach(function(p){ var j=p.ids.indexOf(id); if(j>-1) p.ids.splice(j,1); });
   S.pools[pi].ids.push(id);
+  logIt(ab(id)+" added to "+S.pools[pi].name);
   persist(); render();
+}
+
+/* ---------- mid-night changes ---------- */
+function poolOf(id){ for(var i=0;i<S.pools.length;i++) if(S.pools[i].ids.indexOf(id)>-1) return i; return -1; }
+
+/* Substitute: the arriving player takes the leaving player's exact seat, so the
+   pool size, rotation shape and every other pool are untouched. This is the
+   common case — someone drops at 6pm and someone else walks in. */
+/* Validation is separate from the action so both the Changes card (which
+   alerts) and the command bar (which shows inline feedback) can use it. */
+function whyNotSub(outId, inId){
+  if(!outId||!inId) return "Pick both a player to sub out and a player to sub in.";
+  if(outId===inId) return "That's the same player.";
+  if(poolOf(outId)<0) return ab(outId)+" is not in a pool.";
+  if(poolOf(inId)>-1) return ab(inId)+" is already in "+S.pools[poolOf(inId)].name+". Use Swap instead.";
+  return null;
+}
+function whyNotSwap(a,b){
+  if(!a||!b) return "Pick two players to swap.";
+  if(a===b) return "That's the same player.";
+  var pa=poolOf(a), pb=poolOf(b);
+  if(pa<0||pb<0) return "Both players must already be in a pool to swap.";
+  if(pa===pb) return ab(a)+" and "+ab(b)+" are both in "+S.pools[pa].name+" already.";
+  return null;
+}
+function subPlayer(outId, inId){
+  var bad=whyNotSub(outId,inId);
+  if(bad){ alert(bad); return false; }
+  var pi=poolOf(outId);
+  S.pools[pi].ids[S.pools[pi].ids.indexOf(outId)] = inId;
+  var j=S.inn.indexOf(outId); if(j>-1) S.inn.splice(j,1);
+  if(S.inn.indexOf(inId)<0) S.inn.push(inId);
+  logIt(ab(inId)+" subbed in for "+ab(outId)+" in "+S.pools[pi].name);
+  persist(); render(); return true;
+}
+/* Swap: exchange two players between pools, in place. Pool sizes unchanged. */
+function swapPlayers(a,b){
+  var bad=whyNotSwap(a,b);
+  if(bad){ alert(bad); return false; }
+  var pa=poolOf(a), pb=poolOf(b);
+  S.pools[pa].ids[S.pools[pa].ids.indexOf(a)] = b;
+  S.pools[pb].ids[S.pools[pb].ids.indexOf(b)] = a;
+  logIt(ab(a)+" ⇄ "+ab(b)+" ("+S.pools[pb].name+" ⇄ "+S.pools[pa].name+")");
+  persist(); render(); return true;
+}
+function inList(){
+  var o=[];
+  S.pools.forEach(function(p,pi){ byRating(p.ids).forEach(function(id){ o.push({id:id, pool:p.name}); }); });
+  return o;
+}
+function outList(){
+  var innSet={}; S.inn.forEach(function(i){innSet[i]=1;});
+  return ROSTER.filter(function(p){return !innSet[p.id];})
+    .sort(function(a,b){ var x=a.d,y=b.d;
+      if(x==null&&y==null) return 0; if(x==null) return 1; if(y==null) return -1; return y-x; });
+}
+function optsIn(sel){
+  return '<option value="">— player —</option>'+inList().map(function(x){
+    var d=dOf(x.id);
+    return '<option value="'+x.id+'">'+esc(ab(x.id))+' · '+esc(x.pool)+' · '
+      +(d==null?"NR":d.toFixed(3))+'</option>';
+  }).join("");
+}
+function optsOut(){
+  var L=outList();
+  if(!L.length) return '<option value="">— nobody available —</option>';
+  return '<option value="">— player —</option>'+L.map(function(p){
+    return '<option value="'+p.id+'">'+esc(ab(p.id))+' · '+(p.d==null?"NR":p.d.toFixed(3))+'</option>';
+  }).join("");
+}
+function vChanges(){
+  var h='<div class="card"><div class="chd"><h2>Changes</h2>'
+    + '<span class="ct">mid-night moves</span></div>'
+    + '<div class="meta">Scores already entered are safe — they are keyed to the four players '
+    + 'who played, not to a slot. Any matchup that still exists keeps its score.</div>';
+
+  h+='<div class="chgrow"><label>Sub out</label><select id="subOut">'+optsIn()+'</select>'
+   + '<label>Sub in</label><select id="subIn">'+optsOut()+'</select>'
+   + '<button class="btn pri" onclick="subPlayer(document.getElementById(\'subOut\').value,'
+   + 'document.getElementById(\'subIn\').value)">Sub</button></div>'
+   + '<div class="hint">Takes the same seat — pool sizes and every other pool stay as they are.</div>';
+
+  h+='<div class="chgrow"><label>Move</label><select id="mvWho">'+optsIn()+'</select>'
+   + '<label>To pool</label><select id="mvTo">'
+   + S.pools.map(function(p,i){return '<option value="'+i+'">'+esc(p.name)+'</option>';}).join("")
+   + '<option value="out">— drop from tonight —</option></select>'
+   + '<button class="btn" onclick="doMove()">Move</button></div>'
+   + '<div class="hint">Changes both pool sizes. Check the rounds count afterwards.</div>';
+
+  h+='<div class="chgrow"><label>Swap</label><select id="swA">'+optsIn()+'</select>'
+   + '<label>With</label><select id="swB">'+optsIn()+'</select>'
+   + '<button class="btn" onclick="swapPlayers(document.getElementById(\'swA\').value,'
+   + 'document.getElementById(\'swB\').value)">Swap</button></div>'
+   + '<div class="hint">Trades two players between pools. Sizes unchanged.</div>';
+
+  if(S.log && S.log.length){
+    h+='<div class="meta" style="margin-top:12px"><b>Change log</b></div>';
+    h+=S.log.slice(0,8).map(function(e){
+      return '<div class="logline"><span>'+esc(e.t)+'</span> '+esc(e.m)+'</div>'; }).join("");
+  }
+  return h+'</div>';
+}
+function doMove(){
+  var id=document.getElementById("mvWho").value, to=document.getElementById("mvTo").value;
+  if(!id){ alert("Pick a player to move."); return; }
+  movePlayer(id,to);
 }
 function addPool(){ S.pools.push({name:"Pool "+String.fromCharCode(65+S.pools.length), ids:[]}); persist(); render(); }
 function dropPool(pi){
@@ -792,9 +1141,15 @@ function renamePool(pi){
   if(v){ S.pools[pi].name=v.trim(); persist(); render(); }
 }
 function movePlayer(id, to){
+  var from=poolOf(id);
   S.pools.forEach(function(p){ var j=p.ids.indexOf(id); if(j>-1) p.ids.splice(j,1); });
-  if(to==="out"){ var i=S.inn.indexOf(id); if(i>-1) S.inn.splice(i,1); }
-  else S.pools[+to].ids.push(id);
+  if(to==="out"){
+    var i=S.inn.indexOf(id); if(i>-1) S.inn.splice(i,1);
+    logIt(ab(id)+" dropped"+(from>-1?" from "+S.pools[from].name:""));
+  } else {
+    S.pools[+to].ids.push(id);
+    logIt(ab(id)+" → "+S.pools[+to].name+(from>-1&&from!==+to?" (was "+S.pools[from].name+")":""));
+  }
   persist(); render();
 }
 function orphanCount(){
@@ -805,9 +1160,10 @@ function orphanCount(){
 }
 
 function vPlay(){
-  if(!M.length) return '<div class="card"><div class="meta">No matches yet. Set up pools first.</div></div>';
+  if(!M.length) return vChanges()
+    + '<div class="card"><div class="meta">No matches yet. Set up pools first.</div></div>';
   var courts={}; M.forEach(function(m){ courts[m.court]=1; });
-  var h='<div class="board">';
+  var h=vChanges()+'<div class="board">';
   Object.keys(courts).sort().forEach(function(c){
     var cur=onCourt(+c), nx=suggestNext(+c);
     h+='<div class="crt"><h3>Court '+c+'</h3>';
