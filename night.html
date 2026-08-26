@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>RallyTime — League Night Manager</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --ink:#0a2151; --blue:#2352e8;
+    --glass:rgba(255,255,255,.16); --line:rgba(255,255,255,.35); --fade:rgba(255,255,255,.75);
+    --green:#4ade80; --amber:#fbbf24; --red:#f87171;
+  }
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,sans-serif;
+    background:linear-gradient(225deg,rgb(75,151,254) 0%,rgb(1,99,208) 40%,rgb(5,21,94) 87%) fixed;
+    min-height:100vh;color:#fff;
+    padding-bottom:calc(140px + env(safe-area-inset-bottom));
+    -webkit-text-size-adjust:100%;
+  }
+  .topbar{background:#fff;box-shadow:0 4px 18px rgba(5,21,94,.25);
+    padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top));
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    position:sticky;top:0;z-index:20}
+  .brand{font-size:1.05rem;font-weight:800;color:var(--ink);letter-spacing:-.02em}
+  .brand span{color:var(--blue)}
+  .topbar a{font-size:.72rem;font-weight:700;color:#6b7ba8;text-decoration:none}
+  .wrap{max-width:900px;margin:0 auto;padding:14px 12px 0}
+  h1{font-size:1.3rem;font-weight:800;letter-spacing:-.02em}
+  .sub{color:#c9d8ff;font-size:.8rem;margin-top:3px;line-height:1.5}
+
+  .nav{display:flex;gap:6px;margin:14px 0;background:rgba(255,255,255,.12);
+    border:1px solid var(--line);border-radius:12px;padding:4px;overflow-x:auto}
+  .nav button{flex:1;min-width:78px;background:none;border:none;color:var(--fade);
+    font:inherit;font-size:.74rem;font-weight:700;padding:9px 6px;border-radius:9px;cursor:pointer;white-space:nowrap}
+  .nav button.on{background:rgba(255,255,255,.3);color:#fff}
+  .nav button .b{display:inline-block;min-width:17px;font-size:.62rem;margin-left:3px;
+    background:rgba(255,255,255,.28);border-radius:20px;padding:0 5px}
+
+  .status{background:var(--glass);border:1px solid var(--line);border-radius:13px;
+    padding:10px 13px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;
+    gap:10px;font-size:.78rem;font-weight:600;flex-wrap:wrap}
+  .status .prog{color:var(--fade)}.status .prog b{color:#fff}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:6px;vertical-align:1px}
+  .dot.warn{background:var(--amber)}.dot.err{background:var(--red)}
+
+  .card{background:var(--glass);border:1px solid var(--line);border-radius:17px;
+    -webkit-backdrop-filter:blur(22px) saturate(1.7);backdrop-filter:blur(22px) saturate(1.7);
+    box-shadow:0 8px 28px rgba(10,33,81,.22),inset 0 1px 0 rgba(255,255,255,.45);
+    padding:14px;margin-bottom:14px}
+  .chd{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:4px}
+  .chd h2{font-size:1rem;font-weight:800}
+  .chd .ct{font-size:.66rem;font-weight:700;color:var(--fade);letter-spacing:.05em;text-transform:uppercase}
+  .meta{font-size:.7rem;color:var(--fade);line-height:1.55;margin-bottom:10px}
+  .warnbox{background:rgba(251,191,36,.16);border:1px solid rgba(251,191,36,.55);border-radius:12px;
+    padding:10px 12px;margin-bottom:12px;font-size:.74rem;font-weight:600;color:#fde68a;line-height:1.55}
+  .okbox{background:rgba(74,222,128,.14);border:1px solid rgba(74,222,128,.5);border-radius:12px;
+    padding:10px 12px;margin-bottom:12px;font-size:.74rem;font-weight:600;color:#bbf7d0;line-height:1.55}
+
+  /* roster */
+  .rrow{display:grid;grid-template-columns:34px 1fr 66px 40px;gap:7px;align-items:center;
+    border-top:1px solid rgba(255,255,255,.13);padding:7px 0}
+  .rrow:first-of-type{border-top:none}
+  .rrow.out{opacity:.44}
+  .rn{font-size:.8rem;font-weight:700;line-height:1.25}
+  .rn small{display:block;font-size:.62rem;font-weight:600;color:var(--fade)}
+  .tog{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);
+    background:rgba(255,255,255,.14);color:#fff;font:inherit;font-size:.9rem;font-weight:800;cursor:pointer}
+  .tog.on{background:var(--green);border-color:var(--green);color:#06331a}
+  .gtag{font-size:.62rem;font-weight:800;color:var(--fade);text-align:center}
+  input[type=text],input[type=number]{height:34px;font-size:15px;font-weight:700;font-family:inherit;
+    border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.18);color:#fff;
+    padding:0 7px;width:100%;-moz-appearance:textfield}
+  input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  input:focus{outline:none;background:rgba(255,255,255,.32);border-color:#fff}
+  select{height:34px;font-size:14px;font-weight:700;font-family:inherit;border-radius:9px;
+    border:1px solid var(--line);background:rgba(255,255,255,.18);color:#fff;padding:0 6px;
+    -webkit-appearance:none;appearance:none;width:100%}
+  select option{background:#0d2a6b;color:#fff}
+  .addrow{display:grid;grid-template-columns:1fr 74px 58px 60px;gap:7px;margin-top:12px;align-items:center}
+  .btn{padding:10px 8px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.16);
+    color:#fff;font:inherit;font-size:.74rem;font-weight:700;cursor:pointer}
+  .btn.pri{background:var(--blue);border-color:var(--blue)}
+  .btn.danger{background:rgba(248,113,113,.24);border-color:rgba(248,113,113,.5)}
+  .btn:active{transform:translateY(1px)}
+  .btnrow{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+  .btnrow .btn{flex:1;min-width:104px}
+
+  /* config */
+  .cfg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .cfg label{font-size:.66rem;font-weight:700;color:var(--fade);letter-spacing:.04em;
+    text-transform:uppercase;display:block;margin-bottom:4px}
+  .chk{display:flex;align-items:center;gap:8px;font-size:.76rem;font-weight:700;padding:7px 0}
+  .chk input{width:20px;height:20px;accent-color:var(--green)}
+
+  /* pools */
+  .prow{display:grid;grid-template-columns:1fr 96px;gap:8px;align-items:center;
+    border-top:1px solid rgba(255,255,255,.13);padding:7px 0}
+  .prow:first-of-type{border-top:none}
+  .pq{font-size:.68rem;color:var(--fade);margin-top:7px;line-height:1.5}
+  .pq b{color:#fff}
+  .pill{display:inline-block;font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:20px;
+    background:rgba(255,255,255,.2);margin-left:5px}
+  .pill.nr{background:rgba(251,191,36,.3);color:#fde68a}
+
+  /* matches */
+  .mrow{border-top:1px solid rgba(255,255,255,.15);padding:10px 0 11px;position:relative;padding-left:9px}
+  .mrow:first-of-type{border-top:none}
+  .mrow.live{background:rgba(74,222,128,.11)}
+  .mrow.live:before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:3px;background:var(--green)}
+  .mrow.next{background:rgba(251,191,36,.09)}
+  .mrow.next:before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:3px;background:var(--amber)}
+  .mrow.done{opacity:.62}
+  .mtop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px;flex-wrap:wrap}
+  .rd{font-size:.64rem;font-weight:800;letter-spacing:.07em;color:#c9d8ff}
+  .bye{font-size:.64rem;color:var(--fade);font-weight:600}
+  .tag{font-size:.58rem;font-weight:800;letter-spacing:.07em;padding:2px 7px;border-radius:20px}
+  .tag.live{background:var(--green);color:#06331a}
+  .tag.next{background:var(--amber);color:#3a2600}
+  .teams{display:grid;grid-template-columns:1fr auto 1fr;gap:7px;align-items:center}
+  .tm{font-size:.8rem;font-weight:700;line-height:1.35}
+  .tm.r{text-align:right}
+  .tm .amp{font-weight:600;color:var(--fade)}
+  .sc{display:flex;align-items:center;gap:5px}
+  .sc input{width:50px;height:42px;text-align:center;font-size:16px;font-weight:800}
+  .sc input.win{background:rgba(74,222,128,.3);border-color:rgba(74,222,128,.6)}
+  .vs{font-size:.6rem;font-weight:800;color:var(--fade)}
+  .why{font-size:.66rem;color:#fde68a;margin-top:6px;line-height:1.5}
+  .board{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:9px;margin-bottom:14px}
+  .crt{background:rgba(255,255,255,.13);border:1px solid var(--line);border-radius:13px;padding:10px 12px}
+  .crt h3{font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#c9d8ff}
+  .crt .now{font-size:.82rem;font-weight:800;margin-top:5px;line-height:1.35}
+  .crt .nx{font-size:.68rem;color:var(--fade);margin-top:5px;line-height:1.4}
+
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:.75rem}
+  th,td{padding:5px 3px;text-align:right}
+  th:first-child,td:first-child{text-align:left}
+  th{font-size:.59rem;letter-spacing:.04em;text-transform:uppercase;color:var(--fade);
+    font-weight:700;border-bottom:1px solid rgba(255,255,255,.22)}
+  td{border-bottom:1px solid rgba(255,255,255,.09)}
+  tbody tr:first-child td{font-weight:800}
+  .pos{color:#86efac}.neg{color:#fca5a5}
+
+  .bar{position:fixed;left:0;right:0;bottom:0;z-index:30;
+    background:rgba(5,21,94,.88);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+    border-top:1px solid var(--line);padding:9px 12px;
+    padding-bottom:calc(9px + env(safe-area-inset-bottom));display:flex;gap:7px}
+  .bar .btn{flex:1}
+  .ovl{position:fixed;inset:0;z-index:50;background:rgba(5,21,94,.74);display:none;
+    align-items:flex-end;justify-content:center}
+  .ovl.on{display:flex}
+  .sheet{width:100%;max-width:620px;background:#0d2a6b;border:1px solid var(--line);
+    border-radius:19px 19px 0 0;padding:15px 13px;
+    padding-bottom:calc(15px + env(safe-area-inset-bottom));max-height:92vh;
+    display:flex;flex-direction:column;gap:9px}
+  .sheet h3{font-size:.95rem;font-weight:800}
+  .sheet textarea{width:100%;min-height:42vh;background:rgba(255,255,255,.12);border:1px solid var(--line);
+    border-radius:11px;color:#fff;font:inherit;font-size:.78rem;line-height:1.5;padding:10px;resize:none}
+  .sheet .row{display:flex;gap:7px}
+  .sheet .btn{flex:1}
+  .sheet .btn.go{background:#25D366;border-color:#25D366;color:#05341a}
+  .hide{display:none}
+  @media(min-width:640px){
+    .wrap{padding:20px 16px 0}h1{font-size:1.6rem}.card{padding:17px 19px}
+    .tm{font-size:.87rem}th,td{padding:6px 6px}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">Rally<span>Time</span></div>
+  <a href="index.html">&lsaquo; All leagues</a>
+</div>
+
+<div class="wrap">
+  <h1 id="ttl">League Night Manager</h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="nav" id="nav"></div>
+  <div class="status">
+    <span class="prog" id="prog"></span>
+    <span id="sync"><span class="dot"></span>Ready</span>
+  </div>
+
+  <div id="view"></div>
+</div>
+
+<div class="bar">
+  <button class="btn" onclick="openShare()">Share</button>
+  <button class="btn" onclick="expCSV()">CSV</button>
+  <button class="btn" onclick="expJSON()">Backup</button>
+  <button class="btn pri" onclick="saveNow()">Save</button>
+</div>
+
+<div class="ovl" id="ovl"><div class="sheet">
+  <h3 id="shTtl">Share</h3>
+  <textarea id="shTxt" readonly></textarea>
+  <div class="row">
+    <button class="btn" onclick="closeShare()">Close</button>
+    <button class="btn" onclick="copyShare()">Copy</button>
+    <button class="btn go" onclick="sendWA()">WhatsApp</button>
+  </div>
+</div></div>
+
+<script>
+/* ==========================================================================
+   RallyTime — League Night Manager
+   One engine, events as data. Add or drop a player, regenerate, keep scores.
+
+   The key design decision: match scores are keyed by a TEAM SIGNATURE
+   (the sorted player ids of both sides), not by pool/round index. So when
+   the field changes and pools are rebuilt, any matchup that still exists
+   keeps its score. That is what makes last-minute changes safe.
+   ========================================================================== */
+
+var KEY   = "rt-night-manager";
+var API   = "/api/state/night-manager";
+var DIRTY = "rt-dirty:" + KEY;
+
+/* ---------- master roster ---------- */
+/* d:null means unrated (DUPR NR). g: M/F. */
+var ROSTER = [
+  {id:"franco",   n:"Franco Mendoza",          d:4.048, g:"M", dupr:"0Q47QX"},
+  {id:"jameschen",n:"James Chen",              d:3.793, g:"M", dupr:"NRYML7"},
+  {id:"eli",      n:"Eli Azar",                d:3.773, g:"M", dupr:"PPE7GZ"},
+  {id:"mohammad", n:"Mohammad Mukhtar",        d:3.770, g:"M", dupr:"1RPGEM"},
+  {id:"charbelt", n:"Charbel Touma",           d:3.684, g:"M", dupr:"7DPDE5"},
+  {id:"rob",      n:"Rob Chee",                d:3.662, g:"M", dupr:"JJG2WW"},
+  {id:"nicolas",  n:"Nicolas Lion",            d:3.634, g:"M", dupr:"N7VJOW"},
+  {id:"charbelc", n:"Charbel Chahine",         d:3.569, g:"M", dupr:"2YKPV9"},
+  {id:"nikolai",  n:"Nikolai Matveev",         d:3.565, g:"M", dupr:"7JJJ45"},
+  {id:"michael",  n:"Michael Touma",           d:3.529, g:"M", dupr:"QXNGM0", note:"alt acct LZ0KKQ 3.288 — submit to QXNGM0"},
+  {id:"isaiah",   n:"Isaiah Kerstetter",       d:3.523, g:"M", dupr:"3XZ525"},
+  {id:"wais",     n:"Wais Barek",              d:3.514, g:"M", dupr:"PWJJ5X"},
+  {id:"amy",      n:"Amy Hildreth",            d:3.490, g:"F", dupr:"3VM7O7"},
+  {id:"avril",    n:"Avril Baxter",            d:3.489, g:"F", dupr:"MYV0DP"},
+  {id:"juan",     n:"Juan Castillo",           d:3.462, g:"M", dupr:"GW4JXD"},
+  {id:"trey",     n:"Trey Treadwell",          d:3.454, g:"M", dupr:"X2RG7X"},
+  {id:"david",    n:"David Morris",            d:3.451, g:"M", dupr:"89ZJRR"},
+  {id:"omar",     n:"Omar el-Khodari",         d:3.439, g:"M", dupr:"0ZMENG"},
+  {id:"kareem",   n:"Kareem Adi",              d:3.421, g:"M", dupr:""},
+  {id:"nataly",   n:"Nataly Perez",            d:3.414, g:"F", dupr:"0YM70N"},
+  {id:"signe",    n:"Signe Yates",             d:3.410, g:"F", dupr:"7DNKN0"},
+  {id:"brian",    n:"Brian Bartholomew",       d:3.383, g:"M", dupr:"8EJP6W"},
+  {id:"yasir",    n:"Yasir Saleem",            d:3.324, g:"M", dupr:"94EJDJ"},
+  {id:"connie",   n:"Connie Rogers",           d:3.271, g:"F", dupr:"3Z590L"},
+  {id:"nadine",   n:"Nadine Bullock-Pottinga", d:3.174, g:"F", dupr:"0Q5542"},
+  {id:"john",     n:"John Kerstetter",         d:3.143, g:"M", dupr:"8DKGXL"},
+  {id:"rae",      n:"Rae Lamb",                d:3.110, g:"F", dupr:"1RR7VQ"},
+  {id:"jessica",  n:"Jessica Bahou",           d:3.085, g:"F", dupr:"LVVOPK"},
+  {id:"uzair",    n:"Uzair Saeed",             d:3.041, g:"M", dupr:"1625RK"},
+  {id:"stephanie",n:"Stephanie Ascari",        d:2.900, g:"F", dupr:"3OKDJL"},
+  {id:"subbu",    n:"Subbu S",                 d:2.881, g:"M", dupr:"ODXY62"},
+  {id:"tony",     n:"Tony Gaynord",            d:2.813, g:"M", dupr:"3ZPOOL"},
+  {id:"huda",     n:"Huda Khalid",             d:2.369, g:"F", dupr:"YXQ26P"},
+  {id:"vijay",    n:"Vijay Mukundhan",         d:null,  g:"M", dupr:"Z0RNPM"},
+  {id:"dylan",    n:"Dylan Vega",              d:null,  g:"M", dupr:"Y5MM2E", note:"age 16"}
+];
+
+/* ---------- state ---------- */
+var S = {
+  title:"Wednesday DUPR Night",
+  date:"2026-08-26",
+  cfg:{ courts:3, firstBall:"6:15", horn:12, change:3, gameTo:11, womenSep:true, mode:"tier" },
+  inn:[],                 /* player ids playing */
+  pools:[],               /* [{name, ids:[]}] — court/slot derived */
+  scores:{},              /* teamSignature -> {a,b} */
+  tab:"play"
+};
+
+/* Wednesday Aug 26 as designed: Men's 5 / Calibration 5 / Women's 5 */
+function seedDefault(){
+  S.pools = [
+    {name:"Men's",       ids:["mohammad","nikolai","wais","david","yasir"]},
+    {name:"Calibration", ids:["juan","omar","michael","dylan","vijay"]},
+    {name:"Women's",     ids:["amy","nataly","nadine","stephanie","huda"]}
+  ];
+  S.inn = S.pools.reduce(function(a,p){ return a.concat(p.ids); },[]);
+}
+
+function load(){
+  try{
+    var r=localStorage.getItem(KEY);
+    if(r){ var o=JSON.parse(r); if(o&&o.S){ S=o.S; return true; } }
+  }catch(e){}
+  return false;
+}
+function serialize(){ return JSON.stringify({S:S, savedAt:Date.now()}); }
+
+/* ---------- helpers ---------- */
+function P(id){ for(var i=0;i<ROSTER.length;i++) if(ROSTER[i].id===id) return ROSTER[i]; return null; }
+function nm(id){ var p=P(id); if(!p) return "?"; var t=p.n.split(/\s+/);
+  return t[0]==="Charbel" ? "Charbel "+t[1].charAt(0)+"." : t[0]; }
+function full(id){ var p=P(id); return p?p.n:"?"; }
+function ab(id){ var p=P(id); if(!p) return "?"; var t=p.n.split(/\s+/);
+  return t.length>1 ? t[0]+" "+t[t.length-1].charAt(0)+"." : t[0]; }
+function dOf(id){ var p=P(id); return p?p.d:null; }
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+function n2(v){ return (v===""||v==null||isNaN(v))?null:Math.max(0,Math.min(99,parseInt(v,10))); }
+function byRating(ids){
+  return ids.slice().sort(function(x,y){
+    var a=dOf(x), b=dOf(y);
+    if(a==null&&b==null) return 0;
+    if(a==null) return 1;              /* unrated sink to the bottom */
+    if(b==null) return -1;
+    return b-a;
+  });
+}
+/* stable key for a matchup, independent of pool or round index */
+function sig(A,B){
+  var a=A.slice().sort().join("+"), b=B.slice().sort().join("+");
+  return (a<b ? a+"|"+b : b+"|"+a);
+}
+
+/* ---------- rotation engines ---------- */
+var ROT4 = [ {a:[0,1],b:[2,3],by:[]}, {a:[0,2],b:[1,3],by:[]}, {a:[0,3],b:[1,2],by:[]} ];
+var ROT5 = [ {a:[1,4],b:[2,3],by:[0]}, {a:[2,0],b:[3,4],by:[1]}, {a:[3,1],b:[4,0],by:[2]},
+             {a:[4,2],b:[0,1],by:[3]}, {a:[0,3],b:[1,2],by:[4]} ];
+/* 6 players, 6 rounds: bye pairs are fixed (top two together, etc), which is
+   what keeps the two strongest from ever partnering. */
+var BYE6 = [[0,1],[2,3],[4,5],[0,1],[2,3],[4,5]];
+/* 7 players, 7 rounds: cyclic difference set {r, r+1, r+3} mod 7 -> 3 byes each */
+var BYE7 = (function(){ var o=[]; for(var r=0;r<7;r++) o.push([r%7,(r+1)%7,(r+3)%7]); return o; })();
+
+function splitsFor(play){
+  var f=play, out=[];
+  [[0,1],[0,2],[0,3]].forEach(function(p){
+    var a=[f[p[0]],f[p[1]]], b=f.filter(function(x){return a.indexOf(x)<0;});
+    out.push({a:a,b:b});
+  });
+  return out;
+}
+/* search pairings across rounds: all partnerships distinct, then best balance */
+/* team-rating gap for a round; 0 when any player is unrated (no signal) */
+function rdiff(s, ratings){
+  var v=[ratings[s.a[0]],ratings[s.a[1]],ratings[s.b[0]],ratings[s.b[1]]];
+  if(v.some(function(x){return x==null;})) return 0;
+  return Math.abs(v[0]+v[1]-v[2]-v[3]);
+}
+/* order rounds most-balanced first so blowouts land late */
+function balanceFirst(sol, ratings){
+  return sol.slice().sort(function(x,y){ return rdiff(x,ratings)-rdiff(y,ratings); });
+}
+function solveRot(size, ratings){
+  if(size===4) return balanceFirst(
+    ROT4.map(function(r){return {a:r.a.slice(),b:r.b.slice(),by:[]};}), ratings);
+  if(size===5) return balanceFirst(
+    ROT5.map(function(r){return {a:r.a.slice(),b:r.b.slice(),by:r.by.slice()};}), ratings);
+  var byes = size===6 ? BYE6 : BYE7;
+  var opts = byes.map(function(by){
+    var play=[]; for(var i=0;i<size;i++) if(by.indexOf(i)<0) play.push(i);
+    return splitsFor(play);
+  });
+  var best=null;
+  var pick=new Array(byes.length);
+  function diff(s){
+    var av=ratings[s.a[0]], bv=ratings[s.a[1]], cv=ratings[s.b[0]], dv=ratings[s.b[1]];
+    if(av==null||bv==null||cv==null||dv==null) return 0;   /* unrated: no signal */
+    return Math.abs(av+bv-cv-dv);
+  }
+  function rec(i, used, worst, tot){
+    if(best && (worst>best.worst || (worst===best.worst && tot>=best.tot) )) { /* keep going, cheap */ }
+    if(i===byes.length){
+      if(!best || worst<best.worst-1e-9 || (Math.abs(worst-best.worst)<1e-9 && tot<best.tot))
+        best={worst:worst, tot:tot, sol:pick.map(function(s,k){
+          return {a:s.a.slice(),b:s.b.slice(),by:byes[k].slice()}; })};
+      return;
+    }
+    for(var k=0;k<opts[i].length;k++){
+      var s=opts[i][k];
+      var ka=s.a.slice().sort().join(","), kb=s.b.slice().sort().join(",");
+      if(used[ka]||used[kb]) continue;
+      used[ka]=1; used[kb]=1; pick[i]=s;
+      var df=diff(s);
+      rec(i+1, used, Math.max(worst,df), tot+df);
+      delete used[ka]; delete used[kb];
+    }
+  }
+  rec(0,{},0,0);
+  if(!best) return null;
+  return balanceFirst(best.sol, ratings);
+}
+
+/* ---------- pool sizing ---------- */
+function sizeOptions(n){
+  var res=[];
+  (function go(rem, parts){
+    if(rem===0){ res.push(parts.slice()); return; }
+    if(rem<4 || parts.length>6) return;
+    for(var s=Math.min(7,rem); s>=4; s--){
+      if(parts.length && s>parts[parts.length-1]) continue;   /* non-increasing */
+      parts.push(s); go(rem-s, parts); parts.pop();
+    }
+  })(n,[]);
+  /* prefer: fewest pools, then most 5s, then most 6s */
+  res.sort(function(a,b){
+    if(a.length!==b.length) return a.length-b.length;
+    var f=function(x,v){return x.filter(function(y){return y===v;}).length;};
+    if(f(b,5)!==f(a,5)) return f(b,5)-f(a,5);
+    return f(b,6)-f(a,6);
+  });
+  return res;
+}
+function bestSizes(n, courts){
+  var o=sizeOptions(n);
+  if(!o.length) return null;
+  var fit=o.filter(function(x){return x.length<=Math.max(1,courts);});
+  return (fit.length?fit:o)[0];
+}
+
+/* ---------- auto pooling ---------- */
+function autoPools(){
+  var ids=S.inn.slice();
+  if(ids.length<4) return {err:"Need at least 4 players. Currently "+ids.length+"."};
+  var groups=[];
+  if(S.cfg.womenSep){
+    var w=ids.filter(function(i){return P(i)&&P(i).g==="F";});
+    var m=ids.filter(function(i){return P(i)&&P(i).g!=="F";});
+    if(w.length && w.length<4)
+      return {err:"Only "+w.length+" wom"+(w.length===1?"an":"en")
+        +" — a women's pool needs 4. Add another, or turn off “keep women separate”."};
+    if(m.length && m.length<4)
+      return {err:"Only "+m.length+" m"+(m.length===1?"an":"en")
+        +" — a men's pool needs 4. Turn off “keep women separate”."};
+    if(m.length) groups.push({label:"Men's", ids:m});
+    if(w.length) groups.push({label:"Women's", ids:w});
+  } else {
+    groups.push({label:"Pool", ids:ids});
+  }
+  var pools=[], courts=S.cfg.courts;
+  /* share courts proportionally between the gendered groups */
+  groups.forEach(function(g){
+    var share = groups.length>1 ? Math.max(1, Math.round(courts*g.ids.length/ids.length)) : courts;
+    var sizes = bestSizes(g.ids.length, share);
+    if(!sizes) { pools.push({name:g.label, ids:g.ids.slice(), bad:true}); return; }
+    var sorted = byRating(g.ids), k=0;
+    if(S.cfg.mode==="balance"){
+      /* snake so every pool carries comparable strength */
+      var buckets=sizes.map(function(){return [];}), dir=1, bi=0;
+      sorted.forEach(function(id){
+        while(buckets[bi].length>=sizes[bi]){ bi+=dir; if(bi<0||bi>=sizes.length){ dir=-dir; bi+=dir; } }
+        buckets[bi].push(id);
+        bi+=dir; if(bi<0||bi>=sizes.length){ dir=-dir; bi+=dir; }
+      });
+      buckets.forEach(function(b,i){
+        pools.push({name:g.label+(sizes.length>1?" "+String.fromCharCode(65+i):""), ids:b});
+      });
+    } else {
+      sizes.forEach(function(sz,i){
+        pools.push({name:g.label+(sizes.length>1?" "+String.fromCharCode(65+i):""),
+                    ids:sorted.slice(k,k+sz)});
+        k+=sz;
+      });
+    }
+  });
+  return {pools:pools};
+}
+
+/* ---------- schedule ---------- */
+function roundsFor(sz){ return sz===4?3 : sz===5?5 : sz===6?6 : sz===7?7 : 0; }
+function timeAt(slot){
+  var p=String(S.cfg.firstBall).split(":");
+  var mins=(+p[0])*60+(+p[1]) + (slot-1)*(S.cfg.horn+S.cfg.change);
+  var h=Math.floor(mins/60)%24, m=mins%60;
+  var hh=h>12?h-12:(h===0?12:h);
+  return hh+":"+(m<10?"0":"")+m;
+}
+/* Assign each pool a court; pools beyond the court count share one and alternate. */
+function schedule(){
+  var out=[], courts=Math.max(1,S.cfg.courts);
+  var byCourt={};
+  S.pools.forEach(function(pl,pi){
+    var c=(pi%courts)+1;
+    byCourt[c]=byCourt[c]||[]; byCourt[c].push(pi);
+  });
+  Object.keys(byCourt).forEach(function(c){
+    var list=byCourt[c], share=list.length;
+    list.forEach(function(pi,seat){
+      var pool=S.pools[pi];
+      var ids=byRating(pool.ids), sz=ids.length, nr=roundsFor(sz);
+      if(!nr) return;
+      var ratings=ids.map(dOf);
+      var rot=solveRot(sz, ratings) || [];
+      rot.forEach(function(r,ri){
+        var slot = share===1 ? ri+1 : ri*share + seat + 1;
+        var A=r.a.map(function(i){return ids[i];});
+        var B=r.b.map(function(i){return ids[i];});
+        out.push({ pi:pi, pool:pool.name, court:+c, round:ri+1, slot:slot,
+                   A:A, B:B, by:r.by.map(function(i){return ids[i];}),
+                   key:sig(A,B) });
+      });
+    });
+  });
+  out.sort(function(x,y){ return x.slot-y.slot || x.court-y.court; });
+  return out;
+}
+var M = [];                    /* current schedule */
+function rebuild(){ M = schedule(); }
+
+/* ---------- live state ---------- */
+function done(m){ var s=S.scores[m.key]; return !!(s&&s.a!=null&&s.b!=null); }
+function clockSlot(){ var mx=0; M.forEach(function(m){ if(done(m)&&m.slot>mx) mx=m.slot; }); return mx; }
+function onCourt(court){
+  var list=M.filter(function(m){return m.court===court && !done(m);});
+  list.sort(function(a,b){return a.slot-b.slot;});
+  return list[0]||null;
+}
+/* Rest measured in CLOCK slots, not pool rounds — pools sharing a court
+   alternate, so a pool round is not a wall-clock round. */
+function restOf(id){
+  var now=clockSlot(), last=0, played=false;
+  M.forEach(function(m){
+    if(!done(m)) return;
+    if(m.A.indexOf(id)>-1||m.B.indexOf(id)>-1){ played=true; if(m.slot>last) last=m.slot; }
+  });
+  if(!played) return now;
+  return Math.max(0, now-last);
+}
+function justOff(id){
+  var played=false;
+  M.forEach(function(m){ if(done(m)&&(m.A.indexOf(id)>-1||m.B.indexOf(id)>-1)) played=true; });
+  return played && restOf(id)===0;
+}
+var BACK_TO_BACK = 1;
+/* Pull forward whoever has waited longest; push back anyone who just came off.
+   Sum of rest rather than max, so one desperate player can't drag three
+   just-finished players straight back on. */
+function suggestNext(court){
+  var cur=onCourt(court); if(!cur) return null;
+  var cands=M.filter(function(m){return m.court===court && !done(m) && m!==cur;});
+  if(!cands.length) return null;
+  var best=null;
+  cands.forEach(function(m){
+    var on=m.A.concat(m.B), sum=0, mx=0, fresh=0;
+    on.forEach(function(x){ var r=restOf(x); sum+=r; if(r>mx) mx=r; if(justOff(x)) fresh++; });
+    var sc=sum - BACK_TO_BACK*fresh;
+    if(!best || sc>best.sc || (sc===best.sc && (mx>best.mx || (mx===best.mx && m.slot<best.m.slot))))
+      best={m:m, sc:sc, mx:mx, fresh:fresh,
+            who:on.map(function(x){return {id:x,r:restOf(x)};}).sort(function(a,b){return b.r-a.r;})[0]};
+  });
+  return best;
+}
+function whyNext(b){
+  var bits=[];
+  if(b.who.r>0) bits.push(nm(b.who.id)+" has been off court "+b.who.r+" round"+(b.who.r>1?"s":""));
+  if(b.fresh===0) bits.push("none of these four just came off court");
+  return bits.length ? "Play this next — "+bits.join("; ")+"." : "Play this next — longest rested four available.";
+}
+
+/* ---------- standings ---------- */
+function tally(pi){
+  var pool=S.pools[pi]; if(!pool) return [];
+  var t={};
+  pool.ids.forEach(function(id){ t[id]={id:id, pf:0, pa:0, g:0, w:0}; });
+  M.forEach(function(m){
+    if(m.pi!==pi || !done(m)) return;
+    var s=S.scores[m.key];
+    m.A.forEach(function(x){ if(t[x]){t[x].pf+=s.a;t[x].pa+=s.b;t[x].g++;if(s.a>s.b)t[x].w++;} });
+    m.B.forEach(function(x){ if(t[x]){t[x].pf+=s.b;t[x].pa+=s.a;t[x].g++;if(s.b>s.a)t[x].w++;} });
+  });
+  var arr=[]; for(var k in t) arr.push(t[k]);
+  arr.sort(function(x,y){ return y.pf-x.pf || (y.pf-y.pa)-(x.pf-x.pa) || x.pa-y.pa; });
+  return arr;
+}
+function poolQual(ids){
+  var ds=ids.map(dOf).filter(function(v){return v!=null;}).sort(function(a,b){return b-a;});
+  var nr=ids.length-ds.length;
+  if(ds.length<2) return {spread:null, gap:null, nr:nr, rated:ds.length};
+  var gap=0; for(var i=1;i<ds.length;i++) gap=Math.max(gap, ds[i-1]-ds[i]);
+  return {spread:ds[0]-ds[ds.length-1], gap:gap, nr:nr, rated:ds.length};
+}
+
+/* ---------- render ---------- */
+var TABS=[["roster","Roster"],["pools","Pools"],["play","Play"],["stand","Standings"]];
+function render(){
+  document.getElementById("ttl").textContent = S.title;
+  document.getElementById("sub").textContent =
+    S.date+" · "+S.inn.length+" players · "+S.pools.length+" pools · "+S.cfg.courts
+    +" courts · first ball "+S.cfg.firstBall+" · to "+S.cfg.gameTo+", horn "+S.cfg.horn+" min";
+  rebuild();
+  var d=M.filter(done).length;
+  document.getElementById("prog").innerHTML="<b>"+d+"</b> / "+M.length+" matches";
+  document.getElementById("nav").innerHTML = TABS.map(function(t){
+    var b = t[0]==="roster" ? '<span class="b">'+S.inn.length+'</span>'
+          : t[0]==="play"   ? '<span class="b">'+d+'</span>' : '';
+    return '<button class="'+(S.tab===t[0]?"on":"")+'" onclick="go(\''+t[0]+'\')">'+t[1]+b+'</button>';
+  }).join("");
+  var v=document.getElementById("view");
+  if(S.tab==="roster") v.innerHTML=vRoster();
+  else if(S.tab==="pools") v.innerHTML=vPools();
+  else if(S.tab==="stand") v.innerHTML=vStand();
+  else v.innerHTML=vPlay();
+}
+function go(t){ S.tab=t; persist(); render(); }
+
+function vRoster(){
+  var inn={}; S.inn.forEach(function(i){inn[i]=1;});
+  var sorted=ROSTER.slice().sort(function(a,b){
+    if(!!inn[b.id]!==!!inn[a.id]) return inn[b.id]?1:-1;
+    var x=a.d,y=b.d;
+    if(x==null&&y==null) return 0; if(x==null) return 1; if(y==null) return -1;
+    return y-x;
+  });
+  var h='<div class="card"><div class="chd"><h2>Roster</h2>'
+      + '<span class="ct">'+S.inn.length+' in · '+(ROSTER.length-S.inn.length)+' out</span></div>'
+      + '<div class="meta">Tap the button to add or drop. Ratings are editable — set an unrated '
+      + 'player to a provisional number and pools will use it. Changes take effect on '
+      + '<b>Pools → Regenerate</b>; entered scores survive any matchup that still exists.</div>';
+  sorted.forEach(function(p){
+    h+='<div class="rrow'+(inn[p.id]?"":" out")+'">'
+     + '<button class="tog'+(inn[p.id]?" on":"")+'" onclick="toggle(\''+p.id+'\')">'
+     + (inn[p.id]?"✓":"+")+'</button>'
+     + '<div class="rn">'+esc(p.n)
+     + (p.note?'<small>'+esc(p.note)+'</small>':(p.dupr?'<small>'+esc(p.dupr)+'</small>':'<small style="color:#fca5a5">no DUPR ID</small>'))
+     + '</div>'
+     + '<input type="number" step="0.001" placeholder="NR" value="'+(p.d==null?"":p.d)+'" '
+     + 'onchange="setD(\''+p.id+'\',this.value)">'
+     + '<div class="gtag">'+p.g+'</div></div>';
+  });
+  h+='<div class="addrow">'
+   + '<input type="text" id="nn" placeholder="New player name">'
+   + '<input type="number" step="0.001" id="nd" placeholder="DUPR">'
+   + '<select id="ng"><option value="M">M</option><option value="F">F</option></select>'
+   + '<button class="btn pri" onclick="addPlayer()">Add</button></div>'
+   + '<div class="btnrow">'
+   + '<button class="btn" onclick="allIn(true)">All in</button>'
+   + '<button class="btn" onclick="allIn(false)">All out</button>'
+   + '</div></div>';
+  return h;
+}
+function toggle(id){
+  var i=S.inn.indexOf(id);
+  if(i>-1){ S.inn.splice(i,1); S.pools.forEach(function(p){
+      var j=p.ids.indexOf(id); if(j>-1) p.ids.splice(j,1); }); }
+  else S.inn.push(id);
+  persist(); render();
+}
+function allIn(v){
+  if(v) S.inn=ROSTER.map(function(p){return p.id;});
+  else { S.inn=[]; S.pools.forEach(function(p){p.ids=[];}); }
+  persist(); render();
+}
+function setD(id,v){
+  var p=P(id); if(!p) return;
+  p.d = (v===""||isNaN(parseFloat(v))) ? null : parseFloat(v);
+  persist(); render();
+}
+function addPlayer(){
+  var n=document.getElementById("nn").value.trim();
+  if(!n) return;
+  var dv=document.getElementById("nd").value;
+  var g=document.getElementById("ng").value;
+  var id="p"+Date.now().toString(36);
+  ROSTER.push({id:id, n:n, d:(dv===""||isNaN(parseFloat(dv)))?null:parseFloat(dv), g:g, dupr:""});
+  S.inn.push(id);
+  persist(); render();
+}
+
+function vPools(){
+  var h='<div class="card"><div class="chd"><h2>Setup</h2><span class="ct">config</span></div>'
+    + '<div class="cfg">'
+    + '<div><label>Courts</label><input type="number" value="'+S.cfg.courts+'" onchange="setCfg(\'courts\',this.value,1)"></div>'
+    + '<div><label>First ball</label><input type="text" value="'+S.cfg.firstBall+'" onchange="setCfg(\'firstBall\',this.value)"></div>'
+    + '<div><label>Horn (min)</label><input type="number" value="'+S.cfg.horn+'" onchange="setCfg(\'horn\',this.value,1)"></div>'
+    + '<div><label>Changeover</label><input type="number" value="'+S.cfg.change+'" onchange="setCfg(\'change\',this.value,1)"></div>'
+    + '<div><label>Game to</label><input type="number" value="'+S.cfg.gameTo+'" onchange="setCfg(\'gameTo\',this.value,1)"></div>'
+    + '<div><label>Grouping</label><select onchange="setCfg(\'mode\',this.value)">'
+    + '<option value="tier"'+(S.cfg.mode==="tier"?" selected":"")+'>Tiered by DUPR</option>'
+    + '<option value="balance"'+(S.cfg.mode==="balance"?" selected":"")+'>Balanced pools</option>'
+    + '</select></div></div>'
+    + '<div class="chk"><input type="checkbox" id="ws" '+(S.cfg.womenSep?"checked":"")
+    + ' onchange="setCfg(\'womenSep\',this.checked)"><label for="ws" style="margin:0;text-transform:none;'
+    + 'font-size:.78rem;color:#fff;letter-spacing:0">Keep women in their own pools</label></div>'
+    + '<div class="btnrow"><button class="btn pri" onclick="regen()">Regenerate pools</button>'
+    + '<button class="btn" onclick="addPool()">Add empty pool</button></div></div>';
+
+  var orphan=orphanCount();
+  if(orphan) h+='<div class="warnbox">'+orphan+' entered score'+(orphan>1?"s":"")
+    +' no longer match any scheduled match. They are kept in the backup — put those players '
+    +'back together and the scores reappear.</div>';
+
+  var placed={}; S.pools.forEach(function(p){ p.ids.forEach(function(i){placed[i]=1;}); });
+  var loose=S.inn.filter(function(i){return !placed[i];});
+  if(loose.length) h+='<div class="warnbox"><b>'+loose.length+' player'
+    +(loose.length>1?"s":"")+' not in a pool:</b> '+loose.map(ab).join(", ")
+    +' — hit Regenerate, or assign them below.</div>';
+
+  S.pools.forEach(function(pl,pi){
+    var q=poolQual(pl.ids), rn=roundsFor(pl.ids.length);
+    h+='<div class="card"><div class="chd"><h2>'+esc(pl.name)+'</h2>'
+     + '<span class="ct">'+pl.ids.length+' players · court '+((pi%Math.max(1,S.cfg.courts))+1)+'</span></div>';
+    if(!rn){
+      h+='<div class="warnbox"><b>A pool of '+pl.ids.length+' can\'t run</b> — pools must be 4–7. ';
+      h+= pl.ids.length<4 ? 'Add '+(4-pl.ids.length)+' more, or move these players elsewhere.'
+                          : 'Split it, or move '+(pl.ids.length-7)+' out.';
+      h+='</div>';
+    }
+    if(pl.ids.length<7){
+      var near=nearest(pi);
+      if(near.length){
+        h+='<div class="meta">Closest available'+(rn?'':' — tap to fill')+': ';
+        h+=near.map(function(x){
+          return '<button class="btn" style="padding:5px 9px;font-size:.68rem;margin:2px 3px 2px 0" '
+            +'onclick="addTo('+pi+',\''+x.p.id+'\')">+ '+esc(ab(x.p.id))+' '
+            +(x.p.d==null?'NR':x.p.d.toFixed(3))+'</button>';
+        }).join("");
+        h+='</div>';
+      }
+    }
+    byRating(pl.ids).forEach(function(id){
+      var d=dOf(id);
+      h+='<div class="prow"><div class="rn">'+esc(full(id))
+       + ' <span class="pill'+(d==null?" nr":"")+'">'+(d==null?"NR":d.toFixed(3))+'</span></div>'
+       + '<select onchange="movePlayer(\''+id+'\',this.value)">'
+       + S.pools.map(function(q2,qi){
+           return '<option value="'+qi+'"'+(qi===pi?" selected":"")+'>'+esc(q2.name)+'</option>'; }).join("")
+       + '<option value="out">— drop —</option></select></div>';
+    });
+    h+='<div class="pq">';
+    if(q.spread!=null) h+='spread <b>'+q.spread.toFixed(3)+'</b> · biggest gap <b>'+q.gap.toFixed(3)+'</b>';
+    else h+='not enough rated players to measure';
+    if(q.nr) h+=' · <b style="color:#fde68a">'+q.nr+' unrated</b>';
+    if(rn) h+=' · '+rn+' rounds, '+(Math.round(rn*4/pl.ids.length*100)/100)+' games each';
+    h+='</div>';
+    h+='<div class="btnrow"><button class="btn" onclick="renamePool('+pi+')">Rename</button>'
+     + '<button class="btn danger" onclick="dropPool('+pi+')">Delete pool</button></div></div>';
+  });
+  return h;
+}
+function setCfg(k,v,int){
+  if(k==="womenSep") S.cfg[k]=!!v;
+  else if(int){ var n=parseInt(v,10); S.cfg[k]=isNaN(n)?S.cfg[k]:Math.max(1,n); }
+  else S.cfg[k]=v;
+  persist(); render();
+}
+/* Full regenerate reshuffles every pool, so almost no matchup survives.
+   Warn with the real number before throwing away entered scores. */
+function regen(){
+  var r=autoPools();
+  if(r.err){ alert(r.err); return; }
+  var scored=M.filter(done).length;
+  if(scored){
+    var keep={};
+    (function(){
+      var save=S.pools; S.pools=r.pools; rebuild();
+      M.forEach(function(m){ keep[m.key]=1; });
+      S.pools=save; rebuild();
+    })();
+    var lost=M.filter(function(m){ return done(m) && !keep[m.key]; }).length;
+    if(lost && !confirm("Regenerating reshuffles every pool.\n\n"+lost+" of your "+scored
+      +" entered score"+(scored>1?"s":"")+" will no longer match a scheduled match.\n\n"
+      +"They stay in the backup and reappear if those four players meet again.\n\nContinue?")) return;
+  }
+  S.pools=r.pools; persist(); render();
+}
+/* Who's available and closest to this pool's level — the fast fix when
+   someone drops and a pool is left short. */
+function nearest(pi){
+  var pool=S.pools[pi];
+  var rated=pool.ids.map(dOf).filter(function(v){return v!=null;});
+  var mean = rated.length ? rated.reduce(function(a,b){return a+b;},0)/rated.length : 3.4;
+  var innSet={}; S.inn.forEach(function(i){innSet[i]=1;});
+  var femaleOnly = S.cfg.womenSep && pool.ids.length
+      && pool.ids.every(function(i){ return P(i)&&P(i).g==="F"; });
+  var maleOnly = S.cfg.womenSep && pool.ids.length
+      && pool.ids.every(function(i){ return P(i)&&P(i).g!=="F"; });
+  return ROSTER.filter(function(p){
+      if(innSet[p.id]) return false;
+      if(femaleOnly && p.g!=="F") return false;
+      if(maleOnly && p.g==="F") return false;
+      return true;
+    })
+    .map(function(p){ return {p:p, gap:(p.d==null?99:Math.abs(p.d-mean))}; })
+    .sort(function(a,b){ return a.gap-b.gap; })
+    .slice(0,4);
+}
+function addTo(pi,id){
+  if(S.inn.indexOf(id)<0) S.inn.push(id);
+  S.pools.forEach(function(p){ var j=p.ids.indexOf(id); if(j>-1) p.ids.splice(j,1); });
+  S.pools[pi].ids.push(id);
+  persist(); render();
+}
+function addPool(){ S.pools.push({name:"Pool "+String.fromCharCode(65+S.pools.length), ids:[]}); persist(); render(); }
+function dropPool(pi){
+  if(!confirm("Delete "+S.pools[pi].name+"? Players stay on the roster.")) return;
+  S.pools.splice(pi,1); persist(); render();
+}
+function renamePool(pi){
+  var v=prompt("Pool name", S.pools[pi].name);
+  if(v){ S.pools[pi].name=v.trim(); persist(); render(); }
+}
+function movePlayer(id, to){
+  S.pools.forEach(function(p){ var j=p.ids.indexOf(id); if(j>-1) p.ids.splice(j,1); });
+  if(to==="out"){ var i=S.inn.indexOf(id); if(i>-1) S.inn.splice(i,1); }
+  else S.pools[+to].ids.push(id);
+  persist(); render();
+}
+function orphanCount(){
+  var live={}; M.forEach(function(m){live[m.key]=1;});
+  var n=0; for(var k in S.scores){ var s=S.scores[k];
+    if(s&&s.a!=null&&s.b!=null&&!live[k]) n++; }
+  return n;
+}
+
+function vPlay(){
+  if(!M.length) return '<div class="card"><div class="meta">No matches yet. Set up pools first.</div></div>';
+  var courts={}; M.forEach(function(m){ courts[m.court]=1; });
+  var h='<div class="board">';
+  Object.keys(courts).sort().forEach(function(c){
+    var cur=onCourt(+c), nx=suggestNext(+c);
+    h+='<div class="crt"><h3>Court '+c+'</h3>';
+    if(cur) h+='<div class="now">'+esc(nm(cur.A[0])+" + "+nm(cur.A[1]))+' vs '
+      +esc(nm(cur.B[0])+" + "+nm(cur.B[1]))+'</div><div class="nx">'+esc(cur.pool)
+      +' · slot '+cur.slot+' · '+timeAt(cur.slot)+'</div>';
+    else h+='<div class="now">Court free</div>';
+    if(nx) h+='<div class="nx">Next: '+esc(nm(nx.m.A[0])+" + "+nm(nx.m.A[1]))+' vs '
+      +esc(nm(nx.m.B[0])+" + "+nm(nx.m.B[1]))+'</div>';
+    h+='</div>';
+  });
+  h+='</div>';
+
+  S.pools.forEach(function(pl,pi){
+    var rows=M.filter(function(m){return m.pi===pi;});
+    if(!rows.length) return;
+    var cur=onCourt(rows[0].court), nx=suggestNext(rows[0].court);
+    h+='<div class="card"><div class="chd"><h2>'+esc(pl.name)+'</h2>'
+     + '<span class="ct">court '+rows[0].court+'</span></div>'
+     + '<div class="meta">'+byRating(pl.ids).map(function(i){
+         var d=dOf(i); return esc(nm(i))+" "+(d==null?"NR":d.toFixed(3)); }).join(" · ")+'</div>';
+    rows.forEach(function(m){
+      var s=S.scores[m.key]||{};
+      var isCur = cur && cur.key===m.key;
+      var isNx  = nx && nx.m.key===m.key;
+      var cls = done(m)?" done":(isCur?" live":(isNx?" next":""));
+      var d=[dOf(m.A[0]),dOf(m.A[1]),dOf(m.B[0]),dOf(m.B[1])];
+      var df=d.every(function(v){return v!=null;})
+        ? Math.abs(d[0]+d[1]-d[2]-d[3]).toFixed(3) : "?";
+      h+='<div class="mrow'+cls+'"><div class="mtop">'
+       + '<span class="rd">SLOT '+m.slot+' · '+timeAt(m.slot)+' · diff '+df+'</span>'
+       + (isCur?'<span class="tag live">ON COURT</span>':(isNx?'<span class="tag next">UP NEXT</span>':''))
+       + (m.by.length?'<span class="bye">sits '+m.by.map(nm).map(esc).join(", ")+'</span>':'')
+       + '</div><div class="teams">'
+       + '<div class="tm r">'+esc(nm(m.A[0]))+'<span class="amp"> + </span>'+esc(nm(m.A[1]))+'</div>'
+       + '<div class="sc">'
+       + '<input type="number" inputmode="numeric" value="'+(s.a!=null?s.a:"")+'"'
+       + (s.a!=null&&s.b!=null&&s.a>s.b?' class="win"':'')
+       + ' onchange="setScore(\''+m.key+'\',\'a\',this.value)">'
+       + '<span class="vs">vs</span>'
+       + '<input type="number" inputmode="numeric" value="'+(s.b!=null?s.b:"")+'"'
+       + (s.a!=null&&s.b!=null&&s.b>s.a?' class="win"':'')
+       + ' onchange="setScore(\''+m.key+'\',\'b\',this.value)">'
+       + '</div>'
+       + '<div class="tm">'+esc(nm(m.B[0]))+'<span class="amp"> + </span>'+esc(nm(m.B[1]))+'</div>'
+       + '</div>';
+      if(isNx) h+='<div class="why">'+esc(whyNext(nx))+'</div>';
+      h+='</div>';
+    });
+    h+='</div>';
+  });
+  return h;
+}
+function setScore(key, side, v){
+  S.scores[key]=S.scores[key]||{a:null,b:null};
+  S.scores[key][side]=n2(v);
+  if(S.scores[key].a==null&&S.scores[key].b==null) delete S.scores[key];
+  persist(); render();
+}
+
+function vStand(){
+  var h="";
+  S.pools.forEach(function(pl,pi){
+    var T=tally(pi);
+    if(!T.length) return;
+    h+='<div class="card"><div class="chd"><h2>'+esc(pl.name)+'</h2>'
+     + '<span class="ct">points won</span></div>'
+     + '<table><thead><tr><th>Player</th><th>G</th><th>W</th><th>PF</th><th>PA</th><th>+/−</th></tr></thead><tbody>';
+    T.forEach(function(r){
+      var df=r.pf-r.pa;
+      h+='<tr><td>'+esc(ab(r.id))+'</td><td>'+r.g+'</td><td>'+r.w+'</td><td>'+r.pf+'</td><td>'+r.pa
+       + '</td><td class="'+(df>0?"pos":df<0?"neg":"")+'">'+(df>0?"+":"")+df+'</td></tr>';
+    });
+    h+='</tbody></table></div>';
+  });
+  return h || '<div class="card"><div class="meta">No scores yet.</div></div>';
+}
+
+/* ---------- save / sync ---------- */
+var timer=null;
+function persist(){
+  var v=serialize();
+  try{ localStorage.setItem(KEY,v); localStorage.setItem(DIRTY,"1"); }catch(e){}
+  flag("warn","Saving…");
+  clearTimeout(timer); timer=setTimeout(function(){ push(v,false); },800);
+}
+function saveNow(){ var v=serialize(); try{localStorage.setItem(KEY,v);}catch(e){} push(v,false); }
+function push(v,keep){
+  if(location.protocol==="file:"){ flag("ok","Saved on this device");
+    try{localStorage.removeItem(DIRTY);}catch(e){} return; }
+  return fetch(API,{method:"PUT",keepalive:!!keep,
+    headers:{"content-type":"application/json","x-pin":localStorage.getItem("rt-pin")||""},
+    body:JSON.stringify({data:v})}).then(function(r){
+      if(r.status===403){ var p=prompt("Enter the RallyTime PIN to save:");
+        if(p){ localStorage.setItem("rt-pin",p.trim()); return push(v,keep); }
+        flag("err","Not saved — PIN needed"); return; }
+      if(!r.ok){ flag("err","Not saved — offline?"); return; }
+      try{localStorage.removeItem(DIRTY);}catch(e){}
+      flag("ok","Saved to cloud");
+    }).catch(function(){ flag("err","Saved on this device only"); });
+}
+function flag(k,msg){ var el=document.getElementById("sync");
+  if(el) el.innerHTML='<span class="dot '+(k==="ok"?"":k)+'"></span>'+msg; }
+function pull(){
+  if(location.protocol==="file:") return;
+  fetch(API).then(function(r){return r.json();}).then(function(o){
+    if(!o||!o.data) return;
+    if(localStorage.getItem(DIRTY)==="1") return;
+    var mine=null; try{mine=JSON.parse(localStorage.getItem(KEY)||"null");}catch(e){}
+    var th=null; try{th=JSON.parse(o.data);}catch(e){return;}
+    if(!th||!th.S) return;
+    if(mine&&mine.savedAt&&th.savedAt&&mine.savedAt>th.savedAt) return;
+    S=th.S; try{localStorage.setItem(KEY,o.data);}catch(e){}
+    render(); flag("ok","Synced");
+  }).catch(function(){});
+}
+window.addEventListener("pagehide",function(){
+  if(localStorage.getItem(DIRTY)==="1") push(serialize(),true);
+});
+
+/* ---------- export ---------- */
+function dl(name,text,type){
+  var b=new Blob([text],{type:type||"text/plain"});
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(b); a.download=name;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+function expJSON(){ dl("night-"+S.date+"-backup.json", serialize(), "application/json"); }
+function expCSV(){
+  var rows=[["Pool","Court","Slot","Time","A1","A1 ID","A2","A2 ID","B1","B1 ID","B2","B2 ID","Score A","Score B","Sat Out"]];
+  M.forEach(function(m){
+    var s=S.scores[m.key]||{};
+    var g=function(i){ var p=P(i); return [p?p.n:"", p?p.dupr:""]; };
+    rows.push([m.pool,m.court,m.slot,timeAt(m.slot)]
+      .concat(g(m.A[0]),g(m.A[1]),g(m.B[0]),g(m.B[1]),
+        [s.a!=null?s.a:"", s.b!=null?s.b:"", m.by.map(full).join("; ")]));
+  });
+  var csv=rows.map(function(r){ return r.map(function(c){
+    c=String(c==null?"":c);
+    return /[",\n]/.test(c) ? '"'+c.replace(/"/g,'""')+'"' : c; }).join(","); }).join("\n");
+  dl("night-"+S.date+".csv", csv, "text/csv");
+}
+
+/* ---------- share ---------- */
+function shareText(){
+  var L=["*"+S.title+"*","_"+S.date+" · first ball "+S.cfg.firstBall+"_",""];
+  S.pools.forEach(function(pl,pi){
+    L.push("*"+pl.name+"*");
+    L.push(byRating(pl.ids).map(function(i){var d=dOf(i);return nm(i)+" "+(d==null?"NR":d.toFixed(3));}).join(" · "));
+    M.filter(function(m){return m.pi===pi;}).forEach(function(m){
+      var s=S.scores[m.key];
+      var line="slot "+m.slot+" "+timeAt(m.slot)+"  "+nm(m.A[0])+" + "+nm(m.A[1])
+        +(s&&s.a!=null&&s.b!=null ? "  "+s.a+"-"+s.b+"  " : "  vs  ")
+        +nm(m.B[0])+" + "+nm(m.B[1]);
+      if(m.by.length) line+="   (sits "+m.by.map(nm).join(", ")+")";
+      L.push(line);
+    });
+    var T=tally(pi);
+    if(T.length && T[0].g){
+      L.push("Standings — points won");
+      T.forEach(function(r,i){
+        var md=i===0?"🥇 ":i===1?"🥈 ":i===2?"🥉 ":"";
+        L.push(md+(i+1)+". "+ab(r.id)+" — "+r.pf+" ("+(r.pf-r.pa>0?"+":"")+(r.pf-r.pa)+")");
+      });
+    }
+    L.push("");
+  });
+  var d=M.filter(done).length;
+  if(d<M.length) L.push("_"+d+" of "+M.length+" matches in._");
+  return L.join("\n");
+}
+function openShare(){
+  document.getElementById("shTxt").value=shareText();
+  document.getElementById("ovl").classList.add("on");
+}
+function closeShare(){ document.getElementById("ovl").classList.remove("on"); }
+function copyShare(){
+  var t=document.getElementById("shTxt");
+  t.select(); try{document.execCommand("copy");}catch(e){}
+  if(navigator.clipboard) navigator.clipboard.writeText(t.value).catch(function(){});
+}
+function sendWA(){
+  var t=document.getElementById("shTxt").value;
+  if(navigator.share){ navigator.share({text:t}).then(closeShare).catch(function(){}); return; }
+  window.open("https://wa.me/?text="+encodeURIComponent(t),"_blank");
+  closeShare();
+}
+
+/* ---------- boot ---------- */
+if(!load()) seedDefault();
+render(); pull();
+</script>
+</body>
+</html>

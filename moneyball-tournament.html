@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Moneyball — Pools, Draft &amp; Bracket</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --ink:#0a2151; --blue:#2352e8;
+    --glass:rgba(255,255,255,.16); --line:rgba(255,255,255,.35); --fade:rgba(255,255,255,.75);
+    --gold:#fbbf24; --green:#4ade80;
+  }
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,sans-serif;
+    background:linear-gradient(225deg,rgb(75,151,254) 0%,rgb(1,99,208) 40%,rgb(5,21,94) 87%) fixed;
+    min-height:100vh;color:#fff;
+    padding-bottom:calc(132px + env(safe-area-inset-bottom));
+    -webkit-text-size-adjust:100%;
+  }
+  .topbar{
+    background:#fff;box-shadow:0 4px 18px rgba(5,21,94,.25);
+    padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top));
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    position:sticky;top:0;z-index:20;
+  }
+  .brand{font-size:1.05rem;font-weight:800;color:var(--ink);letter-spacing:-.02em;display:flex;align-items:center;gap:7px}
+  .brand span{color:var(--blue)}
+  .topbar a{font-size:.72rem;font-weight:700;color:#6b7ba8;text-decoration:none;white-space:nowrap}
+  .wrap{max-width:860px;margin:0 auto;padding:16px 12px 0}
+  h1{font-size:1.35rem;font-weight:800;letter-spacing:-.02em}
+  .sub{color:#c9d8ff;font-size:.82rem;margin-top:3px;line-height:1.5}
+
+  .status{
+    background:var(--glass);border:1px solid var(--line);border-radius:14px;
+    -webkit-backdrop-filter:blur(20px) saturate(1.7);backdrop-filter:blur(20px) saturate(1.7);
+    padding:11px 14px;margin:14px 0;display:flex;align-items:center;justify-content:space-between;gap:10px;
+    font-size:.8rem;font-weight:600;
+  }
+  .status .prog{color:var(--fade)}
+  .status .prog b{color:#fff;font-size:.95rem}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:6px;vertical-align:1px}
+  .dot.warn{background:var(--gold)}.dot.err{background:#f87171}
+
+  .card{
+    background:var(--glass);border:1px solid var(--line);border-radius:18px;
+    -webkit-backdrop-filter:blur(22px) saturate(1.7);backdrop-filter:blur(22px) saturate(1.7);
+    box-shadow:0 8px 28px rgba(10,33,81,.22),inset 0 1px 0 rgba(255,255,255,.45);
+    padding:14px;margin-bottom:16px;
+  }
+  .card.locked{opacity:.62}
+  .chd{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:3px}
+  .chd h2{font-size:1.05rem;font-weight:800;letter-spacing:-.01em}
+  .chd .ct{font-size:.68rem;font-weight:700;color:var(--fade);letter-spacing:.06em;text-transform:uppercase}
+  .roster{font-size:.72rem;color:var(--fade);line-height:1.5;margin-bottom:12px}
+  .note{font-size:.68rem;color:#fde68a;line-height:1.5;margin-bottom:10px}
+  .lockmsg{font-size:.76rem;color:#c9d8ff;line-height:1.6;padding:10px 0 2px}
+
+  .mrow{border-top:1px solid rgba(255,255,255,.16);padding:11px 0 12px}
+  .mrow:first-of-type{border-top:none}
+  .mrow.done{opacity:.72}
+  .mtop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+  .rd{font-size:.66rem;font-weight:800;letter-spacing:.08em;color:#c9d8ff}
+  .bye{font-size:.66rem;color:var(--fade);font-weight:600;text-align:right}
+  .teams{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center}
+  .tm{font-size:.83rem;font-weight:700;line-height:1.4}
+  .tm.r{text-align:right}
+  .tm .amp{font-weight:600;color:var(--fade);margin:0 2px}
+  .sc{display:flex;align-items:center;gap:5px}
+  input[type=number]{
+    width:52px;height:44px;text-align:center;font-size:16px;font-weight:800;
+    border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.2);
+    color:#fff;font-family:inherit;-moz-appearance:textfield;
+  }
+  input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  input[type=number]:focus{outline:none;background:rgba(255,255,255,.34);border-color:#fff}
+  input[type=number].win{background:rgba(74,222,128,.32);border-color:rgba(74,222,128,.65)}
+  .vs{font-size:.62rem;font-weight:800;color:var(--fade)}
+
+  table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.76rem}
+  th,td{padding:6px 3px;text-align:right}
+  th:first-child,td:first-child{text-align:left}
+  th:nth-child(2),td:nth-child(2){text-align:left}
+  th{font-size:.6rem;letter-spacing:.04em;text-transform:uppercase;color:var(--fade);font-weight:700;border-bottom:1px solid rgba(255,255,255,.22)}
+  td{border-bottom:1px solid rgba(255,255,255,.09)}
+  .pos{color:#86efac}.neg{color:#fca5a5}
+  tr.inn td{background:rgba(74,222,128,.10)}
+  tr.cut td{border-bottom:2px solid var(--gold)}
+  .cutlbl{font-size:.6rem;font-weight:800;color:var(--gold);letter-spacing:.08em;text-transform:uppercase}
+  .sd{display:inline-block;min-width:19px;height:19px;line-height:19px;text-align:center;
+      border-radius:6px;background:rgba(255,255,255,.22);font-size:.62rem;font-weight:800;margin-right:6px}
+  .sd.adv{background:var(--green);color:#06331a}
+  .pl{font-size:.62rem;color:var(--fade);font-weight:700}
+
+  select{
+    width:100%;height:44px;font-size:15px;font-weight:700;font-family:inherit;
+    border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.2);
+    color:#fff;padding:0 10px;-webkit-appearance:none;appearance:none;
+  }
+  select:focus{outline:none;background:rgba(255,255,255,.32);border-color:#fff}
+  select option{background:#0d2a6b;color:#fff}
+  .pick{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;
+        border-top:1px solid rgba(255,255,255,.16);padding:11px 0}
+  .pick:first-of-type{border-top:none}
+  .pick .who{font-size:.8rem;font-weight:800;line-height:1.3}
+  .pick .who small{display:block;font-size:.62rem;font-weight:700;color:var(--fade);letter-spacing:.05em;text-transform:uppercase}
+
+  .team{border-top:1px solid rgba(255,255,255,.16);padding:10px 0;font-size:.82rem;font-weight:700}
+  .team:first-of-type{border-top:none}
+  .team em{font-style:normal;color:var(--fade);font-weight:600}
+  .champ{text-align:center;padding:18px 10px 6px}
+  .champ .lbl{font-size:.66rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+  .champ .nm{font-size:1.3rem;font-weight:800;margin-top:6px;line-height:1.3}
+
+  .warn{background:rgba(251,191,36,.18);border:1px solid rgba(251,191,36,.6);
+    border-radius:14px;padding:11px 14px;margin-bottom:16px;
+    font-size:.78rem;font-weight:700;color:#fde68a;line-height:1.5}
+  .tools{border-style:dashed}
+  .tools .tbtn{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .tools .tbtn button{flex:1;min-width:132px;padding:12px 8px;border-radius:12px;
+    border:1px solid var(--line);background:rgba(255,255,255,.16);color:#fff;
+    font:inherit;font-size:.76rem;font-weight:700;cursor:pointer}
+  .tools .tbtn button.danger{background:rgba(248,113,113,.24);border-color:rgba(248,113,113,.55)}
+  .tools .tbtn button:active{transform:translateY(1px)}
+
+  .seg{display:inline-flex;background:rgba(255,255,255,.14);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:10px}
+  .seg button{background:none;border:none;color:var(--fade);font:inherit;font-size:.66rem;font-weight:700;padding:6px 10px;cursor:pointer}
+  .seg button.on{background:rgba(255,255,255,.3);color:#fff}
+
+  .bar{
+    position:fixed;left:0;right:0;bottom:0;z-index:30;
+    background:rgba(5,21,94,.86);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+    border-top:1px solid var(--line);
+    padding:10px 12px;padding-bottom:calc(10px + env(safe-area-inset-bottom));
+    display:flex;gap:8px;
+  }
+  .bar button{
+    flex:1;padding:12px 6px;border-radius:12px;border:1px solid var(--line);
+    background:var(--glass);color:#fff;font:inherit;font-size:.76rem;font-weight:700;cursor:pointer;
+  }
+  .bar button.pri{background:var(--blue);border-color:var(--blue)}
+  .bar button:active{transform:translateY(1px)}
+
+  .ovl{position:fixed;inset:0;z-index:50;background:rgba(5,21,94,.72);
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+    display:none;align-items:flex-end;justify-content:center}
+  .ovl.on{display:flex}
+  .sheet{width:100%;max-width:620px;background:#0d2a6b;border:1px solid var(--line);
+    border-radius:20px 20px 0 0;padding:16px 14px;
+    padding-bottom:calc(16px + env(safe-area-inset-bottom));max-height:92vh;
+    display:flex;flex-direction:column;gap:10px}
+  .sheet h3{font-size:1rem;font-weight:800}
+  .sheet textarea{width:100%;min-height:44vh;background:rgba(255,255,255,.12);
+    border:1px solid var(--line);border-radius:12px;color:#fff;font:inherit;font-size:.8rem;
+    line-height:1.5;padding:11px;resize:none}
+  .sheet .row{display:flex;gap:8px}
+  .sheet button{flex:1;padding:12px;border-radius:12px;border:1px solid var(--line);
+    background:var(--glass);color:#fff;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}
+  .sheet button.pri{background:#25D366;border-color:#25D366;color:#05341a}
+
+  @media(min-width:640px){
+    .wrap{padding:22px 16px 0}
+    h1{font-size:1.7rem}
+    .card{padding:18px 20px}
+    input[type=number]{width:58px}
+    .tm{font-size:.9rem}
+    th,td{padding:6px 6px}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">Rally<span>Time</span></div>
+  <a href="index.html">&lsaquo; All leagues</a>
+</div>
+
+<div class="wrap">
+  <h1>Moneyball — Men's 3.0–3.75</h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="status">
+    <span class="prog" id="prog"></span>
+    <span id="sync"><span class="dot"></span>Ready</span>
+  </div>
+
+  <div id="demo"></div>
+  <div id="pools"></div>
+  <div id="board"></div>
+  <div id="draft"></div>
+  <div id="bracket"></div>
+  <div id="tools"></div>
+</div>
+
+<div class="bar">
+  <button onclick="openShare()">Share</button>
+  <button onclick="expCSV()">CSV</button>
+  <button onclick="expJSON()">Backup</button>
+  <button class="pri" onclick="saveNow()">Save</button>
+</div>
+
+<div class="ovl" id="ovl">
+  <div class="sheet">
+    <h3>Share results</h3>
+    <textarea id="shareText" readonly></textarea>
+    <div class="row">
+      <button onclick="closeShare()">Close</button>
+      <button onclick="copyShare()">Copy</button>
+      <button class="pri" onclick="sendWhatsApp()">WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   Moneyball — 15 players, three pools of five.
+   Top 8 OVERALL advance (not top-N per pool), so the pools are
+   BALANCED rather than tiered: each carries a comparable share
+   of the field's strength, matched rank-for-rank. Tiering would
+   let one pool send five through and another none.
+   ============================================================ */
+
+var EVENT = {
+  name:"Moneyball — Men's 3.0-3.75",
+  date:"2026-08-27",
+  venue:"Life Time Gainesville",
+  to:11,
+  advance:8           /* size of the cut; must be even, and /2 a power of 2 */
+};
+
+/* ROT5: 5 rounds, each player partners all four others exactly once,
+   plays 4, sits 1. Indices are seats within the pool. */
+var ROT5 = [
+  {a:[1,4], b:[2,3], bye:0},
+  {a:[2,0], b:[3,4], bye:1},
+  {a:[3,1], b:[4,0], bye:2},
+  {a:[4,2], b:[0,1], bye:3},
+  {a:[0,3], b:[1,2], bye:4}
+];
+
+/* Each pool's `rot` lists ROT5 indices in MOST-BALANCED-FIRST order,
+   so lopsided rounds land late. */
+var POOLS = [
+  { pool:"Pool A", rot:[4,0,2,1,3], players:[
+    {n:"James Chen",         d:3.793, id:"NRYML7"},
+    {n:"Charbel Touma",      d:3.693, id:"7DPDE5"},
+    {n:"Nikolai Matveev",    d:3.545, id:"7JJJ45"},
+    {n:"Kareem Adi",         d:3.421, id:""},
+    {n:"Uzair Saeed",        d:3.041, id:"1625RK"}
+  ]},
+  { pool:"Pool B", rot:[4,2,0,1,3], players:[
+    {n:"Eli Azar",           d:3.773, id:"PPE7GZ"},
+    {n:"Nicolas Lion",       d:3.634, id:"N7VJOW"},
+    {n:"Juan Castillo",      d:3.502, id:"GW4JXD"},
+    {n:"Trey Treadwell",     d:3.454, id:"X2RG7X"},
+    {n:"John Kerstetter",    d:3.143, id:"8DKGXL"}
+  ]},
+  { pool:"Pool C", rot:[4,0,2,3,1], players:[
+    {n:"Mohammad Mukhtar",   d:3.718, id:"1RPGEM"},
+    {n:"Charbel Chahine",    d:3.569, id:"2YKPV9"},
+    {n:"Wais Barek",         d:3.514, id:"PWJJ5X"},
+    {n:"Yasir Saleem",       d:3.366, id:"94EJDJ"},
+    {n:"Brian Bartholomew",  d:3.329, id:"8EJP6W"}
+  ]}
+];
+
+/* ---------- state ---------- */
+var KEY   = "rt-moneyball-tourney-2026-08-27";
+var API   = "/api/state/moneyball-tourney";
+var DIRTY = "rt-dirty:" + KEY;
+
+var scores = {};      /* "pi-ri"  -> {a,b}   pool matches            */
+var picks  = {};      /* "1".."4" -> "pi.si" drafted partner         */
+var bs     = {};      /* "sf1","sf2","f" -> {a,b}  bracket matches   */
+var sig    = "";      /* fingerprint of the current four teams       */
+var demo   = false;   /* true when the data on screen is simulated   */
+
+function load(){
+  try{
+    var r=localStorage.getItem(KEY);
+    if(r){ var o=JSON.parse(r); scores=o.scores||{}; picks=o.picks||{}; bs=o.bs||{};
+           sig=o.sig||""; demo=!!o.demo; }
+  }catch(e){}
+}
+function serialize(){
+  return JSON.stringify({scores:scores, picks:picks, bs:bs, sig:sig, demo:demo, savedAt:Date.now()});
+}
+
+/* ---------- helpers ---------- */
+function key(pi,si){ return pi+"."+si; }
+function P(k){ var p=k.split("."); return POOLS[+p[0]].players[+p[1]]; }
+function abbr(n){
+  var p=String(n).trim().split(/\s+/);
+  return p.length>1 ? p[0]+" "+p[p.length-1].charAt(0).toUpperCase()+"." : p[0];
+}
+function first(n){
+  var p=String(n).trim().split(/\s+/);
+  /* two Charbels in the field — disambiguate them */
+  if(p[0]==="Charbel") return "Charbel "+p[1].charAt(0)+".";
+  return p[0];
+}
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+function num(v){ return (v===""||v==null||isNaN(v)) ? null : Math.max(0,Math.min(99,parseInt(v,10))); }
+
+function rnd(pi,ri){ return ROT5[POOLS[pi].rot[ri]]; }
+function got(pi,ri){ var s=scores[pi+"-"+ri]; return !!(s&&s.a!=null&&s.b!=null); }
+function poolDone(pi){ return POOLS[pi].rot.every(function(_,ri){ return got(pi,ri); }); }
+function allPoolsDone(){ return POOLS.every(function(_,pi){ return poolDone(pi); }); }
+function poolsIn(){
+  var n=0; POOLS.forEach(function(Pl,pi){ Pl.rot.forEach(function(_,ri){ if(got(pi,ri)) n++; }); });
+  return n;
+}
+function totalPool(){ var n=0; POOLS.forEach(function(Pl){ n+=Pl.rot.length; }); return n; }
+
+/* ---------- standings ---------- */
+/* Points won is the currency: with rotating partners nobody picks who
+   they play with, so match wins measure the draw as much as the player. */
+function statsFor(pi){
+  var Pl=POOLS[pi], out=Pl.players.map(function(p,si){
+    return {k:key(pi,si), n:p.n, d:p.d, pool:Pl.pool, pf:0, pa:0, g:0, w:0};
+  });
+  Pl.rot.forEach(function(_,ri){
+    if(!got(pi,ri)) return;
+    var R=rnd(pi,ri), s=scores[pi+"-"+ri];
+    R.a.forEach(function(x){ out[x].pf+=s.a; out[x].pa+=s.b; out[x].g++; if(s.a>s.b) out[x].w++; });
+    R.b.forEach(function(x){ out[x].pf+=s.b; out[x].pa+=s.a; out[x].g++; if(s.b>s.a) out[x].w++; });
+  });
+  return out;
+}
+function cmp(x,y){
+  if(y.pf!==x.pf) return y.pf-x.pf;               /* 1. points won        */
+  var dx=x.pf-x.pa, dy=y.pf-y.pa;
+  if(dy!==dx) return dy-dx;                        /* 2. point differential*/
+  if(x.pa!==y.pa) return x.pa-y.pa;                /* 3. fewest conceded   */
+  return y.d-x.d;                                  /* 4. DUPR, deterministic
+                                                       stand-in for a coin flip */
+}
+function overall(){
+  var all=[];
+  POOLS.forEach(function(_,pi){ all=all.concat(statsFor(pi)); });
+  all.sort(cmp);
+  all.forEach(function(r,i){ r.seed=i+1; });
+  return all;
+}
+/* true only once every pool match is in — a partial cut is meaningless */
+function advancers(){ return allPoolsDone() ? overall().slice(0,EVENT.advance) : []; }
+
+/* ---------- draft ---------- */
+function drafters(){ return advancers().slice(0, EVENT.advance/2); }
+function pickable(){ return advancers().slice(EVENT.advance/2); }
+function taken(exceptSeat){
+  var t={};
+  for(var s in picks){ if(+s!==exceptSeat && picks[s]) t[picks[s]]=1; }
+  return t;
+}
+function draftDone(){
+  var D=drafters(); if(!D.length) return false;
+  for(var i=1;i<=D.length;i++) if(!picks[i]) return false;
+  return true;
+}
+function teams(){
+  if(!draftDone()) return [];
+  return drafters().map(function(p,i){
+    var mate=overall().filter(function(r){ return r.k===picks[i+1]; })[0];
+    return {no:i+1, a:p, b:mate, sum:p.seed+mate.seed};
+  });
+}
+
+/* Reseed for the bracket on COMBINED seed number — lowest sum is the
+   top bracket seed. Drafting order no longer decides the bracket, so a
+   drafter who lands a strong partner can outrank one who picked earlier.
+   Ties always resolve: every team's lowest seed is its drafter's seed
+   (partners are all seeds 5-8), and drafter seeds are unique. */
+function bracketTeams(){
+  var T=teams(); if(T.length!==EVENT.advance/2) return [];
+  T=T.slice().sort(function(x,y){
+    if(x.sum!==y.sum) return x.sum-y.sum;
+    return x.a.seed-y.a.seed;
+  });
+  T.forEach(function(t,i){ t.bseed=i+1; });
+  return T;
+}
+function teamName(t){ return first(t.a.n)+" + "+first(t.b.n); }
+function teamSeeds(t){ return "seeds "+t.a.seed+"+"+t.b.seed+" = "+t.sum; }
+
+/* Identity of the four teams. A late pool score can reshuffle the seeds,
+   which silently changes who "Team 1" is — and any bracket score still
+   sitting in bs would then belong to a pairing that no longer exists.
+   We fingerprint the teams and wipe the bracket whenever it moves. */
+function teamSig(){
+  if(!draftDone()) return "";
+  /* built from the RESEEDED order, so a change that only reshuffles the
+     bracket seeding still invalidates any scores already entered */
+  return bracketTeams().map(function(t){ return t.a.k+"+"+t.b.k; }).join("|");
+}
+function syncBracket(){
+  var s=teamSig();
+  if(s!==sig){ if(sig!=="" ) bs={}; sig=s; }
+}
+
+/* ---------- bracket ---------- */
+/* 4 teams: 1v4 and 2v3, then the final. */
+function semiPair(){
+  var T=bracketTeams(); if(T.length!==4) return null;
+  return [{id:"sf1", x:T[0], y:T[3]}, {id:"sf2", x:T[1], y:T[2]}];
+}
+function winnerOf(id){
+  var s=bs[id]; if(!s||s.a==null||s.b==null||s.a===s.b) return null;
+  var S=semiPair(); if(!S) return null;
+  var m=S.filter(function(v){return v.id===id;})[0];
+  if(!m) return null;
+  return s.a>s.b ? m.x : m.y;
+}
+function finalists(){
+  var w1=winnerOf("sf1"), w2=winnerOf("sf2");
+  return (w1&&w2) ? {x:w1,y:w2} : null;
+}
+function champion(){
+  var F=finalists(); if(!F) return null;
+  var s=bs["f"]; if(!s||s.a==null||s.b==null||s.a===s.b) return null;
+  return s.a>s.b ? F.x : F.y;
+}
+
+/* ---------- render ---------- */
+function render(){
+  document.getElementById("sub").textContent =
+    "Thu Aug 27 · " + EVENT.venue + " · 15 players · three pools of five · top "
+    + EVENT.advance + " overall advance · games to " + EVENT.to + ", horn at 12 min";
+
+  var n=poolsIn(), t=totalPool();
+  var extra = allPoolsDone()
+    ? (champion() ? " · champion decided" : (draftDone() ? " · bracket live" : " · ready to draft"))
+    : "";
+  document.getElementById("prog").innerHTML =
+    "<b>"+n+"</b> / "+t+" pool matches" + extra;
+
+  drawDemo(); drawPools(); drawBoard(); drawDraft(); drawBracket(); drawTools();
+}
+
+function drawPools(){
+  var h="";
+  POOLS.forEach(function(Pl,pi){
+    var ds=Pl.players.map(function(p){return p.d;}).slice().sort(function(a,b){return b-a;});
+    var gap=0; for(var i=1;i<ds.length;i++) gap=Math.max(gap, ds[i-1]-ds[i]);
+    var sum=Pl.players.reduce(function(s,p){return s+p.d;},0);
+
+    h+='<div class="card"><div class="chd"><h2>'+Pl.pool+'</h2>'
+     + '<span class="ct">avg '+(sum/5).toFixed(4)+'</span></div>';
+    h+='<div class="roster">'
+     + Pl.players.slice().sort(function(a,b){return b.d-a.d;})
+         .map(function(p){return esc(p.n)+" "+p.d.toFixed(3);}).join(" · ")
+     + '<br>spread '+(ds[0]-ds[4]).toFixed(3)+' · biggest gap '+gap.toFixed(3)+'</div>';
+
+    Pl.rot.forEach(function(_,ri){
+      var R=rnd(pi,ri), s=scores[pi+"-"+ri]||{};
+      var dn=got(pi,ri);
+      var diff=Math.abs(Pl.players[R.a[0]].d+Pl.players[R.a[1]].d
+                       -Pl.players[R.b[0]].d-Pl.players[R.b[1]].d);
+      h+='<div class="mrow'+(dn?" done":"")+'">'
+       + '<div class="mtop"><span class="rd">ROUND '+(ri+1)+' · diff '+diff.toFixed(3)+'</span>'
+       + '<span class="bye">sits '+esc(first(Pl.players[R.bye].n))+'</span></div>'
+       + '<div class="teams">'
+       + '<div class="tm r">'+esc(first(Pl.players[R.a[0]].n))+'<span class="amp"> + </span>'
+       + esc(first(Pl.players[R.a[1]].n))+'</div>'
+       + '<div class="sc">'
+       + '<input type="number" inputmode="numeric" value="'+(s.a!=null?s.a:"")+'" '
+       + (s.a!=null&&s.b!=null&&s.a>s.b?'class="win" ':'')
+       + 'onchange="setScore('+pi+','+ri+',\'a\',this.value)">'
+       + '<span class="vs">vs</span>'
+       + '<input type="number" inputmode="numeric" value="'+(s.b!=null?s.b:"")+'" '
+       + (s.a!=null&&s.b!=null&&s.b>s.a?'class="win" ':'')
+       + 'onchange="setScore('+pi+','+ri+',\'b\',this.value)">'
+       + '</div>'
+       + '<div class="tm">'+esc(first(Pl.players[R.b[0]].n))+'<span class="amp"> + </span>'
+       + esc(first(Pl.players[R.b[1]].n))+'</div>'
+       + '</div></div>';
+    });
+    h+='</div>';
+  });
+  document.getElementById("pools").innerHTML=h;
+}
+
+function drawBoard(){
+  var A=overall(), done=allPoolsDone();
+  var h='<div class="card"><div class="chd"><h2>Overall standings</h2>'
+      + '<span class="ct">'+(done?"final":"live")+'</span></div>'
+      + '<div class="roster">Ranked across all three pools on <b>points won</b>, then differential, '
+      + 'then fewest conceded. The top '+EVENT.advance+' advance regardless of pool.'
+      + (done?"":" Provisional until all "+totalPool()+" pool matches are in.")+'</div>'
+      + '<table><thead><tr><th>#</th><th>Player</th><th>Pool</th><th>G</th><th>W</th>'
+      + '<th>PF</th><th>PA</th><th>+/−</th></tr></thead><tbody>';
+  A.forEach(function(r,i){
+    var adv = done && i < EVENT.advance;
+    var df  = r.pf-r.pa;
+    h+='<tr class="'+(adv?"inn":"")+(done&&i===EVENT.advance-1?" cut":"")+'">'
+     + '<td><span class="sd'+(adv?" adv":"")+'">'+r.seed+'</span></td>'
+     + '<td>'+esc(abbr(r.n))+'</td>'
+     + '<td class="pl">'+esc(r.pool.replace("Pool ",""))+'</td>'
+     + '<td>'+r.g+'</td><td>'+r.w+'</td><td>'+r.pf+'</td><td>'+r.pa+'</td>'
+     + '<td class="'+(df>0?"pos":df<0?"neg":"")+'">'+(df>0?"+":"")+df+'</td></tr>';
+    if(done && i===EVENT.advance-1)
+      h+='<tr><td colspan="8" class="cutlbl" style="padding-top:8px">— cut line · '
+        +EVENT.advance+' advance, '+(A.length-EVENT.advance)+' out —</td></tr>';
+  });
+  h+='</tbody></table></div>';
+  document.getElementById("board").innerHTML=h;
+}
+
+function drawDraft(){
+  var ready=allPoolsDone();
+  var h='<div class="card'+(ready?"":" locked")+'"><div class="chd"><h2>The draft</h2>'
+      + '<span class="ct">'+(draftDone()?"complete":ready?"open":"locked")+'</span></div>';
+  if(!ready){
+    h+='<div class="lockmsg">Opens once all '+totalPool()+' pool matches are scored — '
+     + poolsIn()+' in so far. The cut can\'t be read off a partial pool.</div></div>';
+    document.getElementById("draft").innerHTML=h; return;
+  }
+  var D=drafters(), avail=pickable();
+  h+='<div class="roster">Seeds 1–'+D.length+' pick a partner from seeds '
+   + (D.length+1)+'–'+EVENT.advance+', in seed order. Seed 1 gets first call; '
+   + 'the last drafter takes whoever is left.</div>';
+  D.forEach(function(p,i){
+    var seat=i+1, t=taken(seat);
+    h+='<div class="pick"><div class="who"><small>Seed '+p.seed+' · pick '+seat+'</small>'
+     + esc(abbr(p.n))+'</div><select onchange="setPick('+seat+',this.value)">'
+     + '<option value="">— choose a partner —</option>';
+    avail.forEach(function(q){
+      if(t[q.k]) return;
+      h+='<option value="'+q.k+'"'+(picks[seat]===q.k?" selected":"")+'>'
+       + esc(abbr(q.n))+' · seed '+q.seed+' · '+q.pf+' pts</option>';
+    });
+    h+='</select></div>';
+  });
+  if(draftDone()){
+    h+='<div class="roster" style="margin:14px 0 6px">Bracket seeding — '
+     + 'teams reseed on <b>combined seed number</b>, lowest sum first. '
+     + 'Ties go to the team holding the better individual seed.</div>';
+    bracketTeams().forEach(function(t){
+      h+='<div class="team"><span class="sd adv">'+t.bseed+'</span>'+esc(teamName(t))
+       + ' <em>— '+teamSeeds(t)+'</em></div>';
+    });
+  }
+  h+='</div>';
+  document.getElementById("draft").innerHTML=h;
+}
+
+function drawBracket(){
+  var S=semiPair();
+  var h='<div class="card'+(S?"":" locked")+'"><div class="chd"><h2>Bracket</h2>'
+      + '<span class="ct">'+(champion()?"decided":S?"live":"locked")+'</span></div>';
+  if(!S){
+    h+='<div class="lockmsg">Opens once the draft is complete. Teams reseed on '
+     + 'combined seed number, then play 1 v 4 and 2 v 3, then the final.</div></div>';
+    document.getElementById("bracket").innerHTML=h; return;
+  }
+  h+='<div class="roster">Reseeded on combined seed number — lowest sum is the top seed.</div>';
+  S.forEach(function(m,i){
+    h+=bracketRow("SEMIFINAL "+(i+1)+" · "+m.x.bseed+" v "+m.y.bseed, m.id,
+                  teamName(m.x), teamName(m.y));
+  });
+  var F=finalists();
+  if(F){ h+=bracketRow("FINAL", "f", teamName(F.x), teamName(F.y)); }
+  else {
+    h+='<div class="mrow"><div class="mtop"><span class="rd">FINAL</span></div>'
+     + '<div class="lockmsg" style="padding:0">Waiting on both semifinals.</div></div>';
+  }
+  var C=champion();
+  if(C) h+='<div class="champ"><div class="lbl">Champions</div>'
+         + '<div class="nm">🏆 '+esc(teamName(C))+'</div></div>';
+  h+='</div>';
+  document.getElementById("bracket").innerHTML=h;
+}
+function bracketRow(label,id,left,right){
+  var s=bs[id]||{};
+  return '<div class="mrow'+(s.a!=null&&s.b!=null?" done":"")+'">'
+   + '<div class="mtop"><span class="rd">'+label+'</span></div>'
+   + '<div class="teams">'
+   + '<div class="tm r">'+esc(left)+'</div>'
+   + '<div class="sc">'
+   + '<input type="number" inputmode="numeric" value="'+(s.a!=null?s.a:"")+'" '
+   + (s.a!=null&&s.b!=null&&s.a>s.b?'class="win" ':'')
+   + 'onchange="setB(\''+id+'\',\'a\',this.value)">'
+   + '<span class="vs">vs</span>'
+   + '<input type="number" inputmode="numeric" value="'+(s.b!=null?s.b:"")+'" '
+   + (s.a!=null&&s.b!=null&&s.b>s.a?'class="win" ':'')
+   + 'onchange="setB(\''+id+'\',\'b\',this.value)">'
+   + '</div>'
+   + '<div class="tm">'+esc(right)+'</div>'
+   + '</div></div>';
+}
+
+/* ---------- input ---------- */
+function setScore(pi,ri,side,v){
+  var k=pi+"-"+ri;
+  scores[k]=scores[k]||{a:null,b:null};
+  scores[k][side]=num(v);
+  if(scores[k].a==null && scores[k].b==null) delete scores[k];
+  /* A changed pool score can move the cut, which can invalidate picks
+     and re-label the teams underneath any bracket scores already entered. */
+  pruneDraft(); syncBracket();
+  persist(); render();
+}
+function setB(id,side,v){
+  bs[id]=bs[id]||{a:null,b:null};
+  bs[id][side]=num(v);
+  if(bs[id].a==null && bs[id].b==null) delete bs[id];
+  /* a changed semifinal result rewrites the final */
+  if(id!=="f") delete bs["f"];
+  persist(); render();
+}
+function setPick(seat,v){
+  if(v) picks[seat]=v; else delete picks[seat];
+  bs={}; sig=teamSig();        /* teams changed — any bracket scores are stale */
+  persist(); render();
+}
+/* drop any pick that is no longer a legal partner */
+function pruneDraft(){
+  var ok={}; pickable().forEach(function(p){ ok[p.k]=1; });
+  var D=drafters().length;
+  for(var s in picks){
+    if(+s>D || !ok[picks[s]]){ delete picks[s]; bs={}; }
+  }
+}
+
+/* ============================================================
+   Test tools. These write to the SAME synced state as real
+   scoring, so simulated data is flagged on screen and in the
+   saved payload until it's reset.
+   ============================================================ */
+
+/* Score a match from the two team ratings. Logistic on the rating
+   gap decides the winner; the gap also sets how close it stays, so
+   an even match lands near 11-9 and a lopsided one near 11-3. */
+function simScore(sa, sb){
+  /* k=0.8 puts a 0.8 team-rating edge near an 80% win rate, which is about
+     what that gap is worth in practice. Steeper than this and the favourite
+     never loses, which makes the standings useless for testing tiebreaks. */
+  var p    = 1/(1+Math.pow(10, -(sa-sb)*0.8));
+  var aw   = Math.random() < p;
+  var edge = Math.abs(sa-sb);
+  var base = 9 - Math.min(6, edge*5);
+  var l    = Math.round(base + (Math.random()*4-2));
+  l = Math.max(0, Math.min(EVENT.to-1, l));
+  return aw ? {a:EVENT.to, b:l} : {a:l, b:EVENT.to};
+}
+function fillPools(){
+  scores={}; picks={}; bs={}; sig="";
+  POOLS.forEach(function(Pl,pi){
+    Pl.rot.forEach(function(_,ri){
+      var R=rnd(pi,ri), p=Pl.players;
+      scores[pi+"-"+ri]=simScore(p[R.a[0]].d+p[R.a[1]].d, p[R.b[0]].d+p[R.b[1]].d);
+    });
+  });
+  demo=true;
+}
+function simPools(){
+  if(!confirm("Fill all 15 pool matches with simulated scores?\n\nThis clears anything already entered, including the draft and bracket.")) return;
+  fillPools(); persist(); render();
+}
+function simAll(){
+  if(!confirm("Simulate the whole tournament — pools, draft and bracket?\n\nThis clears anything already entered.")) return;
+  fillPools();
+  /* greedy draft: each seed takes the strongest partner still on the board */
+  var av=pickable();
+  drafters().forEach(function(_,i){ picks[i+1]=av[i].k; });
+  sig=teamSig();
+  var S=semiPair();
+  if(S){
+    S.forEach(function(m){ bs[m.id]=simScore(m.x.a.d+m.x.b.d, m.y.a.d+m.y.b.d); });
+    var F=finalists();
+    if(F) bs["f"]=simScore(F.x.a.d+F.x.b.d, F.y.a.d+F.y.b.d);
+  }
+  persist(); render();
+}
+function resetAll(){
+  if(!confirm("Clear every score, draft pick and bracket result?\n\nThis cannot be undone.")) return;
+  scores={}; picks={}; bs={}; sig=""; demo=false;
+  persist(); render();
+}
+
+function drawDemo(){
+  document.getElementById("demo").innerHTML = demo
+    ? '<div class="warn">⚠️ Simulated test data — not real results. '
+      + 'This is saved and synced like real scoring, so hit <b>Reset everything</b> '
+      + 'before the tournament starts.</div>'
+    : "";
+}
+function drawTools(){
+  document.getElementById("tools").innerHTML =
+    '<div class="card tools"><div class="chd"><h2>Test tools</h2>'
+  + '<span class="ct">'+(demo?"simulated data loaded":"idle")+'</span></div>'
+  + '<div class="roster">Scores are weighted by DUPR, so results look plausible rather than random — '
+  + 'close pools produce close games. Use these to rehearse the flow, then reset.</div>'
+  + '<div class="tbtn">'
+  + '<button onclick="simPools()">Simulate pool play</button>'
+  + '<button onclick="simAll()">Simulate everything</button>'
+  + '<button class="danger" onclick="resetAll()">Reset everything</button>'
+  + '</div></div>';
+}
+
+/* ---------- save ---------- */
+var timer=null;
+function persist(){
+  var v=serialize();
+  try{ localStorage.setItem(KEY,v); localStorage.setItem(DIRTY,"1"); }catch(e){}
+  flag("warn","Saving…");
+  clearTimeout(timer);
+  timer=setTimeout(function(){ push(v,false); },800);
+}
+function saveNow(){ var v=serialize(); try{localStorage.setItem(KEY,v);}catch(e){} push(v,false); }
+function push(v,keep){
+  if(location.protocol==="file:"){ flag("ok","Saved on this device");
+    try{localStorage.removeItem(DIRTY);}catch(e){} return; }
+  return fetch(API,{
+    method:"PUT", keepalive:!!keep,
+    headers:{"content-type":"application/json","x-pin":localStorage.getItem("rt-pin")||""},
+    body:JSON.stringify({data:v})
+  }).then(function(r){
+    if(r.status===403){
+      var p=prompt("Enter the RallyTime PIN to save:");
+      if(p){ localStorage.setItem("rt-pin",p.trim()); return push(v,keep); }
+      flag("err","Not saved — PIN needed"); return;
+    }
+    if(!r.ok){ flag("err","Not saved — offline?"); return; }
+    try{ localStorage.removeItem(DIRTY); }catch(e){}
+    flag("ok","Saved to cloud");
+  }).catch(function(){ flag("err","Saved on this device only"); });
+}
+function flag(kind,msg){
+  var el=document.getElementById("sync");
+  if(el) el.innerHTML='<span class="dot '+(kind==="ok"?"":kind)+'"></span>'+msg;
+}
+function pull(){
+  if(location.protocol==="file:") return;
+  fetch(API).then(function(r){return r.json();}).then(function(o){
+    if(!o||!o.data) return;
+    if(localStorage.getItem(DIRTY)==="1") return;
+    var mine=null; try{ mine=JSON.parse(localStorage.getItem(KEY)||"null"); }catch(e){}
+    var th=null;  try{ th=JSON.parse(o.data); }catch(e){ return; }
+    if(!th) return;
+    if(mine&&mine.savedAt&&th.savedAt&&mine.savedAt>th.savedAt) return;
+    scores=th.scores||{}; picks=th.picks||{}; bs=th.bs||{}; sig=th.sig||""; demo=!!th.demo;
+    try{ localStorage.setItem(KEY,o.data); }catch(e){}
+    render(); flag("ok","Synced");
+  }).catch(function(){});
+}
+window.addEventListener("pagehide",function(){
+  if(localStorage.getItem(DIRTY)==="1") push(serialize(),true);
+});
+
+/* ---------- export ---------- */
+function dl(name,text,type){
+  var b=new Blob([text],{type:type||"text/plain"});
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(b); a.download=name;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+function expJSON(){ dl("moneyball-"+EVENT.date+"-backup.json", serialize(), "application/json"); }
+function expCSV(){
+  var rows=[["Phase","Pool","Round","A P1","A P1 ID","A P2","A P2 ID",
+             "B P1","B P1 ID","B P2","B P2 ID","Score A","Score B","Sat Out"]];
+  POOLS.forEach(function(Pl,pi){
+    Pl.rot.forEach(function(_,ri){
+      var R=rnd(pi,ri), s=scores[pi+"-"+ri]||{};
+      var a1=Pl.players[R.a[0]],a2=Pl.players[R.a[1]],b1=Pl.players[R.b[0]],b2=Pl.players[R.b[1]];
+      rows.push(["Pool",Pl.pool,ri+1,a1.n,a1.id,a2.n,a2.id,b1.n,b1.id,b2.n,b2.id,
+                 s.a!=null?s.a:"", s.b!=null?s.b:"", Pl.players[R.bye].n]);
+    });
+  });
+  var S=semiPair();
+  if(S) S.forEach(function(m,i){
+    var s=bs[m.id]||{};
+    rows.push(["Bracket","Semifinal "+(i+1),"",
+      m.x.a.n,m.x.a.k?P(m.x.a.k).id:"", m.x.b.n,P(m.x.b.k).id,
+      m.y.a.n,P(m.y.a.k).id, m.y.b.n,P(m.y.b.k).id,
+      s.a!=null?s.a:"", s.b!=null?s.b:"", ""]);
+  });
+  var F=finalists();
+  if(F){
+    var s=bs["f"]||{};
+    rows.push(["Bracket","Final","",
+      F.x.a.n,P(F.x.a.k).id, F.x.b.n,P(F.x.b.k).id,
+      F.y.a.n,P(F.y.a.k).id, F.y.b.n,P(F.y.b.k).id,
+      s.a!=null?s.a:"", s.b!=null?s.b:"", ""]);
+  }
+  var csv=rows.map(function(r){
+    return r.map(function(c){
+      c=String(c==null?"":c);
+      return /[",\n]/.test(c) ? '"'+c.replace(/"/g,'""')+'"' : c;
+    }).join(",");
+  }).join("\n");
+  dl("moneyball-"+EVENT.date+".csv", csv, "text/csv");
+}
+
+/* ---------- share ---------- */
+function resultsText(){
+  var L=[];
+  L.push("*Moneyball — Men's 3.0-3.75*");
+  L.push("_Thu Aug 27 · Life Time Gainesville_");
+  L.push("");
+  var C=champion();
+  if(C){ L.push("🏆 *CHAMPIONS: "+teamName(C)+"*"); L.push(""); }
+
+  POOLS.forEach(function(Pl,pi){
+    L.push("*"+Pl.pool+"*");
+    Pl.rot.forEach(function(_,ri){
+      var R=rnd(pi,ri), s=scores[pi+"-"+ri];
+      if(!s||s.a==null||s.b==null) return;
+      L.push("R"+(ri+1)+"  "+first(Pl.players[R.a[0]].n)+" + "+first(Pl.players[R.a[1]].n)
+        +"  "+s.a+"-"+s.b+"  "+first(Pl.players[R.b[0]].n)+" + "+first(Pl.players[R.b[1]].n));
+    });
+    L.push("");
+  });
+
+  var A=overall();
+  L.push("*Overall — points won*");
+  A.forEach(function(r,i){
+    var m = i===0?"🥇 ":i===1?"🥈 ":i===2?"🥉 ":"";
+    L.push(m+(i+1)+". "+abbr(r.n)+" — "+r.pf+" pts ("+(r.pf-r.pa>0?"+":"")+(r.pf-r.pa)+")");
+    if(allPoolsDone() && i===EVENT.advance-1) L.push("— cut line —");
+  });
+  L.push("");
+
+  if(draftDone()){
+    L.push("*Teams — reseeded on combined seed*");
+    bracketTeams().forEach(function(t){
+      L.push(t.bseed+". "+teamName(t)+"  ("+teamSeeds(t)+")");
+    });
+    L.push("");
+  }
+  var S=semiPair();
+  if(S){
+    var any=false, out=["*Bracket*"];
+    S.forEach(function(m,i){
+      var s=bs[m.id]; if(!s||s.a==null||s.b==null) return;
+      any=true; out.push("SF"+(i+1)+"  "+teamName(m.x)+"  "+s.a+"-"+s.b+"  "+teamName(m.y));
+    });
+    var F=finalists(), fs=bs["f"];
+    if(F&&fs&&fs.a!=null&&fs.b!=null){
+      any=true; out.push("F  "+teamName(F.x)+"  "+fs.a+"-"+fs.b+"  "+teamName(F.y));
+    }
+    if(any){ L=L.concat(out); L.push(""); }
+  }
+  if(!allPoolsDone())
+    L.push("_"+poolsIn()+" of "+totalPool()+" pool matches in — standings provisional._");
+  return L.join("\n");
+}
+function openShare(){
+  document.getElementById("shareText").value=resultsText();
+  document.getElementById("ovl").classList.add("on");
+}
+function closeShare(){ document.getElementById("ovl").classList.remove("on"); }
+function copyShare(){
+  var t=document.getElementById("shareText");
+  t.select(); try{ document.execCommand("copy"); }catch(e){}
+  if(navigator.clipboard) navigator.clipboard.writeText(t.value).catch(function(){});
+}
+function sendWhatsApp(){
+  var t=document.getElementById("shareText").value;
+  if(navigator.share){ navigator.share({text:t}).then(closeShare).catch(function(){}); return; }
+  window.open("https://wa.me/?text="+encodeURIComponent(t),"_blank");
+  closeShare();
+}
+
+/* ---------- boot ---------- */
+load(); render(); pull();
+</script>
+</body>
+</html>
