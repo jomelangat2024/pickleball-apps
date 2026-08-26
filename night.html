@@ -253,6 +253,7 @@ var ROSTER = [
   {id:"nicolas",  n:"Nicolas Lion",            d:3.634, g:"M", dupr:"N7VJOW"},
   {id:"charbelc", n:"Charbel Chahine",         d:3.569, g:"M", dupr:"2YKPV9"},
   {id:"nikolai",  n:"Nikolai Matveev",         d:3.565, g:"M", dupr:"7JJJ45"},
+  {id:"thomasp",  n:"Thomas Pizzola",          d:3.552, g:"M", dupr:"EGY4JV"},
   {id:"michael",  n:"Michael Touma",           d:3.529, g:"M", dupr:"QXNGM0", note:"alt acct LZ0KKQ 3.288 — submit to QXNGM0"},
   {id:"isaiah",   n:"Isaiah Kerstetter",       d:3.523, g:"M", dupr:"3XZ525"},
   {id:"wais",     n:"Wais Barek",              d:3.514, g:"M", dupr:"PWJJ5X"},
@@ -267,7 +268,9 @@ var ROSTER = [
   {id:"signe",    n:"Signe Yates",             d:3.410, g:"F", dupr:"7DNKN0"},
   {id:"brian",    n:"Brian Bartholomew",       d:3.383, g:"M", dupr:"8EJP6W"},
   {id:"yasir",    n:"Yasir Saleem",            d:3.324, g:"M", dupr:"94EJDJ"},
+  {id:"tylerp",   n:"Tyler Pizzola",           d:3.298, g:"M", dupr:"ZNXY7M"},
   {id:"connie",   n:"Connie Rogers",           d:3.271, g:"F", dupr:"3Z590L"},
+  {id:"amandap",  n:"Amanda Pizzola",          d:3.101, g:"F", dupr:"9PVRGR"},
   {id:"nadine",   n:"Nadine Bullock-Pottinga", d:3.174, g:"F", dupr:"0Q5542"},
   {id:"john",     n:"John Kerstetter",         d:3.143, g:"M", dupr:"8DKGXL"},
   {id:"rae",      n:"Rae Lamb",                d:3.110, g:"F", dupr:"1RR7VQ"},
@@ -285,7 +288,8 @@ var ROSTER = [
 var S = {
   title:"Wednesday DUPR Night",
   date:"2026-08-26",
-  cfg:{ courts:3, firstBall:"6:15", horn:12, change:3, gameTo:11, womenSep:true, mode:"tier" },
+  cfg:{ courts:3, firstBall:"6:15", horn:12, change:3, gameTo:11,
+        womenSep:true, mode:"tier", size:"4" },
   inn:[],                 /* player ids playing */
   pools:[],               /* [{name, ids:[]}] — court/slot derived */
   scores:{},              /* teamSignature -> {a,b} */
@@ -306,7 +310,7 @@ function logIt(msg){
 /* Wednesday Aug 26 as designed: Men's 5 / Calibration 5 / Women's 5 */
 function seedDefault(){
   S.pools = [
-    {name:"Men's",       ids:["mohammad","nikolai","wais","david","yasir"]},
+    {name:"Men's",       ids:["eli","mohammad","nikolai","thomasp","wais","david","yasir"]},
     {name:"Calibration", ids:["juan","omar","michael","dylan","vijay"]},
     {name:"Women's",     ids:["amy","nataly","nadine","stephanie","huda"]}
   ];
@@ -437,11 +441,23 @@ function sizeOptions(n){
   });
   return res;
 }
-function bestSizes(n, courts){
+/* Size preference. 4 gives the tightest pools but only 3 rounds (a pool of four
+   has exactly three unique matchups). 5 gives 4 games each. "few" minimises the
+   number of pools. Overflowing the court count is allowed — extra pools share a
+   court sequentially, see schedule(). */
+function bestSizes(n, courts, pref){
   var o=sizeOptions(n);
   if(!o.length) return null;
-  var fit=o.filter(function(x){return x.length<=Math.max(1,courts);});
-  return (fit.length?fit:o)[0];
+  var cnt=function(x,v){ return x.filter(function(y){return y===v;}).length; };
+  o=o.slice().sort(function(a,b){
+    if(pref==="4"){ if(cnt(b,4)!==cnt(a,4)) return cnt(b,4)-cnt(a,4); }
+    else if(pref==="5"){ if(cnt(b,5)!==cnt(a,5)) return cnt(b,5)-cnt(a,5); }
+    var ea=Math.max(0,a.length-Math.max(1,courts)), eb=Math.max(0,b.length-Math.max(1,courts));
+    if(ea!==eb) return ea-eb;                 /* prefer fitting the courts */
+    if(a.length!==b.length) return a.length-b.length;
+    return 0;
+  });
+  return o[0];
 }
 
 /* ---------- auto pooling ---------- */
@@ -464,10 +480,9 @@ function autoPools(){
     groups.push({label:"Pool", ids:ids});
   }
   var pools=[], courts=S.cfg.courts;
-  /* share courts proportionally between the gendered groups */
   groups.forEach(function(g){
-    var share = groups.length>1 ? Math.max(1, Math.round(courts*g.ids.length/ids.length)) : courts;
-    var sizes = bestSizes(g.ids.length, share);
+    var share = courts;   /* overflow is fine — extra pools share a court in sequence */
+    var sizes = bestSizes(g.ids.length, share, S.cfg.size);
     if(!sizes) { pools.push({name:g.label, ids:g.ids.slice(), bad:true}); return; }
     var sorted = byRating(g.ids), k=0;
     if(S.cfg.mode==="balance"){
@@ -511,6 +526,13 @@ function schedule(){
   });
   Object.keys(byCourt).forEach(function(c){
     var list=byCourt[c], share=list.length;
+    /* Pools sharing a court interleave when they run the same number of rounds
+       (both finish together, as two women's fours did on Monday). When the round
+       counts differ, interleaving would strand the longer pool far past the end
+       of the night, so they run back to back instead. */
+    var counts=list.map(function(pi){ return roundsFor(S.pools[pi].ids.length); });
+    var even = counts.every(function(x){ return x===counts[0]; });
+    var offset = 0;
     list.forEach(function(pi,seat){
       var pool=S.pools[pi];
       var ids=byRating(pool.ids), sz=ids.length, nr=roundsFor(sz);
@@ -518,13 +540,14 @@ function schedule(){
       var ratings=ids.map(dOf);
       var rot=solveRot(sz, ratings) || [];
       rot.forEach(function(r,ri){
-        var slot = share===1 ? ri+1 : ri*share + seat + 1;
+        var slot = share===1 ? ri+1 : (even ? ri*share + seat + 1 : offset + ri + 1);
         var A=r.a.map(function(i){return ids[i];});
         var B=r.b.map(function(i){return ids[i];});
         out.push({ pi:pi, pool:pool.name, court:+c, round:ri+1, slot:slot,
                    A:A, B:B, by:r.by.map(function(i){return ids[i];}),
                    key:sig(A,B) });
       });
+      offset += nr;
     });
   });
   out.sort(function(x,y){ return x.slot-y.slot || x.court-y.court; });
@@ -911,6 +934,11 @@ function vPools(){
     + '<div><label>Grouping</label><select onchange="setCfg(\'mode\',this.value)">'
     + '<option value="tier"'+(S.cfg.mode==="tier"?" selected":"")+'>Tiered by DUPR</option>'
     + '<option value="balance"'+(S.cfg.mode==="balance"?" selected":"")+'>Balanced pools</option>'
+    + '</select></div>'
+    + '<div><label>Pool size</label><select onchange="setCfg(\'size\',this.value)">'
+    + '<option value="4"'+(S.cfg.size==="4"?" selected":"")+'>Prefer 4 — 3 games each</option>'
+    + '<option value="5"'+(S.cfg.size==="5"?" selected":"")+'>Prefer 5 — 4 games each</option>'
+    + '<option value="few"'+(S.cfg.size==="few"?" selected":"")+'>Fewest pools</option>'
     + '</select></div></div>'
     + '<div class="chk"><input type="checkbox" id="ws" '+(S.cfg.womenSep?"checked":"")
     + ' onchange="setCfg(\'womenSep\',this.checked)"><label for="ws" style="margin:0;text-transform:none;'
