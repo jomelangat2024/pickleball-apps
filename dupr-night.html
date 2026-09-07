@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>DUPR Night — Score Entry</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --ink:#0a2151; --blue:#2352e8;
+    --glass:rgba(255,255,255,.16); --line:rgba(255,255,255,.35); --fade:rgba(255,255,255,.75);
+  }
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,sans-serif;
+    background:linear-gradient(225deg,rgb(75,151,254) 0%,rgb(1,99,208) 40%,rgb(5,21,94) 87%) fixed;
+    min-height:100vh;color:#fff;
+    padding-bottom:calc(132px + env(safe-area-inset-bottom));
+    -webkit-text-size-adjust:100%;
+  }
+  .topbar{
+    background:#fff;box-shadow:0 4px 18px rgba(5,21,94,.25);
+    padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top));
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    position:sticky;top:0;z-index:20;
+  }
+  .brand{font-size:1.05rem;font-weight:800;color:var(--ink);letter-spacing:-.02em;display:flex;align-items:center;gap:7px}
+  .brand span{color:var(--blue)}
+  .brand img{width:24px;height:24px}
+  .topbar a{font-size:.72rem;font-weight:700;color:#6b7ba8;text-decoration:none;white-space:nowrap}
+  .wrap{max-width:860px;margin:0 auto;padding:16px 12px 0}
+  h1{font-size:1.35rem;font-weight:800;letter-spacing:-.02em}
+  .sub{color:#c9d8ff;font-size:.82rem;margin-top:3px;line-height:1.5}
+
+  .status{
+    background:var(--glass);border:1px solid var(--line);border-radius:14px;
+    -webkit-backdrop-filter:blur(20px) saturate(1.7);backdrop-filter:blur(20px) saturate(1.7);
+    padding:11px 14px;margin:14px 0;display:flex;align-items:center;justify-content:space-between;gap:10px;
+    font-size:.8rem;font-weight:600;
+  }
+  .status .prog{color:var(--fade)}
+  .status .prog b{color:#fff;font-size:.95rem}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#4ade80;margin-right:6px;vertical-align:1px}
+  .dot.warn{background:#fbbf24}.dot.err{background:#f87171}
+
+  .card{
+    background:var(--glass);border:1px solid var(--line);border-radius:18px;
+    -webkit-backdrop-filter:blur(22px) saturate(1.7);backdrop-filter:blur(22px) saturate(1.7);
+    box-shadow:0 8px 28px rgba(10,33,81,.22),inset 0 1px 0 rgba(255,255,255,.45);
+    padding:14px;margin-bottom:16px;
+  }
+  .chd{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:3px}
+  .chd h2{font-size:1.05rem;font-weight:800;letter-spacing:-.01em}
+  .chd .ct{font-size:.68rem;font-weight:700;color:var(--fade);letter-spacing:.06em;text-transform:uppercase}
+  .roster{font-size:.72rem;color:var(--fade);line-height:1.5;margin-bottom:12px}
+  .note{font-size:.68rem;color:#fde68a;line-height:1.5;margin-bottom:10px}
+
+  .mrow{border-top:1px solid rgba(255,255,255,.16);padding:11px 0 12px}
+  .mrow:first-of-type{border-top:none}
+  .mtop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+  .rd{font-size:.66rem;font-weight:800;letter-spacing:.08em;color:#c9d8ff}
+  .bye{font-size:.66rem;color:var(--fade);font-weight:600;text-align:right}
+  .teams{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center}
+  .tm{font-size:.83rem;font-weight:700;line-height:1.4}
+  .tm.r{text-align:right}
+  .tm .amp{font-weight:600;color:var(--fade);margin:0 2px}
+  .sc{display:flex;align-items:center;gap:5px}
+  input[type=number]{
+    width:52px;height:44px;text-align:center;font-size:16px;font-weight:800;
+    border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.2);
+    color:#fff;font-family:inherit;-moz-appearance:textfield;
+  }
+  input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  input[type=number]:focus{outline:none;background:rgba(255,255,255,.34);border-color:#fff}
+  input[type=number].win{background:rgba(74,222,128,.32);border-color:rgba(74,222,128,.65)}
+  .vs{font-size:.62rem;font-weight:800;color:var(--fade)}
+
+  table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.76rem}
+  th,td{padding:6px 3px;text-align:right}
+  th:first-child,td:first-child{text-align:left}
+  th{font-size:.6rem;letter-spacing:.04em;text-transform:uppercase;color:var(--fade);font-weight:700;border-bottom:1px solid rgba(255,255,255,.22)}
+  td{border-bottom:1px solid rgba(255,255,255,.09)}
+  tbody tr:first-child td{font-weight:800}
+  tbody tr:first-child td:first-child::before{content:"🏆 "}
+  .pos{color:#86efac}.neg{color:#fca5a5}
+
+  .seg{display:inline-flex;background:rgba(255,255,255,.14);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:10px}
+  .seg button{background:none;border:none;color:var(--fade);font:inherit;font-size:.66rem;font-weight:700;padding:6px 10px;cursor:pointer}
+  .seg button.on{background:rgba(255,255,255,.3);color:#fff}
+
+  .bar{
+    position:fixed;left:0;right:0;bottom:0;z-index:30;
+    background:rgba(5,21,94,.86);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+    border-top:1px solid var(--line);
+    padding:10px 12px;padding-bottom:calc(10px + env(safe-area-inset-bottom));
+    display:flex;gap:8px;
+  }
+  .bar button{
+    flex:1;padding:12px 6px;border-radius:12px;border:1px solid var(--line);
+    background:var(--glass);color:#fff;font:inherit;font-size:.76rem;font-weight:700;cursor:pointer;
+  }
+  .bar button.pri{background:#2352e8;border-color:#2352e8}
+  .bar button:active{transform:translateY(1px)}
+  @media(min-width:640px){
+    .wrap{padding:22px 16px 0}
+    h1{font-size:1.7rem}
+    .card{padding:18px 20px}
+    input[type=number]{width:58px}
+    .tm{font-size:.9rem}
+    th,td{padding:6px 6px}
+  }
+
+  /* ---- share sheet ---- */
+  .ovl{position:fixed;inset:0;z-index:50;background:rgba(5,21,94,.72);
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+    display:none;align-items:flex-end;justify-content:center;padding:0}
+  .ovl.on{display:flex}
+  .sheet{width:100%;max-width:620px;background:#0d2a6b;border:1px solid var(--line);
+    border-radius:20px 20px 0 0;padding:16px 14px;
+    padding-bottom:calc(16px + env(safe-area-inset-bottom));max-height:92vh;
+    display:flex;flex-direction:column;gap:10px}
+  .sheet h3{font-size:1rem;font-weight:800;letter-spacing:-.01em}
+  .sheet p.hint{font-size:.72rem;color:var(--fade);line-height:1.5}
+  .sheet textarea{
+    width:100%;flex:1;min-height:230px;resize:vertical;
+    background:rgba(0,0,0,.28);color:#fff;border:1px solid var(--line);
+    border-radius:12px;padding:11px;font-size:13px;line-height:1.5;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;-webkit-text-size-adjust:100%}
+  .sheet .row{display:flex;gap:8px}
+  .sheet button{flex:1;padding:13px 6px;border-radius:12px;border:1px solid var(--line);
+    background:var(--glass);color:#fff;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}
+  .sheet button.wa{background:#25D366;border-color:#25D366;color:#062d14}
+  .sheet button.ghost{background:none}
+  .sheet button:active{transform:translateY(1px)}
+  @media(min-width:640px){
+    .ovl{align-items:center}
+    .sheet{border-radius:20px;padding:20px}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><img src="rallytime-icon.png" alt="" onerror="this.style.display='none'">Rally<span>Time</span></div>
+  <a href="index.html">← RallyTime</a>
+</div>
+
+<div class="wrap">
+  <h1>DUPR Night — Score Entry</h1>
+  <p class="sub" id="meta"></p>
+
+  <div class="status">
+    <span class="prog"><b id="done">0</b> / <span id="tot">15</span> matches entered</span>
+    <span id="sync"><span class="dot"></span>Saved</span>
+  </div>
+
+  <div id="courts"></div>
+</div>
+
+
+<div class="ovl" id="ovl" onclick="if(event.target===this)closeShare()">
+  <div class="sheet">
+    <h3>Share results</h3>
+    <p class="hint" id="shareHint"></p>
+    <textarea id="shareText" spellcheck="false"></textarea>
+    <div class="row">
+      <button class="wa" onclick="sendWhatsApp()">Send to WhatsApp</button>
+      <button onclick="copyShare()" id="copyBtn">Copy</button>
+    </div>
+    <div class="row"><button class="ghost" onclick="closeShare()">Cancel</button></div>
+  </div>
+</div>
+
+<div class="bar" style="flex-direction:column;gap:8px">
+  <div style="display:flex;gap:8px;width:100%">
+    <button onclick="openShare()" style="flex:2;padding:12px 6px;border-radius:12px;border:1px solid #25D366;background:#25D366;color:#062d14;font:inherit;font-size:.78rem;font-weight:800;cursor:pointer">Share to WhatsApp</button>
+    <button class="pri" onclick="saveNow()" style="flex:1">Save</button>
+  </div>
+  <div style="display:flex;gap:8px;width:100%">
+    <button onclick="expJSON()">Backup</button>
+    <button onclick="expCSV()">CSV</button>
+    <button onclick="wipe()">Reset</button>
+  </div>
+</div>
+
+<script>
+/* ---------- rotations ---------- */
+/* 5 players: everyone partners all 4 others exactly once, plays 4, sits 1 */
+var ROT5 = [
+  {a:[1,4], b:[2,3], byes:[0]},
+  {a:[2,0], b:[3,4], byes:[1]},
+  {a:[3,1], b:[4,0], byes:[2]},
+  {a:[4,2], b:[0,1], byes:[3]},
+  {a:[0,3], b:[1,2], byes:[4]}
+];
+/* 6 players, 5 rounds: no repeated partnerships. 2 sit each round,
+   so games are uneven — four play 3, two play 4. Rank on avg, not total. */
+var ROT6 = [
+  {a:[2,5], b:[3,4], byes:[0,1]},
+  {a:[0,4], b:[1,5], byes:[2,3]},
+  {a:[0,3], b:[1,2], byes:[4,5]},
+  {a:[1,4], b:[3,5], byes:[0,2]},
+  {a:[0,5], b:[2,3], byes:[1,4]}
+];
+/* 4 players: only 3 unique matchups exist, so rds 4-5 repeat 1-2 */
+var ROT4 = [
+  {a:[0,1], b:[2,3], byes:[]},
+  {a:[0,2], b:[1,3], byes:[]},
+  {a:[0,3], b:[1,2], byes:[]},
+  {a:[0,1], b:[2,3], byes:[]},
+  {a:[0,2], b:[1,3], byes:[]}
+];
+
+/* ---------- data ---------- */
+var EVENT = { name:"DUPR Night", date:"2026-08-16", venue:"Life Time Gainesville", to:11 };
+var TIMES = ["6:15","6:36","6:57","7:18","7:39"];
+
+var POOLS = [
+  { pool:"Men's A", court:1, rot:ROT5, players:[
+    {n:"Mohammad Mukhtar", d:3.718, id:"1RPGEM"},
+    {n:"Charbel Touma",    d:3.711, id:"7DPDE5"},
+    {n:"Rob Chee",         d:3.662, id:"JJG2WW"},
+    {n:"Nikolai Matveev",  d:3.545, id:""},
+    {n:"Trey Treadwell",   d:3.527, id:"X2RG7X"}
+  ]},
+  { pool:"Men's B", court:2, rot:ROT5, players:[
+    {n:"Juan Castillo",      d:3.502, id:"GW4JXD"},
+    {n:"David Morris",       d:3.486, id:""},
+    {n:"Michael Touma",      d:3.385, id:"QXNGM0"},
+    {n:"Brian Bartholomew",  d:3.329, id:"8EJP6W"},
+    {n:"Subbu Subramaniam",  d:3.174, id:""}
+  ]},
+  { pool:"Women's", court:3, rot:ROT5, players:[
+    {n:"Amy Hildreth",            d:3.490, id:"3VM7O7"},
+    {n:"Avril Baxter",            d:3.489, id:"MYV0DP"},
+    {n:"Nataly Perez",            d:3.404, id:"0YM70N"},
+    {n:"Connie Rogers",           d:3.139, id:"3Z590L"},
+    {n:"Nadine Bullock-Pottinga", d:2.837, id:""}
+  ]}
+];
+
+/* ---------- state ---------- */
+var KEY = "rt-dupr-night-2026-08-16";
+var API = "/api/state/dupr-night";
+var DIRTY = "rt-dirty:" + KEY;
+var scores = {};
+var sortBy = "avg";
+
+function load(){
+  try{ var r=localStorage.getItem(KEY); if(r){ var o=JSON.parse(r); scores=o.scores||{}; sortBy=o.sortBy||"avg"; } }catch(e){}
+}
+function serialize(){ return JSON.stringify({scores:scores, sortBy:sortBy, savedAt:Date.now()}); }
+function totalMatches(){ var n=0; POOLS.forEach(function(P){ n+=P.rot.length; }); return n; }
+
+/* ---------- helpers ---------- */
+function abbr(n){
+  var p = String(n).trim().split(/\s+/);
+  return p.length>1 ? p[0]+" "+p[p.length-1].charAt(0).toUpperCase()+"." : p[0];
+}
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+
+/* ---------- render ---------- */
+function render(){
+  document.getElementById("meta").textContent =
+    EVENT.venue + " · " + new Date(EVENT.date+"T12:00:00").toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"}) +
+    " · games to " + EVENT.to + ", win by 1 · horn at 18 min";
+  document.getElementById("tot").textContent = totalMatches();
+
+  var html = "";
+  POOLS.forEach(function(P,pi){
+    var uneven = isUneven(P);
+    html += '<div class="card"><div class="chd"><h2>'+esc(P.pool)+' <span style="opacity:.55;font-size:.8rem">('+P.players.length+')</span></h2>'
+         +  '<span class="ct">Court '+P.court+'</span></div>';
+    /* roster reads by rating even when the array order is set by the rotation */
+    html += '<div class="roster">' + P.players.slice().sort(function(x,y){return y.d-x.d;}).map(function(p){
+              return esc(abbr(p.n))+' <span style="opacity:.6">'+p.d.toFixed(3)+'</span>';
+            }).join(" · ") + '</div>';
+    var fit = poolFit(P);
+    html += '<div class="roster" style="margin-top:-6px;opacity:.85">'
+         +  'spread <b>'+fit.spread.toFixed(3)+'</b> \u00b7 biggest gap <b>'+fit.gap.toFixed(3)+'</b>'
+         +  ' ('+esc(fit.between)+') \u00b7 '+fit.verdict
+         +  '</div>';
+    if(uneven) html += '<div class="note">Six players means two sit each round and games come out uneven — four play 3, two play 4. Rank this pool on <b>avg points</b>, not the total.</div>';
+    if(P.note) html += '<div class="note">'+esc(P.note)+'</div>';
+
+    P.rot.forEach(function(R,ri){
+      var k = pi+"-"+ri;
+      var s = scores[k] || {};
+      var A = R.a.map(function(i){return abbr(P.players[i].n);});
+      var B = R.b.map(function(i){return abbr(P.players[i].n);});
+      var wa = (s.a!=null && s.b!=null && s.a>s.b), wb = (s.a!=null && s.b!=null && s.b>s.a);
+      var sitTxt = R.byes.length
+        ? R.byes.map(function(i){return abbr(P.players[i].n);}).join(", ") + " sit" + (R.byes.length>1?"":"s")
+        : "all play";
+      html += '<div class="mrow">'
+        + '<div class="mtop"><span class="rd">ROUND '+(ri+1)+' · '+TIMES[ri]+'</span>'
+        + '<span class="bye">'+esc(sitTxt)+'</span></div>'
+        + '<div class="teams">'
+        + '<div class="tm r">'+esc(A[0])+'<span class="amp">+</span>'+esc(A[1])+'</div>'
+        + '<div class="sc">'
+        +   '<input type="number" min="0" max="40" inputmode="numeric" id="i-'+k+'-a" value="'+(s.a!=null?s.a:"")+'" class="'+(wa?"win":"")+'" oninput="setScore('+pi+','+ri+',\'a\',this.value)">'
+        +   '<span class="vs">VS</span>'
+        +   '<input type="number" min="0" max="40" inputmode="numeric" id="i-'+k+'-b" value="'+(s.b!=null?s.b:"")+'" class="'+(wb?"win":"")+'" oninput="setScore('+pi+','+ri+',\'b\',this.value)">'
+        + '</div>'
+        + '<div class="tm">'+esc(B[0])+'<span class="amp">+</span>'+esc(B[1])+'</div>'
+        + '</div></div>';
+    });
+
+    html += standings(pi);
+    html += '</div>';
+  });
+  document.getElementById("courts").innerHTML = html;
+  document.getElementById("done").textContent = countDone();
+}
+
+/* Spread is top-to-bottom. Max gap is the biggest step between two
+   adjacent players — that's what actually decides whether games are close,
+   since one player sitting clear of the rest dominates every game they're in. */
+function poolFit(P){
+  var d = P.players.map(function(p){return p.d;}).sort(function(a,b){return b-a;});
+  var spread = d[0]-d[d.length-1], gap = 0, at = 0;
+  for(var i=0;i<d.length-1;i++){ if(d[i]-d[i+1] > gap){ gap = d[i]-d[i+1]; at = i; } }
+  var names = P.players.slice().sort(function(x,y){return y.d-x.d;});
+  return { spread:spread, gap:gap,
+           between: abbr(names[at].n)+" \u2192 "+abbr(names[at+1].n),
+           verdict: gap < 0.10 ? "even" : (gap < 0.20 ? "one small step" : "one clear step") };
+}
+
+function isUneven(P){
+  var c = {};
+  P.rot.forEach(function(R){ R.a.concat(R.b).forEach(function(i){ c[i]=(c[i]||0)+1; }); });
+  var v = P.players.map(function(_,i){ return c[i]||0; });
+  return Math.max.apply(null,v) !== Math.min.apply(null,v);
+}
+
+function tally(pi){
+  var P = POOLS[pi];
+  var T = P.players.map(function(p){ return {n:p.n, d:p.d, id:p.id, gp:0, w:0, l:0, pf:0, pa:0}; });
+  P.rot.forEach(function(R,ri){
+    var s = scores[pi+"-"+ri];
+    if(!s || s.a==null || s.b==null) return;
+    R.a.forEach(function(i){ var t=T[i]; t.gp++; t.pf+=s.a; t.pa+=s.b; if(s.a>s.b)t.w++; else if(s.b>s.a)t.l++; });
+    R.b.forEach(function(i){ var t=T[i]; t.gp++; t.pf+=s.b; t.pa+=s.a; if(s.b>s.a)t.w++; else if(s.a>s.b)t.l++; });
+  });
+  T.forEach(function(t){ t.avg = t.gp ? t.pf/t.gp : 0; t.diff = t.pf-t.pa; });
+  T.sort(function(x,y){
+    if(sortBy==="w" && y.w!==x.w) return y.w-x.w;
+    if(sortBy==="pf" && y.pf!==x.pf) return y.pf-x.pf;
+    if(y.avg!==x.avg) return y.avg-x.avg;
+    if(y.diff!==x.diff) return y.diff-x.diff;
+    return y.pf-x.pf;
+  });
+  return T;
+}
+
+function standings(pi){
+  var T = tally(pi);
+  var any = T.some(function(t){return t.gp>0;});
+  var h = '<div class="seg">'
+    + '<button class="'+(sortBy==="avg"?"on":"")+'" onclick="setSort(\'avg\')">Avg pts</button>'
+    + '<button class="'+(sortBy==="pf"?"on":"")+'" onclick="setSort(\'pf\')">Total pts</button>'
+    + '<button class="'+(sortBy==="w"?"on":"")+'" onclick="setSort(\'w\')">Wins</button></div>';
+  h += '<table><thead><tr><th>Player</th><th>GP</th><th>W-L</th><th>Pts</th><th>Avg</th><th>+/−</th></tr></thead><tbody>';
+  T.forEach(function(t){
+    h += '<tr><td>'+esc(abbr(t.n))+'</td>'
+      +  '<td>'+(t.gp||"–")+'</td>'
+      +  '<td>'+(t.gp?t.w+"-"+t.l:"–")+'</td>'
+      +  '<td>'+(t.gp?t.pf:"–")+'</td>'
+      +  '<td>'+(t.gp?t.avg.toFixed(1):"–")+'</td>'
+      +  '<td class="'+(t.diff>0?"pos":t.diff<0?"neg":"")+'">'+(t.gp?(t.diff>0?"+":"")+t.diff:"–")+'</td></tr>';
+  });
+  h += '</tbody></table>';
+  if(!any) h += '<div style="font-size:.7rem;color:var(--fade);margin-top:8px">Standings fill in as you enter scores.</div>';
+  return h;
+}
+
+function setSort(s){ sortBy=s; persist(); render(); }
+
+function setScore(pi,ri,side,val){
+  var k = pi+"-"+ri;
+  scores[k] = scores[k] || {};
+  var v = val==="" ? null : Math.max(0, Math.min(40, parseInt(val,10)));
+  scores[k][side] = isNaN(v) ? null : v;
+  if(scores[k].a==null && scores[k].b==null) delete scores[k];
+  persist();
+  var focus = document.activeElement && document.activeElement.id;
+  render();
+  if(focus){ var el=document.getElementById(focus); if(el){ el.focus(); try{el.setSelectionRange(el.value.length,el.value.length);}catch(e){} } }
+}
+
+function countDone(){
+  var n=0;
+  for(var k in scores){ if(scores[k].a!=null && scores[k].b!=null) n++; }
+  return n;
+}
+
+/* ---------- save ---------- */
+var timer=null;
+function persist(){
+  var v = serialize();
+  try{ localStorage.setItem(KEY,v); localStorage.setItem(DIRTY,"1"); }catch(e){}
+  flag("warn","Saving…");
+  clearTimeout(timer);
+  timer = setTimeout(function(){ push(v,false); }, 800);
+}
+function saveNow(){ var v=serialize(); try{localStorage.setItem(KEY,v);}catch(e){} push(v,false); }
+
+function push(v,keep){
+  if(location.protocol==="file:"){ flag("ok","Saved on this device"); try{localStorage.removeItem(DIRTY);}catch(e){} return; }
+  return fetch(API,{
+    method:"PUT", keepalive:!!keep,
+    headers:{"content-type":"application/json","x-pin":localStorage.getItem("rt-pin")||""},
+    body:JSON.stringify({data:v})
+  }).then(function(r){
+    if(r.status===403){
+      var p = prompt("Enter the RallyTime PIN to save:");
+      if(p){ localStorage.setItem("rt-pin",p.trim()); return push(v,keep); }
+      flag("err","Not saved — PIN needed"); return;
+    }
+    if(!r.ok){ flag("err","Not saved — offline?"); return; }
+    try{ localStorage.removeItem(DIRTY); }catch(e){}
+    flag("ok","Saved to cloud");
+  }).catch(function(){ flag("err","Saved on this device only"); });
+}
+
+function flag(kind,msg){
+  document.getElementById("sync").innerHTML = '<span class="dot '+(kind==="ok"?"":kind)+'"></span>'+msg;
+}
+
+function pull(){
+  if(location.protocol==="file:") return;
+  fetch(API).then(function(r){return r.json();}).then(function(o){
+    if(!o || !o.data) return;
+    if(localStorage.getItem(DIRTY)==="1") return;
+    var mine=null; try{ mine=JSON.parse(localStorage.getItem(KEY)||"null"); }catch(e){}
+    var theirs=null; try{ theirs=JSON.parse(o.data); }catch(e){ return; }
+    if(!theirs) return;
+    if(mine && mine.savedAt && theirs.savedAt && mine.savedAt > theirs.savedAt) return;
+    scores = theirs.scores||{}; sortBy = theirs.sortBy||sortBy;
+    try{ localStorage.setItem(KEY,o.data); }catch(e){}
+    render(); flag("ok","Synced");
+  }).catch(function(){});
+}
+
+window.addEventListener("pagehide",function(){
+  if(localStorage.getItem(DIRTY)==="1") push(serialize(),true);
+});
+
+/* ---------- export ---------- */
+function dl(name,text,type){
+  var b = new Blob([text],{type:type||"text/plain"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(b); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function expJSON(){ dl("dupr-night-"+EVENT.date+"-backup.json", serialize(), "application/json"); }
+function expCSV(){
+  var rows = [["Pool","Court","Round","Time","Team A P1","A P1 ID","Team A P2","A P2 ID","Team B P1","B P1 ID","Team B P2","B P2 ID","Score A","Score B","Sat Out"]];
+  POOLS.forEach(function(P,pi){
+    P.rot.forEach(function(R,ri){
+      var s = scores[pi+"-"+ri] || {};
+      var a1=P.players[R.a[0]], a2=P.players[R.a[1]], b1=P.players[R.b[0]], b2=P.players[R.b[1]];
+      rows.push([P.pool,P.court,ri+1,TIMES[ri],
+        a1.n,a1.id,a2.n,a2.id,b1.n,b1.id,b2.n,b2.id,
+        s.a!=null?s.a:"", s.b!=null?s.b:"",
+        R.byes.map(function(i){return P.players[i].n;}).join("; ")]);
+    });
+  });
+  var csv = rows.map(function(r){
+    return r.map(function(c){ c=String(c); return /[",\n]/.test(c) ? '"'+c.replace(/"/g,'""')+'"' : c; }).join(",");
+  }).join("\n");
+  dl("dupr-night-"+EVENT.date+"-matches.csv", csv, "text/csv");
+}
+function wipe(){
+  if(!confirm("Clear all scores? Export a backup first if you want to keep them.")) return;
+  scores={}; persist(); render();
+}
+
+
+/* ---------- share to WhatsApp ---------- */
+function first(n){ return String(n).trim().split(/\s+/)[0]; }
+
+function resultsText(){
+  var L = [];
+  var d = new Date(EVENT.date+"T12:00:00");
+  var wd = d.toLocaleDateString(undefined,{weekday:"long"});
+  var dateStr = EVENT.name.indexOf(wd) > -1
+    ? d.toLocaleDateString(undefined,{month:"short",day:"numeric"})
+    : wd+", "+d.toLocaleDateString(undefined,{month:"short",day:"numeric"});
+  L.push("*"+EVENT.name+"* \u00b7 "+dateStr);
+  L.push(EVENT.venue+" \u00b7 games to "+EVENT.to+", win by 1");
+
+  POOLS.forEach(function(P,pi){
+    L.push("");
+    L.push("*COURT "+P.court+" \u2014 "+P.pool.toUpperCase()+"*");
+    var played = 0;
+    P.rot.forEach(function(R,ri){
+      var s = scores[pi+"-"+ri];
+      if(!s || s.a==null || s.b==null) return;
+      played++;
+      L.push("R"+(ri+1)+"  "+R.a.map(function(i){return first(P.players[i].n);}).join("+")
+             +"  "+s.a+"-"+s.b+"  "
+             +R.b.map(function(i){return first(P.players[i].n);}).join("+"));
+    });
+    if(!played){ L.push("_no scores yet_"); return; }
+
+    var T = tally(pi).filter(function(t){return t.gp>0;});
+    if(T.length){
+      L.push("");
+      T.forEach(function(t,i){
+        var medal = i===0 ? "\ud83e\udd47 " : (i===1 ? "\ud83e\udd48 " : (i===2 ? "\ud83e\udd49 " : (i+1)+". "));
+        L.push(medal+abbr(t.n)+" \u2014 "+t.pf+" pts \u00b7 "+t.w+"-"+t.l
+               +" \u00b7 "+(t.diff>0?"+":"")+t.diff
+               +(isUneven(POOLS[pi]) ? " \u00b7 "+t.avg.toFixed(1)+"/gm" : ""));
+      });
+    }
+  });
+
+  var done = countDone(), tot = totalMatches();
+  L.push("");
+  if(done < tot) L.push("_"+done+" of "+tot+" matches recorded so far._");
+  else L.push("_All "+tot+" matches in. Scores heading to DUPR._");
+  return L.join("\n");
+}
+
+function openShare(){
+  var t = resultsText();
+  document.getElementById("shareText").value = t;
+  var done = countDone(), tot = totalMatches();
+  document.getElementById("shareHint").textContent =
+    done < tot
+      ? "Only "+done+" of "+tot+" matches are filled in — this will post partial results. Edit the text below if you like."
+      : "All "+tot+" matches recorded. Edit the text below if you like, then send.";
+  document.getElementById("copyBtn").textContent = "Copy";
+  document.getElementById("ovl").classList.add("on");
+}
+function closeShare(){ document.getElementById("ovl").classList.remove("on"); }
+
+function sendWhatsApp(){
+  var t = document.getElementById("shareText").value;
+  if(navigator.share){
+    navigator.share({text:t}).then(closeShare).catch(function(){});
+    return;
+  }
+  window.open("https://wa.me/?text="+encodeURIComponent(t), "_blank");
+  closeShare();
+}
+
+function copyShare(){
+  var el = document.getElementById("shareText");
+  var btn = document.getElementById("copyBtn");
+  function ok(){ btn.textContent = "Copied \u2713"; }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(el.value).then(ok).catch(fallback);
+  } else fallback();
+  function fallback(){
+    el.focus(); el.select();
+    try{ document.execCommand("copy"); ok(); }
+    catch(e){ btn.textContent = "Select \u0026 copy"; }
+  }
+}
+
+/* ---------- go ---------- */
+load(); render(); pull();
+</script>
+</body>
+</html>

@@ -29,7 +29,7 @@
   h1{font-size:1.3rem;font-weight:800;letter-spacing:-.02em}
   .sub{color:#c9d8ff;font-size:.8rem;margin-top:3px;line-height:1.5}
 
-  .nav{display:flex;gap:6px;margin:14px 0;background:rgba(255,255,255,.12);
+  .nav{display:flex;gap:6px;margin:10px 0;background:rgba(255,255,255,.12);
     border:1px solid var(--line);border-radius:12px;padding:4px;overflow-x:auto}
   .nav button{flex:1;min-width:78px;background:none;border:none;color:var(--fade);
     font:inherit;font-size:.74rem;font-weight:700;padding:9px 6px;border-radius:9px;cursor:pointer;white-space:nowrap}
@@ -38,7 +38,7 @@
     background:rgba(255,255,255,.28);border-radius:20px;padding:0 5px}
 
   .status{background:var(--glass);border:1px solid var(--line);border-radius:13px;
-    padding:10px 13px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;
+    padding:8px 12px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;
     gap:10px;font-size:.78rem;font-weight:600;flex-wrap:wrap}
   .status .prog{color:var(--fade)}.status .prog b{color:#fff}
   .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:6px;vertical-align:1px}
@@ -47,33 +47,33 @@
   .card{background:var(--glass);border:1px solid var(--line);border-radius:17px;
     -webkit-backdrop-filter:blur(22px) saturate(1.7);backdrop-filter:blur(22px) saturate(1.7);
     box-shadow:0 8px 28px rgba(10,33,81,.22),inset 0 1px 0 rgba(255,255,255,.45);
-    padding:14px;margin-bottom:14px}
-  .chd{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:4px}
-  .chd h2{font-size:1rem;font-weight:800}
+    padding:11px 13px;margin-bottom:10px}
+  .chd{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:3px}
+  .chd h2{font-size:.98rem;font-weight:800}
   .chd .ct{font-size:.66rem;font-weight:700;color:var(--fade);letter-spacing:.05em;text-transform:uppercase}
-  .meta{font-size:.7rem;color:var(--fade);line-height:1.55;margin-bottom:10px}
+  .meta{font-size:.7rem;color:var(--fade);line-height:1.4;margin-bottom:7px}
   .warnbox{background:rgba(251,191,36,.16);border:1px solid rgba(251,191,36,.55);border-radius:12px;
-    padding:10px 12px;margin-bottom:12px;font-size:.74rem;font-weight:600;color:#fde68a;line-height:1.55}
+    padding:8px 11px;margin-bottom:9px;font-size:.73rem;font-weight:600;color:#fde68a;line-height:1.45}
   .okbox{background:rgba(74,222,128,.14);border:1px solid rgba(74,222,128,.5);border-radius:12px;
     padding:10px 12px;margin-bottom:12px;font-size:.74rem;font-weight:600;color:#bbf7d0;line-height:1.55}
 
   /* roster */
-  .rrow{display:grid;grid-template-columns:34px 1fr 66px 40px;gap:7px;align-items:center;
-    border-top:1px solid rgba(255,255,255,.13);padding:7px 0}
+  .rrow{display:grid;grid-template-columns:32px 1fr 62px 26px;gap:6px;align-items:center;
+    border-top:1px solid rgba(255,255,255,.11);padding:4px 0}
   .rrow:first-of-type{border-top:none}
   .rrow.out{opacity:.44}
-  .rn{font-size:.8rem;font-weight:700;line-height:1.25}
-  .rn small{display:block;font-size:.62rem;font-weight:600;color:var(--fade)}
-  .tog{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);
-    background:rgba(255,255,255,.14);color:#fff;font:inherit;font-size:.9rem;font-weight:800;cursor:pointer}
+  .rn{font-size:.79rem;font-weight:700;line-height:1.15}
+  .rn small{display:block;font-size:.6rem;font-weight:600;color:var(--fade);line-height:1.25}
+  .tog{width:32px;height:32px;border-radius:8px;border:1px solid var(--line);
+    background:rgba(255,255,255,.14);color:#fff;font:inherit;font-size:.88rem;font-weight:800;cursor:pointer}
   .tog.on{background:var(--green);border-color:var(--green);color:#06331a}
-  .gtag{font-size:.62rem;font-weight:800;color:var(--fade);text-align:center}
-  input[type=text],input[type=number]{height:34px;font-size:15px;font-weight:700;font-family:inherit;
-    border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.18);color:#fff;
-    padding:0 7px;width:100%;-moz-appearance:textfield}
+  .gtag{font-size:.6rem;font-weight:800;color:var(--fade);text-align:center}
+  input[type=text],input[type=number]{height:32px;font-size:15px;font-weight:700;font-family:inherit;
+    border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.18);color:#fff;
+    padding:0 6px;width:100%;-moz-appearance:textfield}
   input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
   input:focus{outline:none;background:rgba(255,255,255,.32);border-color:#fff}
-  select{height:34px;font-size:14px;font-weight:700;font-family:inherit;border-radius:9px;
+  select{height:32px;font-size:14px;font-weight:700;font-family:inherit;border-radius:8px;
     border:1px solid var(--line);background:rgba(255,255,255,.18);color:#fff;padding:0 6px;
     -webkit-appearance:none;appearance:none;width:100%}
   select option{background:#0d2a6b;color:#fff}
@@ -83,28 +83,42 @@
   .btn.pri{background:var(--blue);border-color:var(--blue)}
   .btn.danger{background:rgba(248,113,113,.24);border-color:rgba(248,113,113,.5)}
   .btn:active{transform:translateY(1px)}
-  .btnrow{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+  .btnrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
   .btnrow .btn{flex:1;min-width:104px}
 
   /* config */
-  .cfg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .cfg{display:grid;grid-template-columns:1fr 1fr;gap:7px 8px}
   .cfg label{font-size:.66rem;font-weight:700;color:var(--fade);letter-spacing:.04em;
-    text-transform:uppercase;display:block;margin-bottom:4px}
-  .chk{display:flex;align-items:center;gap:8px;font-size:.76rem;font-weight:700;padding:7px 0}
+    text-transform:uppercase;display:block;margin-bottom:2px}
+  .chk{display:flex;align-items:center;gap:8px;font-size:.76rem;font-weight:700;padding:6px 0 2px}
   .chk input{width:20px;height:20px;accent-color:var(--green)}
 
   /* pools */
-  .prow{display:grid;grid-template-columns:1fr 96px;gap:8px;align-items:center;
-    border-top:1px solid rgba(255,255,255,.13);padding:7px 0}
+  .prow{display:grid;grid-template-columns:1fr 30px 30px 30px;gap:5px;align-items:center;
+    border-top:1px solid rgba(255,255,255,.11);padding:4px 0}
+  .pmv{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);
+    background:rgba(255,255,255,.16);color:#fff;font:inherit;font-size:.86rem;font-weight:800;
+    cursor:pointer;padding:0;line-height:1}
+  .pmv:active{transform:translateY(1px)}
+  .pmv[disabled]{opacity:.22;cursor:default}
+  .pmv.x{background:rgba(248,113,113,.22);border-color:rgba(248,113,113,.45);font-size:.78rem}
   .prow:first-of-type{border-top:none}
-  .pq{font-size:.68rem;color:var(--fade);margin-top:7px;line-height:1.5}
+  .pq{font-size:.68rem;color:var(--fade);margin-top:6px;line-height:1.45}
   .pq b{color:#fff}
   .pill{display:inline-block;font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:20px;
     background:rgba(255,255,255,.2);margin-left:5px}
   .pill.nr{background:rgba(251,191,36,.3);color:#fde68a}
 
+  /* DUPR reliability (0-100). A rating with a low score is built on very few
+     matches, so it can move a long way overnight — worth seeing next to it. */
+  .rel{display:inline-block;font-size:.55rem;font-weight:800;padding:1px 5px;
+    border-radius:20px;margin-left:3px;vertical-align:middle;letter-spacing:.02em}
+  .rel.hi{background:rgba(255,255,255,.11);color:#cbd5e1}   /* 80-100 solid   */
+  .rel.mid{background:rgba(251,191,36,.22);color:#fcd34d}   /* 40-79  soft    */
+  .rel.lo{background:rgba(248,113,113,.26);color:#fca5a5}   /* under 40 shaky */
+
   /* matches */
-  .mrow{border-top:1px solid rgba(255,255,255,.15);padding:10px 0 11px;position:relative;padding-left:9px}
+  .mrow{border-top:1px solid rgba(255,255,255,.13);padding:7px 0 8px;position:relative;padding-left:9px}
   .mrow:first-of-type{border-top:none}
   .mrow.live{background:rgba(74,222,128,.11)}
   .mrow.live:before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:3px;background:var(--green)}
@@ -117,6 +131,7 @@
   .tag{font-size:.58rem;font-weight:800;letter-spacing:.07em;padding:2px 7px;border-radius:20px}
   .tag.live{background:var(--green);color:#06331a}
   .tag.next{background:var(--amber);color:#3a2600}
+  .tag.late{background:rgba(248,113,113,.28);border:1px solid rgba(248,113,113,.6);color:#fca5a5}
   .teams{display:grid;grid-template-columns:1fr auto 1fr;gap:7px;align-items:center}
   .tm{font-size:.8rem;font-weight:700;line-height:1.35}
   .tm.r{text-align:right}
@@ -168,7 +183,7 @@
   .logline{font-size:.68rem;color:#c9d8ff;line-height:1.6;border-top:1px solid rgba(255,255,255,.09);padding:4px 0}
   .logline span{color:var(--fade);font-weight:700;margin-right:6px}
   .cmdwrap{background:var(--glass);border:1px solid var(--line);border-radius:15px;
-    padding:11px 13px;margin-bottom:14px}
+    padding:9px 12px;margin-bottom:10px}
   .cmdbar{display:grid;grid-template-columns:1fr 66px 60px;gap:7px}
   .cmdbar input{height:44px;font-size:16px}
   .cmdmsg{font-size:.72rem;line-height:1.5;margin-top:8px;font-weight:600}
@@ -177,6 +192,12 @@
     border-radius:8px;padding:3px 8px;margin:3px 4px 0 0;font-size:.7rem;font-weight:700;cursor:pointer}
   .cmdhelp{font-size:.64rem;color:var(--fade);line-height:1.6;margin-top:8px}
   .cmdhelp code{background:rgba(255,255,255,.16);border-radius:5px;padding:1px 5px;font-size:.66rem}
+  .chd.tap{cursor:pointer;user-select:none;-webkit-user-select:none;margin-bottom:0;padding:2px 0}
+  .chd.tap h2{display:flex;align-items:center;gap:7px}
+  .chev{display:inline-block;font-size:.72rem;color:var(--fade);transition:transform .15s;transform:rotate(-90deg)}
+  .chev.open{transform:rotate(0deg)}
+  .peek{font-size:.68rem;color:var(--fade);line-height:1.5;padding-top:6px}
+  .peek b{color:#c9d8ff}
   @media(max-width:520px){
     .chgrow{grid-template-columns:1fr 1fr;grid-auto-rows:auto}
     .chgrow label{grid-column:1/-1;padding-top:2px}
@@ -184,7 +205,7 @@
     .chgrow button{grid-column:1/-1}
   }
   @media(min-width:640px){
-    .wrap{padding:20px 16px 0}h1{font-size:1.6rem}.card{padding:17px 19px}
+    .wrap{padding:18px 16px 0}h1{font-size:1.6rem}.card{padding:14px 17px}
     .tm{font-size:.87rem}th,td{padding:6px 6px}
   }
 </style>
@@ -213,17 +234,23 @@
   <button class="btn" onclick="openShare()">Share</button>
   <button class="btn" onclick="expCSV()">CSV</button>
   <button class="btn" onclick="expJSON()">Backup</button>
+  <button class="btn" onclick="openRestore()">Restore</button>
   <button class="btn pri" onclick="saveNow()">Save</button>
 </div>
 
 <div class="ovl" id="ovl"><div class="sheet">
   <h3 id="shTtl">Share</h3>
   <textarea id="shTxt" readonly></textarea>
-  <div class="row">
+  <div class="row" id="shBtns">
     <button class="btn" onclick="closeShare()">Close</button>
     <button class="btn" onclick="copyShare()">Copy</button>
     <button class="btn go" onclick="sendWA()">WhatsApp</button>
   </div>
+  <div class="row hide" id="rsBtns">
+    <button class="btn" onclick="closeShare()">Cancel</button>
+    <button class="btn pri" onclick="doRestore()">Import scores</button>
+  </div>
+  <div class="hint hide" id="rsHint"></div>
 </div></div>
 
 <script>
@@ -244,56 +271,69 @@ var DIRTY = "rt-dirty:" + KEY;
 /* ---------- master roster ---------- */
 /* d:null means unrated (DUPR NR). g: M/F. */
 var ROSTER = [
-  {id:"franco",   n:"Franco Mendoza",          d:4.048, g:"M", dupr:"0Q47QX"},
-  {id:"jameschen",n:"James Chen",              d:3.793, g:"M", dupr:"NRYML7"},
-  {id:"eli",      n:"Eli Azar",                d:3.773, g:"M", dupr:"PPE7GZ"},
-  {id:"mohammad", n:"Mohammad Mukhtar",        d:3.770, g:"M", dupr:"1RPGEM"},
-  {id:"charbelt", n:"Charbel Touma",           d:3.684, g:"M", dupr:"7DPDE5"},
-  {id:"rob",      n:"Rob Chee",                d:3.662, g:"M", dupr:"JJG2WW"},
-  {id:"nicolas",  n:"Nicolas Lion",            d:3.634, g:"M", dupr:"N7VJOW"},
-  {id:"charbelc", n:"Charbel Chahine",         d:3.569, g:"M", dupr:"2YKPV9"},
-  {id:"nikolai",  n:"Nikolai Matveev",         d:3.565, g:"M", dupr:"7JJJ45"},
-  {id:"thomasp",  n:"Thomas Pizzola",          d:3.552, g:"M", dupr:"EGY4JV"},
-  {id:"michael",  n:"Michael Touma",           d:3.529, g:"M", dupr:"QXNGM0", note:"alt acct LZ0KKQ 3.288 — submit to QXNGM0"},
-  {id:"isaiah",   n:"Isaiah Kerstetter",       d:3.523, g:"M", dupr:"3XZ525"},
-  {id:"wais",     n:"Wais Barek",              d:3.514, g:"M", dupr:"PWJJ5X"},
-  {id:"amy",      n:"Amy Hildreth",            d:3.490, g:"F", dupr:"3VM7O7"},
-  {id:"avril",    n:"Avril Baxter",            d:3.489, g:"F", dupr:"MYV0DP"},
-  {id:"juan",     n:"Juan Castillo",           d:3.462, g:"M", dupr:"GW4JXD"},
-  {id:"trey",     n:"Trey Treadwell",          d:3.454, g:"M", dupr:"X2RG7X"},
-  {id:"david",    n:"David Morris",            d:3.451, g:"M", dupr:"89ZJRR"},
-  {id:"omar",     n:"Omar el-Khodari",         d:3.439, g:"M", dupr:"0ZMENG"},
-  {id:"kareem",   n:"Kareem Adi",              d:3.421, g:"M", dupr:""},
-  {id:"nataly",   n:"Nataly Perez",            d:3.414, g:"F", dupr:"0YM70N"},
-  {id:"signe",    n:"Signe Yates",             d:3.410, g:"F", dupr:"7DNKN0"},
-  {id:"brian",    n:"Brian Bartholomew",       d:3.383, g:"M", dupr:"8EJP6W"},
-  {id:"yasir",    n:"Yasir Saleem",            d:3.324, g:"M", dupr:"94EJDJ"},
-  {id:"tylerp",   n:"Tyler Pizzola",           d:3.298, g:"M", dupr:"ZNXY7M"},
-  {id:"connie",   n:"Connie Rogers",           d:3.271, g:"F", dupr:"3Z590L"},
-  {id:"amandap",  n:"Amanda Pizzola",          d:3.101, g:"F", dupr:"9PVRGR"},
-  {id:"nadine",   n:"Nadine Bullock-Pottinga", d:3.174, g:"F", dupr:"0Q5542"},
-  {id:"john",     n:"John Kerstetter",         d:3.143, g:"M", dupr:"8DKGXL"},
-  {id:"rae",      n:"Rae Lamb",                d:3.110, g:"F", dupr:"1RR7VQ"},
-  {id:"jessica",  n:"Jessica Bahou",           d:3.085, g:"F", dupr:"LVVOPK"},
-  {id:"uzair",    n:"Uzair Saeed",             d:3.041, g:"M", dupr:"1625RK"},
-  {id:"stephanie",n:"Stephanie Ascari",        d:2.900, g:"F", dupr:"3OKDJL"},
-  {id:"subbu",    n:"Subbu S",                 d:2.881, g:"M", dupr:"ODXY62"},
-  {id:"tony",     n:"Tony Gaynord",            d:2.813, g:"M", dupr:"3ZPOOL"},
-  {id:"huda",     n:"Huda Khalid",             d:2.369, g:"F", dupr:"YXQ26P"},
-  {id:"vijay",    n:"Vijay Mukundhan",         d:null,  g:"M", dupr:"Z0RNPM"},
-  {id:"dylan",    n:"Dylan Vega",              d:null,  g:"M", dupr:"Y5MM2E", note:"age 16"}
+  {id:"franco",   n:"Franco Mendoza",          d:4.048, r:100, g:"M", dupr:"0Q47QX"},
+  {id:"priscilla", n:"Priscilla Glover",        d:3.454, r:70, g:"F", dupr:"1R9DYE"},
+  {id:"kelly",     n:"Kelly Mehic",             d:3.722, r:40, g:"F", dupr:"8457E2"},
+  {id:"jameschen",n:"James Chen",              d:3.795, r:30, g:"M", dupr:"NRYML7"},
+  {id:"eli",      n:"Eli Azar",                d:3.867, r:100, g:"M", dupr:"PPE7GZ"},
+  {id:"mohammad", n:"Mohammad Mukhtar",        d:3.819, r:80, g:"M", dupr:"1RPGEM"},
+  {id:"charbelt", n:"Charbel Touma",           d:3.724, r:100, g:"M", dupr:"7DPDE5"},
+  {id:"rob",      n:"Rob Chee",                d:3.897, r:90, g:"M", dupr:"JJG2WW"},
+  {id:"nicolas",  n:"Nicolas Lion",            d:3.664, r:100, g:"M", dupr:"N7VJOW"},
+  {id:"charbelc", n:"Charbel Chahine",         d:3.569, r:50, g:"M", dupr:"2YKPV9"},
+  {id:"nikolai",  n:"Nikolai Matveev",         d:3.596, r:100, g:"M", dupr:"7JJJ45"},
+  {id:"thomasp",  n:"Thomas Pizzola",          d:3.398, r:30, g:"M", dupr:"EGY4JV"},
+  {id:"michael",  n:"Michael Touma",           d:3.555, r:100, g:"M", dupr:"QXNGM0", note:"alt acct LZ0KKQ 3.288 — submit to QXNGM0"},
+  {id:"isaiah",   n:"Isaiah Kerstetter",       d:3.523, r:100, g:"M", dupr:"3XZ525"},
+  {id:"wais",     n:"Wais Barek",              d:3.447, r:100, g:"M", dupr:"PWJJ5X"},
+  {id:"amy",      n:"Amy Hildreth",            d:3.416, r:90, g:"F", dupr:"3VM7O7"},
+  {id:"avril",    n:"Avril Baxter",            d:3.483, r:100, g:"F", dupr:"MYV0DP"},
+  {id:"victorb",  n:"Victor Buonocore",        d:3.281, r:30, g:"M", dupr:"W5VJKM"},
+  {id:"juan",     n:"Juan Castillo",           d:3.500, r:100, g:"M", dupr:"GW4JXD"},
+  {id:"trey",     n:"Trey Treadwell",          d:3.401, r:100, g:"M", dupr:"X2RG7X"},
+  {id:"david",    n:"David Morris",            d:3.489, r:100, g:"M", dupr:"89ZJRR"},
+  {id:"omar",     n:"Omar el-Khodari",         d:3.523, r:60, g:"M", dupr:"0ZMENG"},
+  {id:"kareem",   n:"Kareem Adi",              d:3.421, r:20, g:"M", dupr:"ELM40J"},
+  {id:"nataly",   n:"Nataly Perez",            d:3.393, r:100, g:"F", dupr:"0YM70N"},
+  {id:"signe",    n:"Signe Yates",             d:3.456, r:100, g:"F", dupr:"7DNKN0"},
+  {id:"brian",    n:"Brian Bartholomew",       d:3.306, r:100, g:"M", dupr:"8EJP6W"},
+  {id:"yasir",    n:"Yasir Saleem",            d:3.383, r:100, g:"M", dupr:"94EJDJ"},
+  {id:"tylerp",   n:"Tyler Pizzola",           d:3.298, r:1, g:"M", dupr:"ZNXY7M"},
+  {id:"connie",   n:"Connie Rogers",           d:3.215, r:70, g:"F", dupr:"3Z590L"},
+  {id:"amandap",  n:"Amanda Pizzola",          d:3.101, r:10, g:"F", dupr:"9PVRGR"},
+  {id:"nadine",   n:"Nadine Bullock-Pottinga", d:3.127, r:70, g:"F", dupr:"0Q5542"},
+  {id:"john",     n:"John Kerstetter",         d:3.143, r:100, g:"M", dupr:"8DKGXL"},
+  {id:"rae",      n:"Rae Lamb",                d:3.132, r:100, g:"F", dupr:"1RR7VQ"},
+  {id:"jessica",  n:"Jessica Bahou",           d:3.084, r:100, g:"F", dupr:"LVVOPK"},
+  {id:"juanm",    n:"Juan Mojica",             d:3.079, r:70, g:"M", dupr:"NXDW9Z", note:"Falls Church 53M — NOT Juan Castillo"},
+  {id:"uzair",    n:"Uzair Saeed",             d:3.041, r:90, g:"M", dupr:"1625RK"},
+  {id:"leslie",   n:"Leslie Restaino",         d:3.029, r:100, g:"F", dupr:"KOXPVO"},
+  {id:"stephanie",n:"Stephanie Ascari",        d:2.963, r:80, g:"F", dupr:"3OKDJL"},
+  {id:"subbu",    n:"Subbu S",                 d:3.063, r:80, g:"M", dupr:"ODXY62"},
+  {id:"tony",     n:"Tony Gaynord",            d:2.807, r:100, g:"M", dupr:"3ZPOOL"},
+  {id:"huda",     n:"Huda Khalid",             d:2.526, r:100, g:"F", dupr:"YXQ26P"},
+  {id:"vijay",    n:"Vijay Mukundhan",         d:2.629, r:30, g:"M", dupr:"Z0RNPM"},
+  {id:"dylan",    n:"Dylan Vega",              d:3.519, r:20,  g:"M", dupr:"Y5MM2E", note:"age 16"},
+  {id:"jessicap", n:"Jessica Perdue",          d:2.562, r:20,  g:"F", dupr:"QNLNMR", note:"Bristow · spelled Perdue on DUPR · rated Sep 2, reliability 20"},
+  {id:"victoria", n:"Victoria Ghosh",          d:null, r:null,  g:"F", dupr:"Z0RJ0D", note:"unrated · Haymarket 35F"}
 ];
 
 /* ---------- state ---------- */
 var S = {
   title:"Wednesday DUPR Night",
-  date:"2026-08-26",
+  /* Always today, in local time. Never hardcode this: a stale default here once
+     sent 16 matches toward DUPR labelled with the wrong night. */
+  date:(function(){var d=new Date();return d.getFullYear()+"-"
+        +String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");})(),
   cfg:{ courts:3, firstBall:"6:15", horn:12, change:3, gameTo:11,
-        womenSep:true, mode:"tier", size:"4" },
+        womenSep:true, mode:"tier", size:"5" },
   inn:[],                 /* player ids playing */
   pools:[],               /* [{name, ids:[]}] — court/slot derived */
   scores:{},              /* teamSignature -> {a,b} */
+  late:{},                /* playerId -> arrival time, e.g. "6:25" */
+  openPlay:{},            /* playerId -> true: plays the open pools, ignoring womenSep */
   log:[],                 /* audit trail of roster/pool changes */
+  ui:{chg:false, cfg:false},  /* collapsed panels */
   tab:"play"
 };
 
@@ -309,18 +349,42 @@ function logIt(msg){
 
 /* Wednesday Aug 26 as designed: Men's 5 / Calibration 5 / Women's 5 */
 function seedDefault(){
+  /* DUPR Night — 15 players, 5/5/5. Vijay withdrew.
+     Priscilla 3.787 and Nataly 3.414 both play the open pools: Priscilla
+     because she outrates every man here, Nataly because without her the open
+     side is 9 and someone ends up in a four with only three games.
+
+     19 players: open 11 (6+5), women 8 (4+4). Women's B is the calibration
+     pool — Victoria and Jessica P are both unrated and get measured against
+     Stephanie 2.900 and Huda 2.369. The two fours only get 3 games each
+     (a 4-pod has just 3 unique matchups); the alternative was moving Connie
+     up to make 6/6/7 and running 15 minutes longer. Chose the shorter night. */
+  S.title = "DUPR Night";
+  /* 5/5/4 — verified against an exhaustive search of all 126,126 ways to split
+     these 14 into 4/5/5. This is the exact optimum on worst matchup gap (0.536)
+     AND on night total (2.886). Putting the four-pod at the TOP instead costs a
+     lot: worst 0.796, total 3.472, because Vijay 2.629 lands in a five with
+     Yasir 3.383 and one round has to pair him with the weakest man present.
+     The four-pod at the bottom absorbs him — its forced worst is only
+     (John+Amanda)-(Juan M.+Vijay) = 0.536.
+     Cost: the bottom four get 3 games rather than 4. */
   S.pools = [
-    {name:"Men's",       ids:["eli","mohammad","nikolai","thomasp","wais","david","yasir"]},
-    {name:"Calibration", ids:["juan","omar","michael","dylan","vijay"]},
-    {name:"Women's",     ids:["amy","nataly","nadine","stephanie","huda"]}
+    {name:"Pool A", ids:["eli","mohammad","charbelt","nikolai","omar"]},
+    {name:"Pool B", ids:["juan","wais","trey","nataly","yasir"]},
+    {name:"Pool C", ids:["john","amandap","juanm","vijay"]}
   ];
+  S.late = {};
+  /* Only two women in the field tonight, and a women's pool needs four,
+     so both play open. */
+  S.openPlay = {nataly:true, amandap:true};
+  S.cfg.size = "5";
   S.inn = S.pools.reduce(function(a,p){ return a.concat(p.ids); },[]);
 }
 
 function load(){
   try{
     var r=localStorage.getItem(KEY);
-    if(r){ var o=JSON.parse(r); if(o&&o.S){ S=o.S; return true; } }
+    if(r){ var o=JSON.parse(r); if(o&&o.S){ S=o.S; S.ui=S.ui||{chg:false}; S.openPlay=S.openPlay||{}; return true; } }
   }catch(e){}
   return false;
 }
@@ -328,12 +392,59 @@ function serialize(){ return JSON.stringify({S:S, savedAt:Date.now()}); }
 
 /* ---------- helpers ---------- */
 function P(id){ for(var i=0;i<ROSTER.length;i++) if(ROSTER[i].id===id) return ROSTER[i]; return null; }
-function nm(id){ var p=P(id); if(!p) return "?"; var t=p.n.split(/\s+/);
-  return t[0]==="Charbel" ? "Charbel "+t[1].charAt(0)+"." : t[0]; }
+/* Show "First L." only when two players in tonight's field share a first name.
+   Currently catches Charbel Touma / Charbel Chahine and Jessica Bahou /
+   Jessica Perdue, and will catch any future collision without a code change. */
+var _dupKey="", _dupSet=null;
+function dupFirsts(){
+  var key=(S.inn||[]).join(",");
+  if(_dupKey===key && _dupSet) return _dupSet;
+  var c={};
+  (S.inn||[]).forEach(function(i){
+    var p=P(i); if(!p) return;
+    var f=p.n.trim().split(/\s+/)[0].toLowerCase();
+    c[f]=(c[f]||0)+1;
+  });
+  _dupSet={}; for(var k in c) if(c[k]>1) _dupSet[k]=1;
+  _dupKey=key; return _dupSet;
+}
+function nm(id){
+  var p=P(id); if(!p) return "?";
+  var t=p.n.trim().split(/\s+/);
+  if(t.length>1 && dupFirsts()[t[0].toLowerCase()])
+    return t[0]+" "+t[t.length-1].charAt(0).toUpperCase()+".";
+  return t[0];
+}
 function full(id){ var p=P(id); return p?p.n:"?"; }
 function ab(id){ var p=P(id); if(!p) return "?"; var t=p.n.split(/\s+/);
   return t.length>1 ? t[0]+" "+t[t.length-1].charAt(0)+"." : t[0]; }
 function dOf(id){ var p=P(id); return p?p.d:null; }
+
+/* ---- DUPR reliability ----------------------------------------------------
+   DUPR returns doublesReliabilityScore 0-100 alongside the rating. It is a
+   confidence figure, not a skill figure: a 3.30 at reliability 1 rests on
+   almost no submitted matches and can swing a third of a point overnight,
+   while a 3.30 at 100 is settled. Two of our own pools were built on soft
+   numbers before we started reading it, so it now renders next to every
+   rating. Cutoffs: 80+ solid, 40-79 soft, under 40 shaky.               */
+function rOf(id){ var p=P(id); return (p && typeof p.r==="number") ? p.r : null; }
+function relCls(r){ return r>=80 ? "hi" : (r>=40 ? "mid" : "lo"); }
+/* HTML badge — empty string when there is no score (unrated players). */
+function relTag(id){
+  var r=rOf(id); if(r==null) return "";
+  return '<span class="rel '+relCls(r)+'" title="DUPR reliability '+r
+       + '/100 — '+(r>=80?"settled":(r>=40?"soft, based on limited matches":"shaky, very few matches"))
+       + '">'+r+'</span>';
+}
+/* Plain-text form, for WhatsApp posts and courtside sheets. */
+function relTxt(id){ var r=rOf(id); return r==null ? "" : " ("+r+")"; }
+/* Rating + reliability together, the pairing that should almost always travel. */
+function dTxt(id){ var d=dOf(id); return (d==null?"NR":d.toFixed(3))+relTxt(id); }
+/* A woman marked "open" is grouped with the men. Priscilla 3.787 outrates every
+   man here, so putting her in the women's pool leaves her without a peer and
+   drags that pool's spread to 1.418. This flag survives Regenerate. */
+function isOpen(id){ return !!(S.openPlay||{})[id]; }
+function grp(id){ var p=P(id); return (p && p.g==="F" && !isOpen(id)) ? "F" : "M"; }
 function esc(s){ return String(s).replace(/[&<>"]/g,function(c){
   return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
 function n2(v){ return (v===""||v==null||isNaN(v))?null:Math.max(0,Math.min(99,parseInt(v,10))); }
@@ -381,6 +492,17 @@ function rdiff(s, ratings){
 function balanceFirst(sol, ratings){
   return sol.slice().sort(function(x,y){ return rdiff(x,ratings)-rdiff(y,ratings); });
 }
+/* Total unevenness across the pool's rounds — the objective we minimise.
+   Minimising the WORST round instead was measurably worse for players: on the
+   women's five it turned 0.20/0.29/0.45/1.36/1.39 into 0.45/0.83/0.85/0.88/1.32,
+   trading three genuinely even games for five mediocre ones. Better to keep the
+   good games and let the one lopsided round run last. */
+function solTotal(sol, ratings){
+  return sol.reduce(function(a,s){ return a+rdiff(s,ratings); },0);
+}
+function solWorst(sol, ratings){
+  return sol.reduce(function(a,s){ return Math.max(a,rdiff(s,ratings)); },0);
+}
 function solveRot(size, ratings){
   if(size===4) return balanceFirst(
     ROT4.map(function(r){return {a:r.a.slice(),b:r.b.slice(),by:[]};}), ratings);
@@ -399,9 +521,9 @@ function solveRot(size, ratings){
     return Math.abs(av+bv-cv-dv);
   }
   function rec(i, used, worst, tot){
-    if(best && (worst>best.worst || (worst===best.worst && tot>=best.tot) )) { /* keep going, cheap */ }
+    if(best && tot>best.tot) return;                  /* prune: total can only grow */
     if(i===byes.length){
-      if(!best || worst<best.worst-1e-9 || (Math.abs(worst-best.worst)<1e-9 && tot<best.tot))
+      if(!best || tot<best.tot-1e-9 || (Math.abs(tot-best.tot)<1e-9 && worst<best.worst))
         best={worst:worst, tot:tot, sol:pick.map(function(s,k){
           return {a:s.a.slice(),b:s.b.slice(),by:byes[k].slice()}; })};
       return;
@@ -419,6 +541,169 @@ function solveRot(size, ratings){
   rec(0,{},0,0);
   if(!best) return null;
   return balanceFirst(best.sol, ratings);
+}
+
+/* ---- seat search ----
+   The bye pattern is fixed relative to seat index, so WHO SITS TOGETHER is
+   decided before balance is ever considered. For sizes 4-6 that costs nothing
+   (measured optimal across 60 random pools each). For SEVEN it costs a lot:
+   the cyclic {r, r+1, r+3} design was sub-optimal in 100% of random pools,
+   by as much as Σ1.086. Shuffling which rating sits in which seat fixes it.
+   150 random shuffles hit the exact 5040-permutation optimum 10 times out of 10,
+   so a bounded sample is exact in practice and ~40ms instead of ~1s. */
+var SEAT_TRIES = 200;
+var ROTCACHE = {};
+function rotFor(size, ratings){
+  var key = size+":"+ratings.map(function(v){return v==null?"n":v;}).join(",");
+  if(ROTCACHE[key]) return ROTCACHE[key];
+  var best = solveRot(size, ratings), bestR = ratings, bestSeats = null;
+  if(size===7 && ratings.every(function(v){return v!=null;})){
+    var rand = (function(s){ return function(){ s=(s*1103515245+12345)%2147483648; return s/2147483648; }; })(987654321);
+    var bt = best ? solTotal(best, ratings) : Infinity;
+    var bw = best ? solWorst(best, ratings) : Infinity;
+    for(var k=0;k<SEAT_TRIES;k++){
+      var p=ratings.map(function(_,i){return i;});
+      for(var i=p.length-1;i>0;i--){ var j=Math.floor(rand()*(i+1)); var t=p[i]; p[i]=p[j]; p[j]=t; }
+      var rr=p.map(function(seat){ return ratings[seat]; });
+      var sol=solveRot(size, rr);
+      if(!sol) continue;
+      var tot=solTotal(sol,rr), wst=solWorst(sol,rr);
+      if(tot<bt-1e-9 || (Math.abs(tot-bt)<1e-9 && wst<bw)){
+        bt=tot; bw=wst; best=sol; bestR=rr; bestSeats=p;
+      }
+    }
+    /* Seats were permuted, so map the winning rotation back onto the caller's
+       original ordering: seat s in the search holds original player bestSeats[s]. */
+    if(bestSeats){
+      var m=function(x){ return bestSeats[x]; };
+      best = best.map(function(r){
+        return {a:r.a.map(m), b:r.b.map(m), by:r.by.map(m)};
+      });
+    }
+  }
+  if(Object.keys(ROTCACHE).length>200) ROTCACHE={};
+  ROTCACHE[key]=best;
+  return best;
+}
+
+/* ================= MIXED DOUBLES =================================
+   A mixed pool is n men + n women where every man partners every woman
+   exactly once.
+
+   The maths, because it constrains the UI:
+     - n men + n women give n^2 teams; each match eats two, so n^2/2 matches.
+       n^2 must therefore be even, so **n must be EVEN**. 5+5 and 3+3 are
+       impossible, not merely awkward.
+     - A round that seats everyone uses each man once and each woman once, so
+       a round IS a man-woman permutation, and the n rounds together form a
+       LATIN SQUARE. L[r][i] = which woman partners man i in round r.
+     - Every player plays all n rounds. NOBODY EVER SITS.
+     - A round runs n/2 matches at once, so the pool needs n/2 COURTS, unlike
+       a normal pool which needs one.
+
+   Mixed pools produce much tighter matchups than same-gender ones because
+   every team is one man plus one woman, so team sums cluster hard.        */
+
+function mixedSplit(ids){
+  /* Gender here is literal — the "plays open" override is about pool
+     assignment, not about which side of a mixed team someone is on. */
+  var men=[], women=[];
+  ids.forEach(function(id,i){ (P(id) && P(id).g==="F" ? women : men).push(i); });
+  return {men:men, women:women};
+}
+/* Why a given set of players can or cannot run mixed. Returns null when fine. */
+function mixedWhyNot(ids, courts){
+  var s=mixedSplit(ids), m=s.men.length, w=s.women.length;
+  if(m!==w) return m+" men and "+w+" wom"+(w===1?"an":"en")
+    +" — mixed needs equal numbers. "+(m>w?"Drop "+(m-w)+" man"+(m-w>1?"/men":"")
+      :"Drop "+(w-m)+" wom"+(w-m>1?"en":"an"))+", or add.";
+  if(m===0) return "No players.";
+  if(m%2) return m+"+"+m+" is impossible — "+(m*m)+" teams cannot split into whole matches. Mixed needs an EVEN number of each. Try "+(m-1)+"+"+(m-1)+" or "+(m+1)+"+"+(m+1)+".";
+  if(courts && m/2 > courts) return m+"+"+m+" needs "+(m/2)+" courts at once; you have "+courts+".";
+  return null;
+}
+function mixedRoundsOf(ids){ return mixedSplit(ids).men.length; }      /* n rounds  */
+function mixedCourtsOf(ids){ return mixedSplit(ids).men.length/2; }    /* n/2 courts */
+
+/* A round's n teams are paired into n/2 matches. Sorting the team sums and
+   pairing ADJACENT provably minimises both the worst gap and the total gap
+   over every perfect pairing of that round's teams. */
+function pairRound(teams){
+  var t=teams.slice().sort(function(x,y){ return x.s-y.s; }), out=[];
+  for(var i=0;i<t.length;i+=2) out.push({a:t[i], b:t[i+1], d:Math.abs(t[i].s-t[i+1].s)});
+  return out;
+}
+function latinRandom(n, rnd){
+  var L=[];
+  for(var r=0;r<n;r++){
+    var row=(function place(i,cur,used){
+      if(i===n) return cur.slice();
+      var ws=[];
+      for(var w=0;w<n;w++){
+        if(used[w]) continue;
+        var ok=true;
+        for(var k=0;k<r;k++) if(L[k][i]===w){ ok=false; break; }
+        if(ok) ws.push(w);
+      }
+      for(var j=ws.length-1;j>0;j--){ var t=Math.floor(rnd()*(j+1)), x=ws[j]; ws[j]=ws[t]; ws[t]=x; }
+      for(var a=0;a<ws.length;a++){
+        used[ws[a]]=1; cur.push(ws[a]);
+        var res=place(i+1,cur,used);
+        if(res) return res;
+        cur.pop(); used[ws[a]]=0;
+      }
+      return null;
+    })(0,[],{});
+    if(!row) return null;
+    L.push(row);
+  }
+  return L;
+}
+/* Which Latin square you pick matters a lot: on a real 4+4 the best gave a
+   worst gap of 0.196 and the worst gave 0.348, same players. So search. */
+var MIXTRIES = 3000;
+var MIXCACHE = {};
+function mixedRot(ids){
+  var s=mixedSplit(ids), n=s.men.length;
+  if(n===0 || n%2 || s.women.length!==n) return null;
+  var Mr=s.men.map(function(i){ return dOf(ids[i]); });
+  var Wr=s.women.map(function(i){ return dOf(ids[i]); });
+  var key="mix:"+n+":"+Mr.concat(Wr).map(function(v){return v==null?"n":v;}).join(",");
+  if(MIXCACHE[key]) return MIXCACHE[key];
+
+  var rnd=(function(seed){ return function(){ seed=(seed*1103515245+12345)%2147483648; return seed/2147483648; }; })(20260902);
+  var rated = Mr.every(function(v){return v!=null;}) && Wr.every(function(v){return v!=null;});
+  var best=null;
+  var tries = rated ? MIXTRIES : 1;
+  for(var k=0;k<tries;k++){
+    var L=latinRandom(n,rnd); if(!L) continue;
+    var rounds=L.map(function(sig){
+      return pairRound(sig.map(function(wi,mi){
+        var a=s.men[mi], b=s.women[wi];
+        return {i:a, j:b, s:(rated ? Mr[mi]+Wr[wi] : 0)};
+      }));
+    });
+    var worst=0, tot=0;
+    rounds.forEach(function(rd){ rd.forEach(function(mm){ worst=Math.max(worst,mm.d); tot+=mm.d; }); });
+    if(!best || worst<best.worst-1e-9 || (Math.abs(worst-best.worst)<1e-9 && tot<best.tot-1e-9))
+      best={worst:worst, tot:tot, rounds:rounds};
+  }
+  if(!best) return null;
+  /* Run the tightest rounds first so the widest lands last — same convention
+     as the same-gender rotations. */
+  var ord=best.rounds.slice().sort(function(x,y){
+    var wx=Math.max.apply(null,x.map(function(m){return m.d;}));
+    var wy=Math.max.apply(null,y.map(function(m){return m.d;}));
+    return wx-wy;
+  });
+  var out=ord.map(function(rd,ri){
+    return rd.map(function(mm,ci){
+      return {a:[mm.a.i, mm.a.j], b:[mm.b.i, mm.b.j], by:[], rd:ri, ct:ci, d:mm.d};
+    });
+  });
+  if(Object.keys(MIXCACHE).length>60) MIXCACHE={};
+  MIXCACHE[key]=out;
+  return out;
 }
 
 /* ---------- pool sizing ---------- */
@@ -466,15 +751,15 @@ function autoPools(){
   if(ids.length<4) return {err:"Need at least 4 players. Currently "+ids.length+"."};
   var groups=[];
   if(S.cfg.womenSep){
-    var w=ids.filter(function(i){return P(i)&&P(i).g==="F";});
-    var m=ids.filter(function(i){return P(i)&&P(i).g!=="F";});
+    var w=ids.filter(function(i){return grp(i)==="F";});
+    var m=ids.filter(function(i){return grp(i)!=="F";});
     if(w.length && w.length<4)
       return {err:"Only "+w.length+" wom"+(w.length===1?"an":"en")
         +" — a women's pool needs 4. Add another, or turn off “keep women separate”."};
     if(m.length && m.length<4)
       return {err:"Only "+m.length+" m"+(m.length===1?"an":"en")
         +" — a men's pool needs 4. Turn off “keep women separate”."};
-    if(m.length) groups.push({label:"Men's", ids:m});
+    if(m.length) groups.push({label:"Open", ids:m});
     if(w.length) groups.push({label:"Women's", ids:w});
   } else {
     groups.push({label:"Pool", ids:ids});
@@ -517,13 +802,118 @@ function timeAt(slot){
   return hh+":"+(m<10?"0":"")+m;
 }
 /* Assign each pool a court; pools beyond the court count share one and alternate. */
+/* ---------- late arrivals ---------- */
+function mins(hhmm){
+  var p=String(hhmm||"").split(":"); if(p.length!==2) return null;
+  var h=+p[0], m=+p[1]; if(isNaN(h)||isNaN(m)) return null;
+  if(h<8) h+=12;                       /* 6:25 means the evening */
+  return h*60+m;
+}
+function slotStart(slot){
+  var b=mins(S.cfg.firstBall); if(b==null) b=18*60+15;
+  return b + (slot-1)*(S.cfg.horn+S.cfg.change);
+}
+function lateOf(id){ var t=(S.late||{})[id]; return t ? mins(t) : null; }
+/* Can this player be on court for a match starting at `slot`? */
+function availAt(id, slot){
+  var t=lateOf(id); return t==null || t<=slotStart(slot);
+}
+/* Order a pool's rounds so that anyone arriving late sits out the early ones.
+   Rounds can be freely resequenced without breaking the partner-everyone
+   property, so this costs nothing except a little round-order balance.
+   Greedy: for each slot in turn take the round with the fewest absent players,
+   breaking ties on balance. */
+function orderForLate(rot, ids, slotOf){
+  var anyLate = ids.some(function(id){ return lateOf(id)!=null; });
+  if(!anyLate) return rot;
+  var pool=rot.slice(), out=[];
+  for(var pos=0; pos<rot.length; pos++){
+    var slot=slotOf(pos), best=-1, bestKey=null;
+    for(var i=0;i<pool.length;i++){
+      var on=pool[i].a.concat(pool[i].b).map(function(x){ return ids[x]; });
+      var absent=on.filter(function(id){ return !availAt(id, slot); }).length;
+      var key=[absent, pool[i].__d==null?0:pool[i].__d];
+      if(best<0 || key[0]<bestKey[0] || (key[0]===bestKey[0] && key[1]<bestKey[1])){
+        best=i; bestKey=key;
+      }
+    }
+    out.push(pool[best]); pool.splice(best,1);
+  }
+  return out;
+}
+
+/* Assign pools to courts by load, longest pool first, each going to whichever
+   court has the fewest rounds so far. Naively cycling pi % courts can strand a
+   five-round pool alongside another five-round pool and push the night to ten
+   slots; balancing keeps two three-round pools together instead. */
+function isMixed(p){ return !!(p && p.mixed); }
+/* Rounds a pool runs, and how many courts it needs at once. A mixed pool plays
+   all n/2 of its matches simultaneously, so it occupies a BLOCK of courts. */
+function poolRounds(p){ return isMixed(p) ? mixedRoundsOf(p.ids) : roundsFor(p.ids.length); }
+function poolCourtSpan(p){ return isMixed(p) ? Math.max(1, mixedCourtsOf(p.ids)) : 1; }
+
+function assignCourts(){
+  var courts=Math.max(1,S.cfg.courts), load=[], byCourt={};
+  for(var i=0;i<courts;i++) load.push(0);
+
+  /* Mixed pools are placed first and take a contiguous block of courts — they
+     cannot be split across time the way a normal pool can. */
+  var mixed=[], plain=[];
+  S.pools.forEach(function(p,i){
+    var o={pi:i, r:poolRounds(p), span:poolCourtSpan(p)};
+    if(isMixed(p) && o.r) mixed.push(o); else if(o.r) plain.push(o);
+  });
+  mixed.sort(function(a,b){ return b.span-a.span || a.pi-b.pi; });
+  var blocks={};
+  mixed.forEach(function(o){
+    /* find the block of `span` adjacent courts with the least existing load */
+    var bestStart=0, bestMax=Infinity;
+    for(var st=0; st+o.span<=courts; st++){
+      var mx=0; for(var k=0;k<o.span;k++) mx=Math.max(mx, load[st+k]);
+      if(mx<bestMax){ bestMax=mx; bestStart=st; }
+    }
+    if(bestMax===Infinity) return;                 /* does not fit — flagged in UI */
+    blocks[o.pi]={start:bestStart+1, span:o.span, base:bestMax};
+    for(var k=0;k<o.span;k++){
+      load[bestStart+k]=bestMax+o.r;
+      byCourt[bestStart+k+1]=byCourt[bestStart+k+1]||[];
+    }
+  });
+
+  plain.sort(function(a,b){ return b.r-a.r || a.pi-b.pi; })
+    .forEach(function(o){
+      var c=0;
+      for(var i=1;i<courts;i++) if(load[i]<load[c]) c=i;
+      load[c]+=o.r;
+      byCourt[c+1]=byCourt[c+1]||[]; byCourt[c+1].push(o.pi);
+    });
+  Object.keys(byCourt).forEach(function(c){ byCourt[c].sort(function(a,b){return a-b;}); });
+  return {byCourt:byCourt, blocks:blocks};
+}
 function schedule(){
   var out=[], courts=Math.max(1,S.cfg.courts);
-  var byCourt={};
-  S.pools.forEach(function(pl,pi){
-    var c=(pi%courts)+1;
-    byCourt[c]=byCourt[c]||[]; byCourt[c].push(pi);
+  var ac=assignCourts(), byCourt=ac.byCourt, blocks=ac.blocks;
+
+  /* --- mixed pools: n rounds, n/2 simultaneous matches, nobody sits --- */
+  Object.keys(blocks).forEach(function(pi){
+    pi=+pi;
+    var pool=S.pools[pi], b=blocks[pi];
+    var ids=pool.ids.slice();
+    var rot=mixedRot(ids);
+    if(!rot) return;
+    rot.forEach(function(round, ri){
+      round.forEach(function(r){
+        var slot=b.base+ri+1;
+        var A=r.a.map(function(i){return ids[i];});
+        var B=r.b.map(function(i){return ids[i];});
+        var absent=A.concat(B).filter(function(id){ return !availAt(id, slot); });
+        out.push({ pi:pi, pool:pool.name, court:b.start+r.ct, round:ri+1, slot:slot,
+                   A:A, B:B, by:[], mixed:true,
+                   absent:absent, key:sig(A,B) });
+      });
+    });
   });
+
   Object.keys(byCourt).forEach(function(c){
     var list=byCourt[c], share=list.length;
     /* Pools sharing a court interleave when they run the same number of rounds
@@ -538,14 +928,18 @@ function schedule(){
       var ids=byRating(pool.ids), sz=ids.length, nr=roundsFor(sz);
       if(!nr) return;
       var ratings=ids.map(dOf);
-      var rot=solveRot(sz, ratings) || [];
+      var rot=(rotFor(sz, ratings) || []).map(function(r){
+        var c={a:r.a,b:r.b,by:r.by}; c.__d=rdiff(r,ratings); return c; });
+      var slotOf=function(ri){ return share===1 ? ri+1 : (even ? ri*share + seat + 1 : offset + ri + 1); };
+      rot=orderForLate(rot, ids, slotOf);
       rot.forEach(function(r,ri){
-        var slot = share===1 ? ri+1 : (even ? ri*share + seat + 1 : offset + ri + 1);
+        var slot = slotOf(ri);
         var A=r.a.map(function(i){return ids[i];});
         var B=r.b.map(function(i){return ids[i];});
+        var absent=A.concat(B).filter(function(id){ return !availAt(id, slot); });
         out.push({ pi:pi, pool:pool.name, court:+c, round:ri+1, slot:slot,
                    A:A, B:B, by:r.by.map(function(i){return ids[i];}),
-                   key:sig(A,B) });
+                   absent:absent, key:sig(A,B) });
       });
       offset += nr;
     });
@@ -624,9 +1018,22 @@ function tally(pi){
 function poolQual(ids){
   var ds=ids.map(dOf).filter(function(v){return v!=null;}).sort(function(a,b){return b-a;});
   var nr=ids.length-ds.length;
-  if(ds.length<2) return {spread:null, gap:null, nr:nr, rated:ds.length};
+  /* Average is over RATED players only. When some are unrated it is not the
+     pool's average, so the caller has to say how many it covers. */
+  var avg = ds.length ? ds.reduce(function(a,b){return a+b;},0)/ds.length : null;
+  if(ds.length<2) return {avg:avg, spread:null, gap:null, nr:nr, rated:ds.length};
   var gap=0; for(var i=1;i<ds.length;i++) gap=Math.max(gap, ds[i-1]-ds[i]);
-  return {spread:ds[0]-ds[ds.length-1], gap:gap, nr:nr, rated:ds.length};
+  return {avg:avg, spread:ds[0]-ds[ds.length-1], gap:gap, nr:nr, rated:ds.length};
+}
+/* one-line quality summary shared by the Pools and Play cards */
+function qualLine(ids){
+  var q=poolQual(ids), out=[];
+  if(q.avg!=null) out.push('avg <b>'+q.avg.toFixed(3)+'</b>'
+    + (q.nr ? ' <span style="opacity:.75">('+q.rated+' of '+ids.length+' rated)</span>' : ''));
+  if(q.spread!=null) out.push('spread <b>'+q.spread.toFixed(3)+'</b>');
+  if(q.gap!=null) out.push('biggest gap <b>'+q.gap.toFixed(3)+'</b>');
+  if(!out.length) out.push('not enough rated players to measure');
+  return out.join(' · ');
 }
 
 /* ==========================================================================
@@ -639,7 +1046,13 @@ function poolQual(ids){
    ========================================================================== */
 var CMD = {msg:"", kind:"", opts:null};
 var UNDO = [];
-function snapshot(){ UNDO.push(JSON.stringify(S)); if(UNDO.length>15) UNDO.shift(); }
+/* Safe to call from any mutator: a duplicate push is skipped, so a UI action
+   that snapshots AND calls a helper that also snapshots costs one undo slot. */
+function snapshot(){
+  var v=JSON.stringify(S);
+  if(UNDO.length && UNDO[UNDO.length-1]===v) return;
+  UNDO.push(v); if(UNDO.length>15) UNDO.shift();
+}
 function undo(){
   if(!UNDO.length){ CMD={msg:"Nothing to undo.",kind:"err",opts:null}; render(); return; }
   S=JSON.parse(UNDO.pop());
@@ -757,6 +1170,37 @@ function runCmd(raw){
     snapshot(); movePlayer(r.id, String(pi));
     return say("ok",ab(r.id)+" → "+S.pools[pi].name+" ("+S.pools[pi].ids.length+" players).");
   }
+  /* open pool: "Priscilla open" / "Priscilla women" */
+  if((m=t.match(/^(.+?)\s+(open|opens|mixed)$/i))){
+    r=one(m[1],"all"); if(r.err) return say("err",r.err,r.opts);
+    snapshot(); S.openPlay=S.openPlay||{}; S.openPlay[r.id]=true;
+    logIt(ab(r.id)+" -> open pools"); persist(); render();
+    return say("ok",ab(r.id)+" will be grouped with the open pools, not the women's — survives Regenerate.");
+  }
+  if((m=t.match(/^(.+?)\s+(women|womens|women's)$/i))){
+    r=one(m[1],"all"); if(r.err) return say("err",r.err,r.opts);
+    snapshot(); if(S.openPlay) delete S.openPlay[r.id];
+    logIt(ab(r.id)+" -> women's pool"); persist(); render();
+    return say("ok",ab(r.id)+" back in the women's grouping.");
+  }
+  /* late: "Nikolai late 6:25" | "Nikolai arrives 6:25" | "Nikolai on time" */
+  if((m=t.match(/^(.+?)\s+(?:is\s+)?(?:late|arriv\w*|here|in)\s+(?:at\s+)?(\d{1,2}:\d{2})$/i))){
+    r=one(m[1],"in"); if(r.err) return say("err",r.err,r.opts);
+    snapshot(); S.late=S.late||{}; S.late[r.id]=m[2];
+    logIt(ab(r.id)+" arriving "+m[2]);
+    persist(); render();
+    var miss=M.filter(function(x){ return x.absent && x.absent.indexOf(r.id)>-1; }).length;
+    return say(miss?"ask":"ok", ab(r.id)+" arriving "+m[2]+" — rounds reordered so "
+      +(miss ? "they sit early. ⚠️ still short by "+miss+" match"+(miss>1?"es":"")
+             : "they miss nothing."));
+  }
+  if((m=t.match(/^(.+?)\s+(?:on\s*time|not\s+late|cancel\s*late)$/i))){
+    r=one(m[1],"in"); if(r.err) return say("err",r.err,r.opts);
+    snapshot(); if(S.late) delete S.late[r.id];
+    logIt(ab(r.id)+" on time");
+    persist(); render();
+    return say("ok",ab(r.id)+" back to a 6:15 start.");
+  }
   /* rating: "Yasir 3.35" | "set Vijay to 3.2" | "Dylan NR" */
   if((m=t.match(/^(?:set\s+)?(.+?)\s+(?:to\s+)?(\d\.\d{1,3}|\d|nr)$/i))){
     r=one(m[1],"all");
@@ -783,11 +1227,11 @@ function runCmd(raw){
         +S.pools.map(function(p){return p.name;}).join(", ")+".");
     } else {
       /* no pool given — put them where they fit best on rating and gender */
-      var g=P(r.id).g, best=-1, bg=1e9;
+      var g=grp(r.id), best=-1, bg=1e9;
       S.pools.forEach(function(p,i){
         if(p.ids.length>=7) return;
-        if(S.cfg.womenSep && p.ids.length && p.ids.every(function(x){return P(x).g==="F";}) && g!=="F") return;
-        if(S.cfg.womenSep && p.ids.length && p.ids.every(function(x){return P(x).g!=="F";}) && g==="F") return;
+        if(S.cfg.womenSep && p.ids.length && p.ids.every(function(x){return grp(x)==="F";}) && g!=="F") return;
+        if(S.cfg.womenSep && p.ids.length && p.ids.every(function(x){return grp(x)!=="F";}) && g==="F") return;
         var rt=p.ids.map(dOf).filter(function(v){return v!=null;});
         var mean=rt.length?rt.reduce(function(a,b){return a+b;},0)/rt.length:3.4;
         var gap=dOf(r.id)==null?50:Math.abs(dOf(r.id)-mean);
@@ -831,13 +1275,13 @@ function vCmd(){
     h+='<div class="cmdhelp"><code>add Trey</code> <code>drop Huda</code> '
      + '<code>sub Rae for Stephanie</code> <code>swap Yasir with Juan</code> '
      + '<code>move Yasir to calibration</code> <code>Vijay 3.25</code> '
-     + '<code>court 1 11-9</code> <code>courts 3</code> <code>regen</code> <code>undo</code></div>';
+     + '<code>court 1 11-9</code> <code>Nikolai late 6:25</code> <code>regen</code> <code>undo</code></div>';
   }
   return h+'</div>';
 }
 
 /* ---------- render ---------- */
-var TABS=[["roster","Roster"],["pools","Pools"],["play","Play"],["stand","Standings"]];
+var TABS=[["roster","Check-in"],["pools","Pools"],["play","Play"],["stand","Standings"]];
 function render(){
   document.getElementById("ttl").textContent = S.title;
   document.getElementById("sub").textContent =
@@ -845,7 +1289,11 @@ function render(){
     +" courts · first ball "+S.cfg.firstBall+" · to "+S.cfg.gameTo+", horn "+S.cfg.horn+" min";
   rebuild();
   var d=M.filter(done).length;
-  document.getElementById("prog").innerHTML="<b>"+d+"</b> / "+M.length+" matches";
+  /* Opened as a local file, nothing reaches the cloud. Say so loudly — scores
+     entered here are invisible to rallytime.pro and to every other device. */
+  var localOnly = location.protocol==="file:";
+  document.getElementById("prog").innerHTML="<b>"+d+"</b> / "+M.length+" matches"
+    + (localOnly ? ' <span style="color:#fca5a5;font-weight:700">· LOCAL FILE — not syncing</span>' : '');
   document.getElementById("nav").innerHTML = TABS.map(function(t){
     var b = t[0]==="roster" ? '<span class="b">'+S.inn.length+'</span>'
           : t[0]==="play"   ? '<span class="b">'+d+'</span>' : '';
@@ -860,30 +1308,43 @@ function render(){
 }
 function go(t){ S.tab=t; persist(); render(); }
 
+/* Check-in sheet. Alphabetical by first name, because at the desk you're
+   looking up "is Trey here?" — not scanning by rating. Expected players first
+   so the list you actually work down is short; everyone else below for walk-ins. */
+function firstName(p){ return p.n.trim().split(/\s+/)[0].toLowerCase(); }
+function byFirstName(a,b){
+  var x=firstName(a), y=firstName(b);
+  if(x!==y) return x<y?-1:1;
+  return a.n.localeCompare(b.n);
+}
+function checkRow(p, inn){
+  return '<div class="rrow'+(inn?"":" out")+'">'
+   + '<button class="tog'+(inn?" on":"")+'" onclick="toggle(\''+p.id+'\')">'+(inn?"✓":"+")+'</button>'
+   + '<div class="rn">'+esc(p.n)+relTag(p.id)
+   + (p.note?'<small>'+esc(p.note)+'</small>'
+      :(p.dupr?'<small>'+esc(p.dupr)+'</small>'
+             :'<small style="color:#fca5a5">no DUPR ID</small>'))
+   + '</div>'
+   + '<input type="number" step="0.001" placeholder="NR" value="'+(p.d==null?"":p.d)+'" '
+   + 'onchange="setD(\''+p.id+'\',this.value)">'
+   + '<div class="gtag">'+(isOpen(p.id)?'<span title="plays the open pools">'+p.g+'*</span>':p.g)+'</div></div>';
+}
 function vRoster(){
   var inn={}; S.inn.forEach(function(i){inn[i]=1;});
-  var sorted=ROSTER.slice().sort(function(a,b){
-    if(!!inn[b.id]!==!!inn[a.id]) return inn[b.id]?1:-1;
-    var x=a.d,y=b.d;
-    if(x==null&&y==null) return 0; if(x==null) return 1; if(y==null) return -1;
-    return y-x;
-  });
-  var h='<div class="card"><div class="chd"><h2>Roster</h2>'
-      + '<span class="ct">'+S.inn.length+' in · '+(ROSTER.length-S.inn.length)+' out</span></div>'
-      + '<div class="meta">Tap the button to add or drop. Ratings are editable — set an unrated '
-      + 'player to a provisional number and pools will use it. Changes take effect on '
-      + '<b>Pools → Regenerate</b>; entered scores survive any matchup that still exists.</div>';
-  sorted.forEach(function(p){
-    h+='<div class="rrow'+(inn[p.id]?"":" out")+'">'
-     + '<button class="tog'+(inn[p.id]?" on":"")+'" onclick="toggle(\''+p.id+'\')">'
-     + (inn[p.id]?"✓":"+")+'</button>'
-     + '<div class="rn">'+esc(p.n)
-     + (p.note?'<small>'+esc(p.note)+'</small>':(p.dupr?'<small>'+esc(p.dupr)+'</small>':'<small style="color:#fca5a5">no DUPR ID</small>'))
-     + '</div>'
-     + '<input type="number" step="0.001" placeholder="NR" value="'+(p.d==null?"":p.d)+'" '
-     + 'onchange="setD(\''+p.id+'\',this.value)">'
-     + '<div class="gtag">'+p.g+'</div></div>';
-  });
+  var here = ROSTER.filter(function(p){return inn[p.id];}).sort(byFirstName);
+  var away = ROSTER.filter(function(p){return !inn[p.id];}).sort(byFirstName);
+
+  var h='<div class="card"><div class="chd"><h2>Check-in</h2>'
+      + '<span class="ct"><b>'+here.length+'</b> checked in</span></div>'
+      + '<div class="meta">Tap ✓ to check someone out if they don\'t show, or + to add a walk-in. '
+      + 'Ratings are editable inline. Then go to <b>Pools → Regenerate</b>.</div>';
+  here.forEach(function(p){ h+=checkRow(p,true); });
+  h+='</div>';
+
+  h+='<div class="card"><div class="chd"><h2>Not playing</h2>'
+   + '<span class="ct">'+away.length+' available</span></div>'
+   + '<div class="meta">Tap + to bring someone in.</div>';
+  away.forEach(function(p){ h+=checkRow(p,false); });
   h+='<div class="addrow">'
    + '<input type="text" id="nn" placeholder="New player name">'
    + '<input type="number" step="0.001" id="nd" placeholder="DUPR">'
@@ -891,11 +1352,12 @@ function vRoster(){
    + '<button class="btn pri" onclick="addPlayer()">Add</button></div>'
    + '<div class="btnrow">'
    + '<button class="btn" onclick="allIn(true)">All in</button>'
-   + '<button class="btn" onclick="allIn(false)">All out</button>'
+   + '<button class="btn danger" onclick="allIn(false)">All out</button>'
    + '</div></div>';
   return h;
 }
 function toggle(id){
+  snapshot();
   var i=S.inn.indexOf(id);
   if(i>-1){ S.inn.splice(i,1); S.pools.forEach(function(p){
       var j=p.ids.indexOf(id); if(j>-1) p.ids.splice(j,1); }); }
@@ -903,29 +1365,44 @@ function toggle(id){
   persist(); render();
 }
 function allIn(v){
+  snapshot();
   if(v) S.inn=ROSTER.map(function(p){return p.id;});
   else { S.inn=[]; S.pools.forEach(function(p){p.ids=[];}); }
   persist(); render();
 }
 function setD(id,v){
   var p=P(id); if(!p) return;
-  p.d = (v===""||isNaN(parseFloat(v))) ? null : parseFloat(v);
+  var nv = (v===""||isNaN(parseFloat(v))) ? null : parseFloat(v);
+  /* A hand-typed rating is an estimate, not a DUPR figure, so the reliability
+     score that came with the old number no longer describes it. Drop it rather
+     than let a manual 3.25 keep wearing a "100" badge. */
+  if(nv !== p.d) p.r = null;
+  p.d = nv;
   persist(); render();
 }
 function addPlayer(){
   var n=document.getElementById("nn").value.trim();
   if(!n) return;
+  snapshot();
   var dv=document.getElementById("nd").value;
   var g=document.getElementById("ng").value;
   var id="p"+Date.now().toString(36);
-  ROSTER.push({id:id, n:n, d:(dv===""||isNaN(parseFloat(dv)))?null:parseFloat(dv), g:g, dupr:""});
+  /* r:null — a walk-in's rating is typed in by hand, so there is no DUPR
+     reliability score to show for it. */
+  ROSTER.push({id:id, n:n, d:(dv===""||isNaN(parseFloat(dv)))?null:parseFloat(dv),
+               r:null, g:g, dupr:""});
   S.inn.push(id);
   persist(); render();
 }
 
 function vPools(){
-  var h='<div class="card"><div class="chd"><h2>Setup</h2><span class="ct">config</span></div>'
-    + '<div class="cfg">'
+  var sz = S.cfg.size==="4" ? "prefer 4" : S.cfg.size==="5" ? "prefer 5" : "fewest pools";
+  var peek = S.cfg.courts+" courts · first ball "+esc(S.cfg.firstBall)+" · to "+S.cfg.gameTo
+    + " · horn "+S.cfg.horn+"m · "+(S.cfg.mode==="tier"?"tiered":"balanced")+" · "+sz
+    + (S.cfg.womenSep?" · women separate":"");
+  var h='<div class="card">'+panelHead("cfg","Setup","config",peek);
+  if(!uiState().cfg) h+='</div>';
+  else h+='<div class="cfg">'
     + '<div><label>Courts</label><input type="number" value="'+S.cfg.courts+'" onchange="setCfg(\'courts\',this.value,1)"></div>'
     + '<div><label>First ball</label><input type="text" value="'+S.cfg.firstBall+'" onchange="setCfg(\'firstBall\',this.value)"></div>'
     + '<div><label>Horn (min)</label><input type="number" value="'+S.cfg.horn+'" onchange="setCfg(\'horn\',this.value,1)"></div>'
@@ -946,6 +1423,14 @@ function vPools(){
     + '<div class="btnrow"><button class="btn pri" onclick="regen()">Regenerate pools</button>'
     + '<button class="btn" onclick="addPool()">Add empty pool</button></div></div>';
 
+  /* Regenerate lives inside Setup, which is collapsed by default — surface it
+     here too, since it's the most-reached-for button on this tab. */
+  h+='<div class="btnrow" style="margin:0 0 10px">'
+   + '<button class="btn pri" onclick="regen()">Regenerate all pools</button>'
+   + '<button class="btn" onclick="addPool()">Add empty pool</button>'
+   + '<button class="btn" onclick="toggleSim()">Simulate &amp; compare</button></div>';
+  if(S.ui && S.ui.sim) h+=vSim();
+
   var orphan=orphanCount();
   if(orphan) h+='<div class="warnbox">'+orphan+' entered score'+(orphan>1?"s":"")
     +' no longer match any scheduled match. They are kept in the backup — put those players '
@@ -953,14 +1438,33 @@ function vPools(){
 
   var placed={}; S.pools.forEach(function(p){ p.ids.forEach(function(i){placed[i]=1;}); });
   var loose=S.inn.filter(function(i){return !placed[i];});
-  if(loose.length) h+='<div class="warnbox"><b>'+loose.length+' player'
-    +(loose.length>1?"s":"")+' not in a pool:</b> '+loose.map(ab).join(", ")
-    +' — hit Regenerate, or assign them below.</div>';
+  if(loose.length){
+    h+='<div class="warnbox"><b>'+loose.length+' player'+(loose.length>1?"s":"")
+     +' checked in but not in a pool:</b> '+loose.map(ab).join(", ")+'<br>';
+    /* Placing one person into one pool is almost always better than a full
+       regenerate, which reshuffles every pool and orphans scores. */
+    loose.forEach(function(id){
+      var near=-1, bg=1e9, g=grp(id);
+      S.pools.forEach(function(p,i){
+        if(p.ids.length>=7) return;
+        if(S.cfg.womenSep && p.ids.length && p.ids.every(function(x){return grp(x)==="F";}) && g!=="F") return;
+        if(S.cfg.womenSep && p.ids.length && p.ids.every(function(x){return grp(x)!=="F";}) && g==="F") return;
+        var rt=p.ids.map(dOf).filter(function(v){return v!=null;});
+        var mean=rt.length?rt.reduce(function(a,b){return a+b;},0)/rt.length:3.4;
+        var gap=dOf(id)==null?50:Math.abs(dOf(id)-mean);
+        if(gap<bg){ bg=gap; near=i; }
+      });
+      if(near>-1) h+='<button class="btn" style="padding:5px 9px;font-size:.68rem;margin:4px 4px 0 0" '
+        +'onclick="addTo('+near+',\''+id+'\')">+ '+esc(ab(id))+' → '+esc(S.pools[near].name)+'</button>';
+    });
+    h+='</div>';
+  }
 
   S.pools.forEach(function(pl,pi){
     var q=poolQual(pl.ids), rn=roundsFor(pl.ids.length);
+    var myCourt=(M.filter(function(m){return m.pi===pi;})[0]||{}).court;
     h+='<div class="card"><div class="chd"><h2>'+esc(pl.name)+'</h2>'
-     + '<span class="ct">'+pl.ids.length+' players · court '+((pi%Math.max(1,S.cfg.courts))+1)+'</span></div>';
+     + '<span class="ct">'+pl.ids.length+' players'+(myCourt?' · court '+myCourt:'')+'</span></div>';
     if(!rn){
       h+='<div class="warnbox"><b>A pool of '+pl.ids.length+' can\'t run</b> — pools must be 4–7. ';
       h+= pl.ids.length<4 ? 'Add '+(4-pl.ids.length)+' more, or move these players elsewhere.'
@@ -974,7 +1478,7 @@ function vPools(){
         h+=near.map(function(x){
           return '<button class="btn" style="padding:5px 9px;font-size:.68rem;margin:2px 3px 2px 0" '
             +'onclick="addTo('+pi+',\''+x.p.id+'\')">+ '+esc(ab(x.p.id))+' '
-            +(x.p.d==null?'NR':x.p.d.toFixed(3))+'</button>';
+            +(x.p.d==null?'NR':x.p.d.toFixed(3))+relTag(x.p.id)+'</button>';
         }).join("");
         h+='</div>';
       }
@@ -982,16 +1486,34 @@ function vPools(){
     byRating(pl.ids).forEach(function(id){
       var d=dOf(id);
       h+='<div class="prow"><div class="rn">'+esc(full(id))
-       + ' <span class="pill'+(d==null?" nr":"")+'">'+(d==null?"NR":d.toFixed(3))+'</span></div>'
-       + '<select onchange="movePlayer(\''+id+'\',this.value)">'
-       + S.pools.map(function(q2,qi){
-           return '<option value="'+qi+'"'+(qi===pi?" selected":"")+'>'+esc(q2.name)+'</option>'; }).join("")
-       + '<option value="out">— drop —</option></select></div>';
+       + ' <span class="pill'+(d==null?" nr":"")+'">'+(d==null?"NR":d.toFixed(3))+'</span>'
+       + relTag(id)+'</div>'
+       + '<button class="pmv" title="move up a pool"'+(pi===0?" disabled":"")
+       + ' onclick="movePool(\''+id+'\',-1)">&#9650;</button>'
+       + '<button class="pmv" title="move down a pool"'+(pi===S.pools.length-1?" disabled":"")
+       + ' onclick="movePool(\''+id+'\',1)">&#9660;</button>'
+       + '<button class="pmv x" title="drop from tonight" onclick="dropTonight(\''+id+'\')">&#10005;</button>'
+       + '</div>';
     });
-    h+='<div class="pq">';
-    if(q.spread!=null) h+='spread <b>'+q.spread.toFixed(3)+'</b> · biggest gap <b>'+q.gap.toFixed(3)+'</b>';
-    else h+='not enough rated players to measure';
+    /* mixed-format control + why-not explanation */
+    var mwn=mixedWhyNot(pl.ids, S.cfg.courts);
+    var msp=mixedSplit(pl.ids);
+    h+='<div class="pq" style="margin-top:6px">'
+     + '<button class="btn'+(isMixed(pl)?" pri":"")+'" style="padding:5px 10px;font-size:.68rem" '
+     + 'onclick="toggleMixed('+pi+')">'+(isMixed(pl)?"✓ Mixed":"Make mixed")+'</button>'
+     + ' <span class="meta" style="font-size:.68rem">'+msp.men.length+'M / '+msp.women.length+'W'
+     + (isMixed(pl)
+        ? (mwn ? ' · <b style="color:#fca5a5">'+esc(mwn)+'</b>'
+               : ' · every man partners every woman · '+mixedRoundsOf(pl.ids)+' rounds on '
+                 +mixedCourtsOf(pl.ids)+' courts · nobody sits')
+        : (mwn ? '' : ' · <b style="color:#86efac">can run mixed</b>'))
+     + '</span></div>';
+    h+='<div class="pq">'+qualLine(pl.ids);
     if(q.nr) h+=' · <b style="color:#fde68a">'+q.nr+' unrated</b>';
+    /* A pool's average and spread are only as trustworthy as the ratings
+       underneath them, so say how many are shaky. */
+    var soft=pl.ids.filter(function(i){var r=rOf(i); return r!=null && r<40;}).length;
+    if(soft) h+=' · <b style="color:#fca5a5">'+soft+' shaky rating'+(soft>1?"s":"")+'</b>';
     if(rn) h+=' · '+rn+' rounds, '+(Math.round(rn*4/pl.ids.length*100)/100)+' games each';
     h+='</div>';
     h+='<div class="btnrow"><button class="btn" onclick="renamePool('+pi+')">Rename</button>'
@@ -1023,7 +1545,8 @@ function regen(){
       +" entered score"+(scored>1?"s":"")+" will no longer match a scheduled match.\n\n"
       +"They stay in the backup and reappear if those four players meet again.\n\nContinue?")) return;
   }
-  S.pools=r.pools; persist(); render();
+  snapshot();
+  S.pools=r.pools; logIt("pools regenerated"); persist(); render();
 }
 /* Who's available and closest to this pool's level — the fast fix when
    someone drops and a pool is left short. */
@@ -1033,13 +1556,13 @@ function nearest(pi){
   var mean = rated.length ? rated.reduce(function(a,b){return a+b;},0)/rated.length : 3.4;
   var innSet={}; S.inn.forEach(function(i){innSet[i]=1;});
   var femaleOnly = S.cfg.womenSep && pool.ids.length
-      && pool.ids.every(function(i){ return P(i)&&P(i).g==="F"; });
+      && pool.ids.every(function(i){ return grp(i)==="F"; });
   var maleOnly = S.cfg.womenSep && pool.ids.length
-      && pool.ids.every(function(i){ return P(i)&&P(i).g!=="F"; });
+      && pool.ids.every(function(i){ return grp(i)!=="F"; });
   return ROSTER.filter(function(p){
       if(innSet[p.id]) return false;
-      if(femaleOnly && p.g!=="F") return false;
-      if(maleOnly && p.g==="F") return false;
+      if(femaleOnly && grp(p.id)!=="F") return false;
+      if(maleOnly && grp(p.id)==="F") return false;
       return true;
     })
     .map(function(p){ return {p:p, gap:(p.d==null?99:Math.abs(p.d-mean))}; })
@@ -1047,6 +1570,7 @@ function nearest(pi){
     .slice(0,4);
 }
 function addTo(pi,id){
+  snapshot();
   if(S.inn.indexOf(id)<0) S.inn.push(id);
   S.pools.forEach(function(p){ var j=p.ids.indexOf(id); if(j>-1) p.ids.splice(j,1); });
   S.pools[pi].ids.push(id);
@@ -1112,20 +1636,24 @@ function optsIn(sel){
   return '<option value="">— player —</option>'+inList().map(function(x){
     var d=dOf(x.id);
     return '<option value="'+x.id+'">'+esc(ab(x.id))+' · '+esc(x.pool)+' · '
-      +(d==null?"NR":d.toFixed(3))+'</option>';
+      +dTxt(x.id)+'</option>';
   }).join("");
 }
 function optsOut(){
   var L=outList();
   if(!L.length) return '<option value="">— nobody available —</option>';
   return '<option value="">— player —</option>'+L.map(function(p){
-    return '<option value="'+p.id+'">'+esc(ab(p.id))+' · '+(p.d==null?"NR":p.d.toFixed(3))+'</option>';
+    return '<option value="'+p.id+'">'+esc(ab(p.id))+' · '+dTxt(p.id)+'</option>';
   }).join("");
 }
 function vChanges(){
-  var h='<div class="card"><div class="chd"><h2>Changes</h2>'
-    + '<span class="ct">mid-night moves</span></div>'
-    + '<div class="meta">Scores already entered are safe — they are keyed to the four players '
+  var last = (S.log && S.log.length) ? S.log[0] : null;
+  var peek = 'Sub · move · swap' + (last
+    ? ' — last: <b>'+esc(last.t)+'</b> '+esc(last.m)
+    : ' — no changes yet tonight');
+  var h='<div class="card">'+panelHead("chg","Changes","mid-night moves",peek);
+  if(!uiState().chg) return h+'</div>';
+  h+='<div class="meta">Scores already entered are safe — they are keyed to the four players '
     + 'who played, not to a slot. Any matchup that still exists keeps its score.</div>';
 
   h+='<div class="chgrow"><label>Sub out</label><select id="subOut">'+optsIn()+'</select>'
@@ -1154,10 +1682,21 @@ function vChanges(){
   }
   return h+'</div>';
 }
+function uiState(){ S.ui = S.ui || {}; return S.ui; }
+function togglePanel(k){ var u=uiState(); u[k] = !u[k]; persist(); render(); }
+function toggleChg(){ togglePanel("chg"); }
+/* collapsible card header + peek line, shared by Setup and Changes */
+function panelHead(k, title, openLabel, peek){
+  var open = !!uiState()[k];
+  return '<div class="chd tap" onclick="togglePanel(\''+k+'\')">'
+    + '<h2><span class="chev'+(open?" open":"")+'">▾</span>'+esc(title)+'</h2>'
+    + '<span class="ct">'+(open?esc(openLabel):"tap to open")+'</span></div>'
+    + (open ? "" : '<div class="peek">'+peek+'</div>');
+}
 function doMove(){
   var id=document.getElementById("mvWho").value, to=document.getElementById("mvTo").value;
   if(!id){ alert("Pick a player to move."); return; }
-  movePlayer(id,to);
+  snapshot(); movePlayer(id,to);
 }
 function addPool(){ S.pools.push({name:"Pool "+String.fromCharCode(65+S.pools.length), ids:[]}); persist(); render(); }
 function dropPool(pi){
@@ -1167,6 +1706,261 @@ function dropPool(pi){
 function renamePool(pi){
   var v=prompt("Pool name", S.pools[pi].name);
   if(v){ S.pools[pi].name=v.trim(); persist(); render(); }
+}
+/* Nudge a player one pool up or down. The schedule rebuilds on the next render,
+   so both affected pools re-solve their rotations immediately. Scores are keyed
+   by which four players were on court, so any matchup that still exists keeps
+   its score; the rest are held in the backup and reported as orphans. */
+/* ---------- simulate & compare panel ---------- */
+function toggleSim(){ S.ui=S.ui||{}; S.ui.sim=!S.ui.sim; S.ui.stress=false; persist(); render(); }
+function toggleStress(){ S.ui=S.ui||{}; S.ui.stress=!S.ui.stress; persist(); render(); }
+function vSim(){
+  var h='<div class="card"><div class="chd"><h2>Simulate &amp; compare</h2>'
+      + '<span class="ct">'+M.filter(done).length+' / '+M.length+' entered</span></div>';
+
+  /* 1 — fill scores */
+  h+='<div class="meta">Play the night out with plausible scores to check standings, '
+   + 'the leaderboard and the DUPR export before anyone arrives.</div>'
+   + '<div class="btnrow"><button class="btn pri" onclick="simulate()">Simulate all matches</button>'
+   + '<button class="btn danger" onclick="clearScores()">Clear scores</button></div>';
+
+  /* 2 — format comparison */
+  var opts=formatOptions();
+  if(opts.length){
+    h+='<div class="pq" style="margin-top:12px"><b>What this field could run</b></div>'
+     + '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.7rem">'
+     + '<tr style="text-align:left;opacity:.7"><th>format</th><th>pools</th><th>games</th>'
+     + '<th>ends</th><th>worst gap</th><th>mean gap</th></tr>';
+    var bestWorst=Math.min.apply(null,opts.map(function(o){return o.worst==null?9:o.worst;}));
+    opts.forEach(function(o){
+      var win=(o.worst!=null && Math.abs(o.worst-bestWorst)<1e-9);
+      h+='<tr style="border-top:1px solid rgba(255,255,255,.1)'+(win?';background:rgba(134,239,172,.10)':'')+'">'
+       + '<td>'+esc(o.label)+(o.note?'<br><span class="meta" style="font-size:.62rem">'+esc(o.note)+'</span>':'')+'</td>'
+       + '<td>'+esc(o.pools)+'</td>'
+       + '<td>'+(o.gmin===o.gmax?o.gmin:o.gmin+"–"+o.gmax)+'</td>'
+       + '<td>'+esc(o.end)+'</td>'
+       + '<td><b>'+(o.worst==null?"—":o.worst.toFixed(3))+'</b></td>'
+       + '<td>'+(o.mean==null?"—":o.mean.toFixed(3))+'</td></tr>';
+    });
+    h+='</table></div><div class="meta" style="margin-top:4px">'
+     + 'An <b>x</b> marks a mixed pool. Green is the tightest worst-gap. '
+     + 'This only compares — nothing changes until you Regenerate.</div>';
+  }
+
+  /* 3 — stress test */
+  h+='<div class="btnrow" style="margin-top:12px">'
+   + '<button class="btn" onclick="toggleStress()">'+(S.ui&&S.ui.stress?"Hide":"Run")+' stress test</button></div>';
+  if(S.ui && S.ui.stress){
+    var st=stressTest(400);
+    if(!st) h+='<div class="meta">No matches to test.</div>';
+    else {
+      h+='<div class="meta">400 simulated nights over the current pools. '
+       + 'Shows what a single run hides — who the draw favours, and how often the top two finish level.</div>';
+      S.pools.forEach(function(p){
+        var d=st.byPool[p.name]; if(!d||!d.n) return;
+        h+='<div class="pq" style="margin-top:8px"><b>'+esc(p.name)+'</b> · '
+         + 'top-two dead level in <b>'+Math.round(d.tie/d.n*100)+'%</b> of runs</div>';
+        var rows=p.ids.slice().sort(function(x,y){ return d.top[y]-d.top[x]; });
+        h+='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.7rem">'
+         + '<tr style="text-align:left;opacity:.7"><th>player</th><th>rating</th><th>avg wins</th><th>wins pool</th></tr>';
+        rows.forEach(function(i){
+          h+='<tr style="border-top:1px solid rgba(255,255,255,.1)"><td>'+esc(nm(i))+'</td>'
+           + '<td>'+(dOf(i)==null?"NR":dOf(i).toFixed(3))+'</td>'
+           + '<td>'+(d.win[i]/d.n).toFixed(2)+'</td>'
+           + '<td><b>'+Math.round(d.top[i]/d.n*100)+'%</b></td></tr>';
+        });
+        h+='</table></div>';
+      });
+      h+='<div class="meta" style="margin-top:6px">A high tie rate is the argument for '
+       + 'ranking on point differential rather than wins.</div>';
+    }
+  }
+  return h+'</div>';
+}
+
+/* ---------- mixed format control ---------- */
+function toggleMixed(pi){
+  var p=S.pools[pi]; if(!p) return;
+  if(!isMixed(p)){
+    var why=mixedWhyNot(p.ids, S.cfg.courts);
+    if(why){ alert("Can't run "+p.name+" as mixed.\n\n"+why); return; }
+  }
+  snapshot();
+  var before=M.filter(done).length;
+  p.mixed=!p.mixed;
+  rebuild();
+  var kept=M.filter(done).length;
+  if(before && kept<before){
+    if(!confirm((before-kept)+" of your "+before+" entered scores no longer match a scheduled match.\n\nSwitch anyway?")){
+      p.mixed=!p.mixed; rebuild(); render(); return;
+    }
+  }
+  logIt(p.name+(p.mixed?" → mixed doubles":" → standard"));
+  persist(); render();
+}
+
+/* ================= SIMULATION =====================================
+   Three separate jobs, deliberately kept apart:
+     simulate()      fill every match with a plausible score, to walk the
+                     night end-to-end before anyone arrives
+     formatPreview() compare the formats tonight's field could actually run
+     stressTest()    replay the night many times to see what one run hides */
+
+/* Win probability from a rating gap. ~0.5 at parity, steepening with the gap;
+   calibrated so a 0.25 edge wins about 70% of the time. */
+function pWin(gap){ return 1/(1+Math.exp(-gap*4.2)); }
+function simGame(gapAB, rnd){
+  var p=pWin(gapAB), aWins=rnd()<p;
+  /* loser's score skews low as the gap grows, but stays believable */
+  var edge=Math.min(0.95, Math.abs(gapAB)*1.6);
+  var loser=Math.max(0, Math.min(10, Math.round(rnd()*(10-edge*7)+ (1-edge)*2)));
+  return aWins ? {a:11,b:loser} : {a:loser,b:11};
+}
+function simulate(){
+  if(!M.length){ alert("No matches to simulate."); return; }
+  if(!confirm("Fill all "+M.length+" matches with simulated scores?\n\nThis overwrites anything already entered.")) return;
+  snapshot();
+  var rnd=Math.random;
+  S.scores={};
+  M.forEach(function(m){
+    var d=[m.A[0],m.A[1],m.B[0],m.B[1]].map(dOf);
+    var gap=d.some(function(x){return x==null;}) ? 0 : (d[0]+d[1]-d[2]-d[3])/2;
+    var r=simGame(gap,rnd);
+    S.scores[m.key]={a:r.a,b:r.b};
+  });
+  logIt("simulated "+M.length+" matches");
+  persist(); render();
+}
+function clearScores(){
+  if(!Object.keys(S.scores).length){ alert("No scores to clear."); return; }
+  if(!confirm("Clear all "+M.filter(done).length+" entered scores?")) return;
+  snapshot(); S.scores={}; logIt("cleared all scores"); persist(); render();
+}
+
+/* ---- format preview: what could tonight's field actually run? ---- */
+function statsFor(pools){
+  var save=S.pools; S.pools=pools;
+  var sched=schedule();
+  S.pools=save;
+  if(!sched.length) return null;
+  var ds=sched.map(function(m){
+    var d=[m.A[0],m.A[1],m.B[0],m.B[1]].map(dOf);
+    return d.some(function(x){return x==null;}) ? null : Math.abs(d[0]+d[1]-d[2]-d[3]);
+  }).filter(function(x){return x!=null;});
+  var g={}; sched.forEach(function(m){ m.A.concat(m.B).forEach(function(x){ g[x]=(g[x]||0)+1; }); });
+  var gv=Object.keys(g).map(function(k){return g[k];});
+  var slots=Math.max.apply(null,sched.map(function(m){return m.slot;}));
+  return {
+    matches:sched.length, slots:slots,
+    end:(function(){var t=mins(S.cfg.firstBall)+slots*(S.cfg.horn+S.cfg.change)-S.cfg.change;
+         var hh=Math.floor(t/60)%24, mm2=t%60;
+         return (hh>12?hh-12:(hh===0?12:hh))+":"+String(mm2).padStart(2,"0");})(),
+    gmin:gv.length?Math.min.apply(null,gv):0, gmax:gv.length?Math.max.apply(null,gv):0,
+    worst:ds.length?Math.max.apply(null,ds):null,
+    mean:ds.length?ds.reduce(function(a,b){return a+b;},0)/ds.length:null,
+    pools:pools.map(function(p){return p.ids.length+(isMixed(p)?"x":"");}).join("/")
+  };
+}
+function formatOptions(){
+  var ids=S.inn.slice();
+  if(ids.length<4) return [];
+  var men=ids.filter(function(i){return P(i)&&P(i).g!=="F";});
+  var wom=ids.filter(function(i){return P(i)&&P(i).g==="F";});
+  var out=[], seen={};
+  function add(label, pools, note){
+    var st=statsFor(pools); if(!st) return;
+    var k=label+st.pools; if(seen[k]) return; seen[k]=1;
+    st.label=label; st.note=note||""; out.push(st);
+  }
+  /* what the app builds now */
+  var save=[S.cfg.mode,S.cfg.size,S.cfg.womenSep];
+  [["tier","5"],["tier","4"],["balance","5"]].forEach(function(cfg){
+    S.cfg.mode=cfg[0]; S.cfg.size=cfg[1];
+    var r=autoPools();
+    if(!r.err) add((cfg[0]==="balance"?"Balanced":"Tiered")+", prefer "+cfg[1], r.pools);
+  });
+  S.cfg.mode=save[0]; S.cfg.size=save[1]; S.cfg.womenSep=save[2];
+
+  /* mixed, using as many equal men/women as fit the courts */
+  var n=Math.min(men.length, wom.length, S.cfg.courts*2);
+  if(n%2) n--;
+  if(n>=2){
+    var mSorted=byRating(men).slice(0,n), wSorted=byRating(wom).slice(0,n);
+    var pools=[{name:"Mixed", ids:mSorted.concat(wSorted), mixed:true}];
+    var rest=ids.filter(function(i){ return pools[0].ids.indexOf(i)<0; });
+    if(rest.length>=4){
+      var sizes=bestSizes(rest.length, Math.max(1,S.cfg.courts-n/2), S.cfg.size);
+      if(sizes){ var sorted=byRating(rest), k=0;
+        sizes.forEach(function(sz,i){ pools.push({name:"Pool "+String.fromCharCode(66+i), ids:sorted.slice(k,k+sz)}); k+=sz; }); }
+    }
+    add("Mixed "+n+"+"+n, pools,
+        rest.length>=4 ? rest.length+" left over in standard pools"
+                       : (rest.length? rest.length+" cannot be placed" : ""));
+  }
+  return out;
+}
+
+/* ---- stress test: replay the night many times ---- */
+function stressTest(runs){
+  runs=runs||400;
+  if(!M.length) return null;
+  var seed=987654321, rnd=function(){seed=(seed*1103515245+12345)%2147483648;return seed/2147483648;};
+  var byPool={};
+  S.pools.forEach(function(p){ byPool[p.name]={win:{}, top:{}, tie:0, n:0}; p.ids.forEach(function(i){ byPool[p.name].win[i]=0; byPool[p.name].top[i]=0; }); });
+  for(var r=0;r<runs;r++){
+    var sc={};
+    M.forEach(function(m){
+      var d=[m.A[0],m.A[1],m.B[0],m.B[1]].map(dOf);
+      var gap=d.some(function(x){return x==null;})?0:(d[0]+d[1]-d[2]-d[3])/2;
+      sc[m.key]=simGame(gap,rnd);
+    });
+    S.pools.forEach(function(p){
+      var pf={}, pa={}, w={};
+      p.ids.forEach(function(i){pf[i]=0;pa[i]=0;w[i]=0;});
+      M.filter(function(m){return m.pool===p.name;}).forEach(function(m){
+        var s=sc[m.key]; if(!s) return;
+        m.A.forEach(function(x){ pf[x]+=s.a; pa[x]+=s.b; if(s.a>s.b) w[x]++; });
+        m.B.forEach(function(x){ pf[x]+=s.b; pa[x]+=s.a; if(s.b>s.a) w[x]++; });
+      });
+      var rank=p.ids.slice().sort(function(x,y){
+        return (w[y]-w[x]) || ((pf[y]-pa[y])-(pf[x]-pa[x])) || (pf[y]-pf[x]); });
+      if(rank.length>1){
+        var a=rank[0], b=rank[1];
+        if(w[a]===w[b] && (pf[a]-pa[a])===(pf[b]-pa[b])) byPool[p.name].tie++;
+      }
+      byPool[p.name].top[rank[0]]++;
+      p.ids.forEach(function(i){ byPool[p.name].win[i]+=w[i]; });
+      byPool[p.name].n++;
+    });
+  }
+  return {runs:runs, byPool:byPool};
+}
+
+function movePool(id, dir){
+  var from=poolOf(id);
+  if(from<0){ alert(ab(id)+" is not in a pool."); return; }
+  var to=from+dir;
+  if(to<0||to>=S.pools.length) return;
+  snapshot();
+  var before=M.filter(done).length;
+  S.pools[from].ids.splice(S.pools[from].ids.indexOf(id),1);
+  S.pools[to].ids.push(id);
+  logIt(ab(id)+" "+(dir<0?"↑":"↓")+" "+S.pools[to].name+" (from "+S.pools[from].name+")");
+  persist(); render();
+  var kept=M.filter(done).length;
+  CMD={kind:"ok", opts:null, msg:ab(id)+" → "+S.pools[to].name+" · "
+    +S.pools[from].name+" now "+S.pools[from].ids.length+", "
+    +S.pools[to].name+" now "+S.pools[to].ids.length
+    +(before>kept ? " · "+(before-kept)+" score"+(before-kept>1?"s":"")+" no longer scheduled" : "")};
+  render();
+}
+function dropTonight(id){
+  var from=poolOf(id);
+  if(!confirm("Drop "+ab(id)+" from tonight?")) return;
+  snapshot(); movePlayer(id,"out");
+  CMD={kind:"ok", opts:null, msg:ab(id)+" dropped"
+    +(from>-1?" · "+S.pools[from].name+" now "+S.pools[from].ids.length:"")};
+  render();
 }
 function movePlayer(id, to){
   var from=poolOf(id);
@@ -1212,7 +2006,8 @@ function vPlay(){
     h+='<div class="card"><div class="chd"><h2>'+esc(pl.name)+'</h2>'
      + '<span class="ct">court '+rows[0].court+'</span></div>'
      + '<div class="meta">'+byRating(pl.ids).map(function(i){
-         var d=dOf(i); return esc(nm(i))+" "+(d==null?"NR":d.toFixed(3)); }).join(" · ")+'</div>';
+         var d=dOf(i); return esc(nm(i))+" "+(d==null?"NR":d.toFixed(3))+relTag(i); }).join(" · ")
+     + '<br>'+qualLine(pl.ids)+'</div>';
     rows.forEach(function(m){
       var s=S.scores[m.key]||{};
       var isCur = cur && cur.key===m.key;
@@ -1224,6 +2019,8 @@ function vPlay(){
       h+='<div class="mrow'+cls+'"><div class="mtop">'
        + '<span class="rd">SLOT '+m.slot+' · '+timeAt(m.slot)+' · diff '+df+'</span>'
        + (isCur?'<span class="tag live">ON COURT</span>':(isNx?'<span class="tag next">UP NEXT</span>':''))
+       + (m.absent&&m.absent.length?'<span class="tag late">'
+           +esc(m.absent.map(nm).join(", "))+' NOT HERE YET</span>':'')
        + (m.by.length?'<span class="bye">sits '+m.by.map(nm).map(esc).join(", ")+'</span>':'')
        + '</div><div class="teams">'
        + '<div class="tm r">'+esc(nm(m.A[0]))+'<span class="amp"> + </span>'+esc(nm(m.A[1]))+'</div>'
@@ -1304,7 +2101,7 @@ function pull(){
     var th=null; try{th=JSON.parse(o.data);}catch(e){return;}
     if(!th||!th.S) return;
     if(mine&&mine.savedAt&&th.savedAt&&mine.savedAt>th.savedAt) return;
-    S=th.S; try{localStorage.setItem(KEY,o.data);}catch(e){}
+    S=th.S; S.ui=S.ui||{chg:false}; S.openPlay=S.openPlay||{}; try{localStorage.setItem(KEY,o.data);}catch(e){}
     render(); flag("ok","Synced");
   }).catch(function(){});
 }
@@ -1340,7 +2137,7 @@ function shareText(){
   var L=["*"+S.title+"*","_"+S.date+" · first ball "+S.cfg.firstBall+"_",""];
   S.pools.forEach(function(pl,pi){
     L.push("*"+pl.name+"*");
-    L.push(byRating(pl.ids).map(function(i){var d=dOf(i);return nm(i)+" "+(d==null?"NR":d.toFixed(3));}).join(" · "));
+    L.push(byRating(pl.ids).map(function(i){return nm(i)+" "+dTxt(i);}).join(" · "));
     M.filter(function(m){return m.pi===pi;}).forEach(function(m){
       var s=S.scores[m.key];
       var line="slot "+m.slot+" "+timeAt(m.slot)+"  "+nm(m.A[0])+" + "+nm(m.A[1])
@@ -1367,7 +2164,7 @@ function openShare(){
   document.getElementById("shTxt").value=shareText();
   document.getElementById("ovl").classList.add("on");
 }
-function closeShare(){ document.getElementById("ovl").classList.remove("on"); }
+/* closeShare is defined further down — it also resets the Restore state. */
 function copyShare(){
   var t=document.getElementById("shTxt");
   t.select(); try{document.execCommand("copy");}catch(e){}
@@ -1378,6 +2175,62 @@ function sendWA(){
   if(navigator.share){ navigator.share({text:t}).then(closeShare).catch(function(){}); return; }
   window.open("https://wa.me/?text="+encodeURIComponent(t),"_blank");
   closeShare();
+}
+
+/* ---------- restore ----------
+   Scores entered in the app opened as a LOCAL FILE never reach the cloud —
+   push() bails out on the file: protocol by design. That strands them in a
+   different browser origin from rallytime.pro. Backup writes them out; this
+   reads them back in. Because scores are keyed by team signature, a score
+   imported from any build lands on the right match as long as those same four
+   players still meet. */
+function openRestore(){
+  var t=document.getElementById("shTxt");
+  document.getElementById("shTtl").textContent="Restore from a backup";
+  t.value=""; t.removeAttribute("readonly");
+  t.setAttribute("placeholder","Paste the contents of a night-*-backup.json file here");
+  document.getElementById("shBtns").classList.add("hide");
+  document.getElementById("rsBtns").classList.remove("hide");
+  var hint=document.getElementById("rsHint");
+  hint.classList.remove("hide");
+  hint.innerHTML="Only <b>scores</b> are imported — your current roster and pools are left alone. "
+    +"Open the app you scored in, hit <b>Backup</b>, then paste that file here.";
+  document.getElementById("ovl").classList.add("on");
+}
+function doRestore(){
+  var raw=document.getElementById("shTxt").value.trim();
+  if(!raw){ alert("Paste a backup file first."); return; }
+  var o;
+  try{ o=JSON.parse(raw); }catch(e){ alert("That isn't valid JSON. Paste the whole backup file."); return; }
+  var sc=(o.S&&o.S.scores)||o.scores||null;
+  if(!sc || typeof sc!=="object"){ alert("No scores found in that backup."); return; }
+  var keys=Object.keys(sc).filter(function(k){ return sc[k]&&sc[k].a!=null&&sc[k].b!=null; });
+  if(!keys.length){ alert("That backup has no completed scores in it."); return; }
+  var live={}; M.forEach(function(m){ live[m.key]=1; });
+  var matched=keys.filter(function(k){ return live[k]; });
+  var orphan=keys.length-matched.length;
+  var msg="Found "+keys.length+" score"+(keys.length>1?"s":"")+".\n\n"
+    +matched.length+" match a scheduled match tonight and will appear straight away.\n"
+    +(orphan?orphan+" are for matchups not in tonight's schedule — they'll be kept and will "
+      +"reappear if those four players meet again.\n":"")
+    +"\nImport?";
+  if(!confirm(msg)) return;
+  snapshot();
+  keys.forEach(function(k){ S.scores[k]={a:sc[k].a, b:sc[k].b}; });
+  logIt("restored "+keys.length+" score"+(keys.length>1?"s":"")+" from a backup");
+  closeShare(); persist(); render();
+  CMD={msg:"Imported "+keys.length+" score"+(keys.length>1?"s":"")+" — "+matched.length
+    +" showing on tonight's schedule"+(orphan?", "+orphan+" held for later":"")+".", kind:"ok", opts:null};
+  render();
+}
+function closeShare(){
+  document.getElementById("ovl").classList.remove("on");
+  var t=document.getElementById("shTxt");
+  t.setAttribute("readonly","readonly"); t.removeAttribute("placeholder");
+  document.getElementById("shTtl").textContent="Share";
+  document.getElementById("shBtns").classList.remove("hide");
+  document.getElementById("rsBtns").classList.add("hide");
+  document.getElementById("rsHint").classList.add("hide");
 }
 
 /* ---------- boot ---------- */

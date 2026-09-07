@@ -67,6 +67,41 @@
     color: #bbf7d0; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.05em;
     padding: 2px 7px; border-radius: 999px;
   }
+
+  /* ---- empty state for the active section ---- */
+  .empty {
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px dashed rgba(255, 255, 255, 0.35);
+    border-radius: 20px; padding: 22px 20px; text-align: center;
+  }
+  .empty p { color: rgba(255, 255, 255, 0.8); font-size: 0.88rem; font-weight: 500; }
+  .empty p + p { margin-top: 4px; color: rgba(255, 255, 255, 0.6); font-size: 0.8rem; }
+
+  /* ---- collapsible Completed section ----
+     Native <details> so it still opens with JavaScript disabled and is
+     keyboard-reachable; the marker is replaced with our own chevron. */
+  details.sect { margin-top: 36px; }
+  details.sect > summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: baseline; gap: 10px;
+    padding: 4px 2px; border-radius: 12px;
+  }
+  details.sect > summary::-webkit-details-marker { display: none; }
+  details.sect > summary:hover h1 { color: #e8f0ff; }
+  details.sect > summary:focus-visible { outline: 2px solid rgba(255,255,255,.7); outline-offset: 3px; }
+  details.sect > summary h1 { margin-bottom: 0; }
+  .count {
+    background: rgba(255, 255, 255, 0.18); border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff; font-size: 0.7rem; font-weight: 700;
+    padding: 2px 9px; border-radius: 999px;
+  }
+  .twist {
+    margin-left: auto; color: rgba(255, 255, 255, 0.75);
+    font-size: 1.1rem; font-weight: 700; transition: transform 0.18s;
+  }
+  details.sect[open] > summary .twist { transform: rotate(90deg); }
+  details.sect > summary .hint { color: #c9d8ff; font-size: 0.82rem; font-weight: 500; }
+  details.sect .apps { margin-top: 18px; }
 </style>
 </head>
 <body>
@@ -76,26 +111,50 @@
 </div>
 <div class="container">
   <h1>Leagues</h1>
-  <p class="subtitle">Pick your league to view schedules, scores &amp; standings</p>
-  <div class="apps">
-    <a class="card" href="night.html"><div class="icon">⚡</div><div><h2>League Night Manager</h2><p>Any night &middot; add/drop players &middot; auto pools &middot; live courts</p></div><span class="chev">&rsaquo;</span></a>
-    <a class="card" href="dupr-night-aug24.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Monday DUPR Night — Aug 24</h2><p>18 players &middot; 4 pools &middot; score entry</p></div><span class="chev">&rsaquo;</span></a>
-    <a class="card" href="dupr-night-aug19.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Wednesday DUPR Night — Aug 19</h2><p>3.5+ &middot; 13 players &middot; 4/4/5 &middot; 13 matches inc. bonus</p></div><span class="chev">&rsaquo;</span></a>
-    <a class="card" href="dupr-night.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>DUPR Night — Aug 16</h2><p>Scores entered &middot; not yet sent to DUPR</p></div><span class="chev">&rsaquo;</span></a>
-    <a class="card" href="thursday-mens-league.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Thursday Men's League</h2><p>Schedules, scores &amp; standings</p></div><span class="chev">›</span></a>
-    <a class="card" href="mlp-teams.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>MLP Team Event</h2><p>3-person teams &middot; pools &amp; bracket</p></div><span class="chev">&rsaquo;</span></a>
-    <a class="card" href="moneyball-tournament.html"><div class="icon">🏆</div><div><h2>Moneyball — Pools, Draft &amp; Bracket</h2><p>Aug 27 &middot; 3 pools of 5 &middot; top 8 advance &middot; scoring</p></div><span class="chev">&rsaquo;</span></a>
-    <a class="card" href="moneyball.html"><div class="icon">💰</div><div><h2>Moneyball — Men's 3.0–3.75</h2><p>Aug 27 &middot; entry list &amp; field DUPR</p></div><span class="chev">&rsaquo;</span></a>
-    <a class="card" href="singles-challenge.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Singles Challenge Division</h2><p>Challenge ladder &amp; results</p></div><span class="chev">›</span></a>
+  <p class="subtitle">Nothing running right now</p>
+  <div class="empty">
+    <p>No active leagues or events.</p>
+    <p>Everything is in the archive below.</p>
   </div>
-  <h1 style="margin-top:36px;">Completed</h1>
-  <p class="subtitle">Finished seasons — results &amp; archives</p>
-  <div class="apps">
-    <a class="card done" href="monday-dupr-league.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Monday DUPR Match League <span class="badge">COMPLETED</span></h2><p>Season archive — all weeks &amp; standings</p></div><span class="chev">›</span></a>
-    <a class="card done" href="tuesday-womens-league.html?results=1"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Tuesday Women's League <span class="badge">COMPLETED</span></h2><p>Final results</p></div><span class="chev">›</span></a>
-    <a class="card done" href="tournament.html"><div class="icon">🏆</div><div><h2>Tournament <span class="badge">COMPLETED</span></h2><p>Brackets &amp; results</p></div><span class="chev">›</span></a>
-    <a class="card done" href="tracker.html"><div class="icon">📊</div><div><h2>Pickleball Tracker <span class="badge">COMPLETED</span></h2><p>Match tracking</p></div><span class="chev">›</span></a>
-  </div>
+
+  <details class="sect" id="doneSect" open>
+    <summary>
+      <h1>Completed</h1>
+      <span class="count">13</span>
+      <span class="hint">results &amp; archives</span>
+      <span class="twist">&rsaquo;</span>
+    </summary>
+    <div class="apps">
+      <a class="card done" href="night.html"><div class="icon">⚡</div><div><h2>League Night Manager <span class="badge">COMPLETED</span></h2><p>Sep 2 &middot; 14 players &middot; pools, live courts &amp; scoring</p></div><span class="chev">&rsaquo;</span></a>
+      <a class="card done" href="moneyball-tournament.html"><div class="icon">🏆</div><div><h2>Moneyball — Pools, Draft &amp; Bracket <span class="badge">COMPLETED</span></h2><p>Aug 27 &middot; 3 pools of 5 &middot; top 8 advance &middot; scoring</p></div><span class="chev">&rsaquo;</span></a>
+      <a class="card done" href="moneyball.html"><div class="icon">💰</div><div><h2>Moneyball — Men's 3.0–3.75 <span class="badge">COMPLETED</span></h2><p>Aug 27 &middot; entry list &amp; field DUPR</p></div><span class="chev">&rsaquo;</span></a>
+      <a class="card done" href="dupr-night-aug24.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Monday DUPR Night — Aug 24 <span class="badge">COMPLETED</span></h2><p>18 players &middot; 4 pools &middot; score entry</p></div><span class="chev">&rsaquo;</span></a>
+      <a class="card done" href="dupr-night-aug19.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Wednesday DUPR Night — Aug 19 <span class="badge">COMPLETED</span></h2><p>3.5+ &middot; 13 players &middot; 4/4/5 &middot; 13 matches inc. bonus</p></div><span class="chev">&rsaquo;</span></a>
+      <a class="card done" href="dupr-night.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>DUPR Night — Aug 16 <span class="badge">COMPLETED</span></h2><p>Scores entered &middot; not yet sent to DUPR</p></div><span class="chev">&rsaquo;</span></a>
+      <a class="card done" href="mlp-teams.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>MLP Team Event <span class="badge">COMPLETED</span></h2><p>3-person teams &middot; pools &amp; bracket</p></div><span class="chev">&rsaquo;</span></a>
+      <a class="card done" href="thursday-mens-league.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Thursday Men's League <span class="badge">COMPLETED</span></h2><p>Schedules, scores &amp; standings</p></div><span class="chev">›</span></a>
+      <a class="card done" href="singles-challenge.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Singles Challenge Division <span class="badge">COMPLETED</span></h2><p>Challenge ladder &amp; results</p></div><span class="chev">›</span></a>
+      <a class="card done" href="monday-dupr-league.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Monday DUPR Match League <span class="badge">COMPLETED</span></h2><p>Season archive — all weeks &amp; standings</p></div><span class="chev">›</span></a>
+      <a class="card done" href="tuesday-womens-league.html?results=1"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Tuesday Women's League <span class="badge">COMPLETED</span></h2><p>Final results</p></div><span class="chev">›</span></a>
+      <a class="card done" href="tournament.html"><div class="icon">🏆</div><div><h2>Tournament <span class="badge">COMPLETED</span></h2><p>Brackets &amp; results</p></div><span class="chev">›</span></a>
+      <a class="card done" href="tracker.html"><div class="icon">📊</div><div><h2>Pickleball Tracker <span class="badge">COMPLETED</span></h2><p>Match tracking</p></div><span class="chev">›</span></a>
+    </div>
+  </details>
 </div>
+<script>
+/* Remember whether the archive was left open or closed. Defaults to open,
+   since with no active leagues a collapsed page would look empty. */
+(function(){
+  var d=document.getElementById("doneSect");
+  if(!d) return;
+  try{
+    var v=localStorage.getItem("rt-done-open");
+    if(v==="0") d.open=false;
+    d.addEventListener("toggle",function(){
+      try{ localStorage.setItem("rt-done-open", d.open?"1":"0"); }catch(e){}
+    });
+  }catch(e){}
+})();
+</script>
 </body>
 </html>

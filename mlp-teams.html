@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0f1722">
+<title>MLP Team Event — RallyTime</title>
+<style>
+  :root{
+    --bg:#0f1722;--panel:#18222f;--panel2:#1f2c3c;--line:#2b3a4d;--text:#e8eef5;
+    --muted:#9fb0c3;--accent:#4ade80;--accent-d:#22c55e;--blue:#38bdf8;--warn:#fbbf24;--red:#f87171;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;padding-bottom:40px}
+  header{position:sticky;top:0;z-index:10;background:linear-gradient(180deg,#142033,#0f1722);
+    border-bottom:1px solid var(--line);padding:14px 16px}
+  .title{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  h1{font-size:19px;margin:0;letter-spacing:.3px}
+  .brand{height:42px;width:auto;display:block}
+  .divider{width:1px;height:32px;background:var(--line)}
+  .chip{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:4px 12px;
+    font-size:12px;font-weight:700;color:var(--accent)}
+  .sub{color:var(--muted);font-size:12.5px;margin-top:5px;line-height:1.5}
+  .bar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  .pill{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:6px 13px;font-size:12.5px}
+  .pill b{color:var(--accent)}
+  button{font:inherit;border-radius:8px;padding:9px 14px;font-weight:700;cursor:pointer;border:0;font-size:13px}
+  .btn-primary{background:var(--accent-d);color:#06210f}
+  .btn-ghost{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+  .btn-warn{background:#3a2a10;color:var(--warn);border:1px solid #5a4520}
+  .btn-red{background:#3a1a1a;color:var(--red);border:1px solid #5a2626}
+  main{padding:16px}
+  section{margin-bottom:22px}
+  .seclabel{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:#67839e;font-weight:800;margin-bottom:9px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .note{color:var(--muted);font-size:12px;margin-top:9px;line-height:1.55}
+  .empty{border:1px dashed var(--line);border-radius:12px;padding:22px;text-align:center;color:var(--muted);font-size:13px}
+  input,select{font:inherit;background:var(--panel2);border:1px solid var(--line);color:var(--text);
+    border-radius:8px;padding:9px 10px;font-size:14px;width:100%}
+  input[type=number]{text-align:center}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+  label.fl{display:block;font-size:11.5px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+  /* teams */
+  .team{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px;margin-bottom:10px}
+  .team h3{margin:0 0 8px;font-size:15px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .tname{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:2px 9px;font-size:11px;color:var(--blue);font-weight:800}
+  .plist{display:grid;grid-template-columns:1fr;gap:6px}
+  .prow{display:grid;grid-template-columns:1fr 78px 34px;gap:6px;align-items:center}
+  .avg{font-size:12px;color:var(--muted)}
+  /* courts */
+  .courts{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:11px}
+  .court{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .court.live{border-color:#2f6b3f;box-shadow:0 0 0 1px rgba(74,222,128,.15)}
+  .court.idle{border-style:dashed;opacity:.55}
+  .cnum{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#67839e;font-weight:800;margin-bottom:8px}
+  .gmrow{display:flex;align-items:center;gap:7px;margin:6px 0;font-size:13px}
+  .gmrow .side{flex:1;min-width:0}
+  .gmrow .side.win{color:var(--accent);font-weight:800}
+  .sbox{width:44px;flex:none;text-align:center;background:var(--panel2);border:1px solid var(--line);
+    color:var(--text);border-radius:5px;padding:5px;font-size:13px;font-weight:700}
+  .rest{font-size:11.5px;color:var(--muted);margin-top:5px}
+  /* queue */
+  .queue{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;align-items:center}
+  .qlab{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#67839e;font-weight:800}
+  .qchip{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:12px}
+  .qchip.next{border-color:var(--accent);color:var(--accent)}
+  .qchip.done{opacity:.55}
+  /* tables */
+  table.stand{width:100%;border-collapse:collapse;font-size:13px;background:var(--panel);
+    border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  table.stand th{background:#16202c;text-align:left;padding:8px 10px;font-size:11px;
+    text-transform:uppercase;letter-spacing:.05em;color:#8ea3b8;font-weight:800}
+  table.stand td{padding:8px 10px;border-bottom:1px solid #223040}
+  table.stand tr:last-child td{border-bottom:none}
+  table.stand tr.adv{background:rgba(74,222,128,.07)}
+  table.stand tr.adv td:first-child{border-left:3px solid var(--accent)}
+  .tag{font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px;background:#15321f;color:var(--accent);margin-left:6px}
+  /* bracket */
+  .bracket{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+  .bmatch{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px}
+  .bmatch .rd{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:#67839e;font-weight:800;margin-bottom:8px}
+  .bteam{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:13.5px}
+  .bteam .nm{flex:1;min-width:0}
+  .bteam.win .nm{color:var(--accent);font-weight:800}
+  .champ{background:linear-gradient(135deg,#15321f,#18222f);border:1px solid #2f6b3f;border-radius:12px;
+    padding:16px;text-align:center}
+  .champ .lab{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:800}
+  .champ .who{font-size:20px;font-weight:800;margin-top:5px}
+  .hidden{display:none!important}
+  @media(min-width:700px){ .plist{grid-template-columns:1fr} main{padding:18px 20px} h1{font-size:21px} }
+</style>
+</head>
+<body>
+<header>
+  <div class="title">
+    <svg class="brand" viewBox="0 0 440 96" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Life Time Pickleball">
+      <g><circle cx="44" cy="48" r="40" fill="#1CA9E0"/>
+      <g fill="#2b2b2b"><circle cx="30" cy="28" r="5"/><circle cx="48" cy="24" r="5"/><circle cx="64" cy="33" r="5"/>
+      <circle cx="24" cy="46" r="5"/><circle cx="42" cy="44" r="5"/><circle cx="60" cy="50" r="5"/>
+      <circle cx="28" cy="63" r="5"/><circle cx="46" cy="64" r="5"/><circle cx="62" cy="67" r="5"/>
+      <circle cx="40" cy="79" r="4.5"/></g></g>
+      <text x="104" y="44" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="34" fill="#ffffff" letter-spacing="1">LIFE TIME</text>
+      <text x="340" y="28" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="12" fill="#ffffff">&#174;</text>
+      <text x="104" y="84" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-style="italic" font-size="34" fill="#1CA9E0" letter-spacing="1">PICKLEBALL</text>
+    </svg>
+    <div class="divider"></div>
+    <h1 id="evTitle">MLP Team Event</h1>
+    <span class="chip" id="phaseChip">Setup</span>
+  </div>
+  <div class="sub">Round-robin pools (groups of 4–5, rotating partners) → qualifiers → captains draft 3-person teams → MLP-style bracket. Each bracket matchup is 3 doubles games; every player sits one.</div>
+  <div class="bar">
+    <span class="pill">Checked in: <b id="ciCount">0</b>/<span id="rosterTotal">0</span></span>
+    <span class="pill">Courts: <b id="courtCount">3</b></span>
+    <button class="btn-ghost" onclick="showTab('setup')">⚙ Setup</button>
+    <button class="btn-ghost" onclick="showTab('pools')">Pools</button>
+    <button class="btn-ghost" onclick="showTab('draft')">Draft</button>
+    <button class="btn-ghost" onclick="showTab('bracket')">Bracket</button>
+    <button class="btn-ghost" id="backupBtn">⤓ Backup</button>
+    <button class="btn-ghost" id="restoreBtn">⤒ Restore</button>
+    <input type="file" id="restoreFile" accept="application/json,.json" style="display:none">
+    <a class="btn-ghost" href="index.html" style="text-decoration:none;color:var(--text);padding:9px 14px;border-radius:8px;display:inline-block">← RallyTime</a>
+  </div>
+</header>
+<main>
+
+
+<!-- ================= SETUP ================= -->
+<div id="tab-setup">
+<section>
+  <div class="seclabel">Event settings</div>
+  <div class="panel">
+    <div class="grid3">
+      <div><label class="fl">Event name</label><input id="cfgName" placeholder="e.g. Fall Team Cup"></div>
+      <div><label class="fl">Division</label><select id="cfgDiv"><option>Men's</option><option>Women's</option><option>Open / Co-ed</option></select></div>
+      <div><label class="fl">Date</label><input id="cfgDate" type="date"></div>
+      <div><label class="fl">Start time</label><input id="cfgStart" type="time"></div>
+      <div><label class="fl">Courts</label><input id="cfgCourts" type="number" min="1" max="8" value="3"></div>
+      <div><label class="fl">Min per game (estimate)</label><input id="cfgMin" type="number" min="5" max="45" value="15"></div>
+      <div><label class="fl">Pool games to</label><select id="cfgTo"><option value="11">11 (win by 2)</option><option value="15">15 (win by 2)</option><option value="21">21 rally</option></select></div>
+      <div><label class="fl">Teams in the draft</label><select id="cfgTeams"><option value="2">2 teams (6 players)</option><option value="3">3 teams (9)</option><option value="4" selected>4 teams (12)</option><option value="5">5 teams (15)</option><option value="6">6 teams (18)</option></select></div>
+      <div><label class="fl">Preferred pool size</label><select id="cfgPool"><option value="0">Auto (4s &amp; 5s)</option><option value="4">4 only</option><option value="5">5 only</option></select></div>
+    </div>
+    <div class="note">All editable any time. Pools are built from whoever checks in, so this works on any day with any turnout.</div>
+  </div>
+</section>
+
+<section>
+  <div class="seclabel">Roster &amp; check-in <span class="note" id="rosterHint" style="display:inline"></span></div>
+  <div class="panel">
+    <div class="row" style="margin-bottom:10px">
+      <input id="newName" placeholder="Add player name…" style="flex:1;min-width:150px">
+      <input id="newDupr" placeholder="DUPR" style="width:100px">
+      <button class="btn-primary" onclick="addPlayer()">+ Add</button>
+    </div>
+    <div class="row" style="margin-bottom:10px">
+      <input type="search" id="search" placeholder="Search players…" style="flex:1;min-width:150px">
+      <button class="btn-ghost" onclick="checkAll(true)">Check in all</button>
+      <button class="btn-ghost" onclick="checkAll(false)">Clear</button>
+      <button class="btn-ghost" onclick="sortRoster('rating')">Sort by rating</button>
+      <button class="btn-ghost" onclick="sortRoster('name')">Sort by name</button>
+    </div>
+    <div id="roster"></div>
+  </div>
+</section>
+
+<section>
+  <div class="seclabel">Generate pools</div>
+  <div class="panel">
+    <div id="planPreview" class="note" style="margin-top:0"></div>
+    <div class="row" style="margin-top:11px">
+      <button class="btn-primary" onclick="generatePools()">Generate pools &amp; schedule</button>
+      <button class="btn-warn" onclick="resetEvent()">Reset scores (keep roster)</button>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ================= POOLS ================= -->
+<div id="tab-pools" class="hidden">
+<section>
+  <div class="seclabel">Courts · live rotation</div>
+  <div id="courts"></div>
+  <div id="queueBox"></div>
+</section>
+<section>
+  <div class="seclabel">Pool standings</div>
+  <div id="standings"></div>
+</section>
+<section>
+  <div class="seclabel">All pool games</div>
+  <div id="allMatches"></div>
+</section>
+</div>
+
+<!-- ================= DRAFT ================= -->
+<div id="tab-draft" class="hidden">
+<section>
+  <div class="seclabel">Captains draft</div>
+  <div id="draftBox"></div>
+</section>
+</div>
+
+<!-- ================= BRACKET ================= -->
+<div id="tab-bracket" class="hidden">
+<section>
+  <div class="seclabel">Bracket</div>
+  <div id="bracketBox"></div>
+</section>
+</div>
+
+</main>
+<script>
+/* ================= CORE ================= */
+const STORE_KEY="rt-mlp-teams-v1";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const pShort=n=>{const p=String(n||"").trim().split(/\s+/);return p.length<2?String(n||""):`${p[0]} ${p[p.length-1][0]}.`;};
+
+let cfg={name:"",div:"Men's",date:"",start:"18:00",courts:3,min:15,to:"11",teams:4,pool:0};
+let players=[];            // {name,dupr}
+let checkedIn=[];          // indices into players
+let pools=null;            // [[pIdx,...]]
+let scores={};             // "g{pool}-{game}-a" -> "11"
+let courtState=null;       // {courts:[slotIdx|null], queue:[], done:[]}
+let draft=null;            // {captains:[pIdx], picks:[[pIdx,...]], order:[teamNo,...], step:int, names:[]}
+let bracket=null;
+let tab="setup";
+let rosterSort="rating";
+
+/* partner rotations — identical to the league apps */
+const ROT4=[{a:[0,1],b:[2,3]},{a:[0,2],b:[1,3]},{a:[0,3],b:[1,2]}];
+const ROT5=[{a:[1,4],b:[2,3],bye:0},{a:[2,0],b:[3,4],bye:1},{a:[3,1],b:[4,0],bye:2},{a:[4,2],b:[0,1],bye:3},{a:[0,3],b:[1,2],bye:4}];
+const rotation=n=> n===4?ROT4 : n===5?ROT5 : null;
+
+const P=i=>players[i]||{name:"?",dupr:""};
+const rate=i=>{const v=parseFloat(P(i).dupr);return isNaN(v)?null:v;};
+const fmtR=r=>r==null?"NR":r.toFixed(3);
+
+/* ================= PERSIST ================= */
+function saveState(){
+  try{ localStorage.setItem(STORE_KEY,JSON.stringify({cfg,players,checkedIn,pools,scores,courtState,draft,bracket})); }catch(e){}
+}
+function loadState(){
+  let raw; try{ raw=localStorage.getItem(STORE_KEY); }catch(e){ return; }
+  if(!raw) return; let s; try{ s=JSON.parse(raw); }catch(e){ return; }
+  if(s.cfg) cfg=Object.assign(cfg,s.cfg);
+  if(Array.isArray(s.players)) players=s.players;
+  if(Array.isArray(s.checkedIn)) checkedIn=s.checkedIn;
+  pools=s.pools||null; scores=s.scores||{}; courtState=s.courtState||null;
+  draft=s.draft||null; bracket=s.bracket||null;
+}
+
+/* ================= CONFIG ================= */
+const CFGMAP=[["cfgName","name"],["cfgDiv","div"],["cfgDate","date"],["cfgStart","start"],
+  ["cfgCourts","courts"],["cfgMin","min"],["cfgTo","to"],["cfgTeams","teams"],["cfgPool","pool"]];
+function paintCfg(){
+  CFGMAP.forEach(([el,k])=>{const e=$(el); if(e&&e.value!==String(cfg[k])) e.value=cfg[k];});
+  const nm=cfg.name||`${cfg.div} MLP Team Event`;
+  $("evTitle").textContent=nm; document.title=nm+" — RallyTime";
+  $("courtCount").textContent=cfg.courts;
+  $("ciCount").textContent=checkedIn.length;
+  $("rosterTotal").textContent=players.length;
+  $("rosterHint").textContent=players.length?`· ${checkedIn.length} of ${players.length} checked in`:"· add players below";
+}
+document.addEventListener("input",e=>{
+  const hit=CFGMAP.find(([el])=>e.target&&e.target.id===el);
+  if(!hit) return;
+  let v=e.target.value;
+  if(["courts","min","teams","pool"].includes(hit[1])) v=parseInt(v)||0;
+  cfg[hit[1]]=v; saveState(); paintCfg(); renderPlan();
+  if(hit[1]==="courts"&&courtState){ initCourts(); renderPools(); }
+});
+
+/* ================= ROSTER ================= */
+function addPlayer(){
+  const n=$("newName").value.trim(); if(!n) return;
+  const d=$("newDupr").value.trim();
+  players.push({name:n,dupr:d});
+  checkedIn.push(players.length-1);
+  $("newName").value=""; $("newDupr").value="";
+  saveState(); renderRoster(); paintCfg(); renderPlan(); $("newName").focus();
+}
+function delPlayer(i){
+  if(!confirm(`Remove ${P(i).name}?`)) return;
+  players.splice(i,1);
+  checkedIn=checkedIn.filter(x=>x!==i).map(x=>x>i?x-1:x);
+  pools=null;scores={};courtState=null;draft=null;bracket=null;
+  saveState(); renderAll();
+}
+function setPlayerField(i,f,v){ const p=players[i]; if(!p) return; p[f]=v; saveState(); renderPlan(); }
+function toggleIn(i){
+  const k=checkedIn.indexOf(i);
+  if(k>=0) checkedIn.splice(k,1); else checkedIn.push(i);
+  saveState(); renderRoster(); paintCfg(); renderPlan();
+}
+function checkAll(on){ checkedIn = on?players.map((_,i)=>i):[]; saveState(); renderRoster(); paintCfg(); renderPlan(); }
+function sortRoster(mode){
+  rosterSort=mode;
+  const idx=players.map((p,i)=>i);
+  idx.sort((a,b)=>{
+    if(mode==="name") return P(a).name.localeCompare(P(b).name);
+    const ra=rate(a), rb=rate(b);
+    if(ra==null&&rb==null) return P(a).name.localeCompare(P(b).name);
+    if(ra==null) return 1; if(rb==null) return -1; return rb-ra;
+  });
+  const np=idx.map(i=>players[i]);
+  const remap={}; idx.forEach((old,nw)=>remap[old]=nw);
+  players=np; checkedIn=checkedIn.map(i=>remap[i]);
+  pools=null;scores={};courtState=null;draft=null;bracket=null;
+  saveState(); renderAll();
+}
+function renderRoster(){
+  const box=$("roster"), q=($("search")?.value||"").toLowerCase().trim();
+  if(!players.length){ box.innerHTML=`<div class="empty">No players yet. Add them above.</div>`; return; }
+  box.innerHTML=players.map((p,i)=>{
+    if(q && !String(p.name).toLowerCase().includes(q) && !String(p.dupr).includes(q)) return "";
+    const on=checkedIn.includes(i);
+    return `<div class="prow" style="grid-template-columns:26px 1fr 88px 34px;margin-bottom:6px">
+      <input type="checkbox" ${on?"checked":""} onchange="toggleIn(${i})" style="width:auto;accent-color:var(--accent)">
+      <input value="${esc(p.name)}" oninput="setPlayerField(${i},'name',this.value)">
+      <input value="${esc(p.dupr)}" placeholder="DUPR" oninput="setPlayerField(${i},'dupr',this.value)">
+      <button class="btn-red" onclick="delPlayer(${i})">✕</button>
+    </div>`;
+  }).join("");
+}
+document.addEventListener("input",e=>{ if(e.target&&e.target.id==="search") renderRoster(); });
+
+/* ================= POOL PLANNING ================= */
+function splitSizes(n){
+  if(n<4) return [];
+  if(cfg.pool===4){ const g=Math.floor(n/4); return g?Array(g).fill(4):[]; }
+  if(cfg.pool===5){ const g=Math.floor(n/5); return g?Array(g).fill(5):[]; }
+  // auto: maximise players used with 4s and 5s
+  let best=null;
+  for(let fives=Math.floor(n/5);fives>=0;fives--){
+    const rem=n-fives*5;
+    if(rem%4===0){ const fours=rem/4; const sizes=[...Array(fives).fill(5),...Array(fours).fill(4)];
+      if(!best||sizes.length*0+ (fives*5+fours*4) > (best.used)) best={sizes,used:fives*5+fours*4};
+      break;
+    }
+  }
+  if(best) return best.sizes;
+  // fall back: as many 4s as fit
+  const g=Math.floor(n/4); return g?Array(g).fill(4):[];
+}
+function renderPlan(){
+  const n=checkedIn.length, box=$("planPreview");
+  if(n<4){ box.textContent="Check in at least 4 players to build a pool."; return; }
+  const sizes=splitSizes(n);
+  if(!sizes.length){ box.textContent=`${n} checked in — can't split into groups of 4 or 5. Check in or out one player.`; return; }
+  const used=sizes.reduce((a,b)=>a+b,0), left=n-used;
+  const poolGames=sizes.reduce((s,k)=>s+rotation(k).length,0);
+  const needed=cfg.teams*3;
+  const brSize=1<<Math.ceil(Math.log2(Math.max(2,cfg.teams)));
+  const brGames=(brSize-1)*3;
+  const total=poolGames+brGames;
+  const mins=Math.ceil(total/Math.max(1,cfg.courts))*(cfg.min||15);
+  const h=Math.floor(mins/60), m=mins%60;
+  box.innerHTML=`<b>${n} checked in</b> → ${sizes.length} pool${sizes.length>1?"s":""} of ${sizes.join(" / ")}`
+    + (left?` <span style="color:var(--warn)">(${left} player${left>1?"s":""} left out — adjust check-ins)</span>`:"")
+    + `<br>${poolGames} pool games, then <b>${cfg.teams} teams × 3 players = ${needed} drafted</b>`
+    + (needed>used?` <span style="color:var(--red)">— not enough players for ${cfg.teams} teams</span>`:"")
+    + `<br>${brSize}-team bracket = ${brGames} games · <b>${total} games total</b> on ${cfg.courts} court${cfg.courts>1?"s":""} ≈ <b>${h?h+"h ":""}${m}m</b> (estimate).`;
+}
+function generatePools(){
+  const n=checkedIn.length;
+  if(n<4){ alert("Check in at least 4 players."); return; }
+  const sizes=splitSizes(n);
+  if(!sizes.length){ alert("Can't split that many players into groups of 4 or 5. Adjust check-ins."); return; }
+  if(pools && Object.keys(scores).length && !confirm("Regenerate pools? Existing scores will be cleared.")) return;
+  // seed by rating, snake into pools so pools are balanced
+  const seeded=checkedIn.slice().sort((a,b)=>{
+    const ra=rate(a),rb=rate(b);
+    if(ra==null&&rb==null) return 0; if(ra==null) return 1; if(rb==null) return -1; return rb-ra;
+  });
+  const buckets=sizes.map(()=>[]);
+  let pi=0,dir=1;
+  seeded.forEach(id=>{
+    let guard=0;
+    while(buckets[pi].length>=sizes[pi] && guard++<buckets.length*2){
+      pi+=dir;
+      if(pi>=buckets.length){pi=buckets.length-1;dir=-1;}
+      else if(pi<0){pi=0;dir=1;}
+    }
+    if(buckets[pi].length<sizes[pi]) buckets[pi].push(id);
+    pi+=dir;
+    if(pi>=buckets.length){pi=buckets.length-1;dir=-1;}
+    else if(pi<0){pi=0;dir=1;}
+  });
+  pools=buckets.filter(b=>b.length>=4);
+  scores={}; draft=null; bracket=null;
+  initCourts(); saveState(); renderAll(); showTab("pools");
+}
+function resetEvent(){
+  if(!confirm("Clear pool scores, draft and bracket? Roster and check-ins stay.")) return;
+  scores={}; courtState=null; draft=null; bracket=null;
+  if(pools) initCourts();
+  saveState(); renderAll();
+}
+
+/* ================= POOL GAMES + COURTS ================= */
+function gKey(p,g,side){ return `g${p}-${g}-${side}`; }
+function gDone(p,g){ const a=scores[gKey(p,g,'a')],b=scores[gKey(p,g,'b')];
+  return a!=null&&a!==""&&b!=null&&b!==""&&!isNaN(+a)&&!isNaN(+b); }
+function allSlots(){
+  const out=[]; if(!pools) return out;
+  pools.forEach((pool,p)=>{ const rot=rotation(pool.length); if(!rot) return;
+    rot.forEach((_,g)=>out.push({p,g})); });
+  return out;
+}
+function initCourts(){
+  if(!pools){ courtState=null; return; }
+  const slots=allSlots();
+  const queue=[],done=[];
+  slots.forEach((s,i)=>{ if(gDone(s.p,s.g)) done.push(i); else queue.push(i); });
+  const courts=[]; for(let c=0;c<cfg.courts;c++) courts.push(queue.length?queue.shift():null);
+  courtState={courts,queue,done};
+}
+function advanceCourt(c){
+  if(!courtState) return;
+  const cur=courtState.courts[c];
+  if(cur!=null&&!courtState.done.includes(cur)) courtState.done.push(cur);
+  courtState.courts[c]=courtState.queue.length?courtState.queue.shift():null;
+  saveState(); renderPools();
+  const nx=courtState.courts[c]; const slots=allSlots();
+  if(nx!=null&&slots[nx]&&gDone(slots[nx].p,slots[nx].g)) advanceCourt(c);
+}
+function setScore(p,g,side,v){
+  if(v==="") delete scores[gKey(p,g,side)]; else scores[gKey(p,g,side)]=v;
+  saveState(); renderPools(); renderStandings();
+  if(gDone(p,g)){
+    const slots=allSlots(); const si=slots.findIndex(s=>s.p===p&&s.g===g);
+    const c=courtState?courtState.courts.indexOf(si):-1;
+    if(c>=0) advanceCourt(c);
+  }
+}
+function slotInfo(si){
+  const slots=allSlots(), s=slots[si]; if(!s) return null;
+  const pool=pools[s.p], rot=rotation(pool.length)[s.g];
+  const nm=i=>pShort(P(pool[i]).name);
+  return { p:s.p, g:s.g,
+    teamA:`${nm(rot.a[0])} & ${nm(rot.a[1])}`,
+    teamB:`${nm(rot.b[0])} & ${nm(rot.b[1])}`,
+    bye: rot.bye!=null?nm(rot.bye):null };
+}
+function renderPools(){
+  const box=$("courts");
+  if(!pools){ box.innerHTML=`<div class="empty">No pools yet — check players in and generate.</div>`; $("queueBox").innerHTML=""; renderAllMatches(); return; }
+  if(!courtState) initCourts();
+  box.innerHTML=`<div class="courts">`+courtState.courts.map((si,c)=>{
+    if(si==null) return `<div class="court idle"><div class="cnum">Court ${c+1}</div><div style="color:var(--muted);font-size:13px">Open · waiting</div></div>`;
+    const inf=slotInfo(si); if(!inf) return "";
+    const ka=gKey(inf.p,inf.g,'a'), kb=gKey(inf.p,inf.g,'b');
+    const sa=scores[ka]??"", sb=scores[kb]??"";
+    const ok=sa!==""&&sb!=="", aW=ok&&+sa>+sb, bW=ok&&+sb>+sa;
+    return `<div class="court live">
+      <div class="cnum">Court ${c+1} · Pool ${inf.p+1} · Game ${inf.g+1}</div>
+      <div class="gmrow"><span class="side ${aW?'win':''}">${inf.teamA}</span>
+        <input class="sbox" type="number" min="0" value="${esc(sa)}" oninput="setScore(${inf.p},${inf.g},'a',this.value)">
+        <input class="sbox" type="number" min="0" value="${esc(sb)}" oninput="setScore(${inf.p},${inf.g},'b',this.value)">
+        <span class="side ${bW?'win':''}" style="text-align:right">${inf.teamB}</span></div>
+      ${inf.bye?`<div class="rest">Resting: ${inf.bye}</div>`:""}
+      <div class="rest">First to ${cfg.to}${cfg.to!=="21"?" (win by 2)":" rally"}</div>
+    </div>`;
+  }).join("")+`</div>`;
+  const q=courtState.queue;
+  $("queueBox").innerHTML=`<div class="queue"><span class="qlab">Up next</span>`+
+    (q.length?q.slice(0,8).map((si,k)=>{const i=slotInfo(si);return `<span class="qchip${k===0?" next":""}">P${i.p+1}·G${i.g+1}</span>`;}).join("")
+      :`<span class="qchip">— none waiting —</span>`)+
+    (q.length>8?`<span class="qchip">+${q.length-8}</span>`:``)+`</div>`+
+    (q.length===0&&courtState.courts.every(c=>c==null)?`<div class="note" style="color:var(--accent)">Pool play complete — go to the Draft tab.</div>`:"");
+  renderAllMatches();
+}
+function renderAllMatches(){
+  const box=$("allMatches"); if(!pools){ box.innerHTML=""; return; }
+  box.innerHTML=pools.map((pool,p)=>{
+    const rot=rotation(pool.length);
+    return `<div class="panel" style="margin-bottom:10px"><div class="cnum">Pool ${p+1} · ${pool.map(i=>pShort(P(i).name)).join(", ")}</div>`+
+      rot.map((r,g)=>{
+        const nm=i=>pShort(P(pool[i]).name);
+        const sa=scores[gKey(p,g,'a')]??"", sb=scores[gKey(p,g,'b')]??"";
+        const ok=sa!==""&&sb!=="", aW=ok&&+sa>+sb, bW=ok&&+sb>+sa;
+        return `<div class="gmrow">
+          <span class="side ${aW?'win':''}">${nm(r.a[0])} & ${nm(r.a[1])}</span>
+          <input class="sbox" type="number" min="0" value="${esc(sa)}" oninput="setScore(${p},${g},'a',this.value)">
+          <input class="sbox" type="number" min="0" value="${esc(sb)}" oninput="setScore(${p},${g},'b',this.value)">
+          <span class="side ${bW?'win':''}" style="text-align:right">${nm(r.b[0])} & ${nm(r.b[1])}</span></div>`;
+      }).join("")+`</div>`;
+  }).join("");
+}
+
+/* ================= INDIVIDUAL STANDINGS ================= */
+function poolTable(p){
+  const pool=pools[p], rot=rotation(pool.length);
+  const rec={}; pool.forEach(i=>rec[i]={i,w:0,l:0,pf:0,pa:0,gp:0});
+  rot.forEach((r,g)=>{
+    if(!gDone(p,g)) return;
+    const sa=+scores[gKey(p,g,'a')], sb=+scores[gKey(p,g,'b')];
+    const aW=sa>sb, tie=sa===sb;
+    r.a.forEach(k=>{const s=rec[pool[k]];s.pf+=sa;s.pa+=sb;s.gp++;if(!tie){aW?s.w++:s.l++;}});
+    r.b.forEach(k=>{const s=rec[pool[k]];s.pf+=sb;s.pa+=sa;s.gp++;if(!tie){aW?s.l++:s.w++;}});
+  });
+  const rows=Object.values(rec).map(r=>({...r,diff:r.pf-r.pa,pct:r.gp?r.w/(r.w+r.l||1):0}));
+  rows.sort((a,b)=> b.w-a.w || b.diff-a.diff || b.pf-a.pf || P(a.i).name.localeCompare(P(b.i).name));
+  return rows;
+}
+function overallRanking(){
+  if(!pools) return [];
+  const out=[];
+  pools.forEach((pool,p)=>{ poolTable(p).forEach((r,rank)=>out.push({...r,pool:p,rank})); });
+  out.sort((a,b)=> a.rank-b.rank || b.w-a.w || b.diff-a.diff);
+  return out;
+}
+function renderStandings(){
+  const box=$("standings"); if(!pools){ box.innerHTML=""; return; }
+  box.innerHTML=pools.map((pool,p)=>{
+    const rows=poolTable(p);
+    return `<div style="margin-bottom:14px"><div class="cnum">Pool ${p+1}</div>
+      <table class="stand"><thead><tr><th>#</th><th>Player</th><th>DUPR</th><th>W–L</th><th>Pts ±</th></tr></thead><tbody>`+
+      rows.map((r,i)=>`<tr>
+        <td>${i+1}</td><td>${esc(P(r.i).name)}</td><td style="color:var(--muted)">${fmtR(rate(r.i))}</td>
+        <td>${r.w}–${r.l}</td>
+        <td style="color:${r.diff>0?'var(--accent)':r.diff<0?'var(--red)':'inherit'}">${r.diff>0?'+':''}${r.diff}</td>
+      </tr>`).join("")+`</tbody></table></div>`;
+  }).join("")+`<div class="note">Sorted by wins, then point differential. Pool finish sets the draft order.</div>`;
+}
+
+/* ================= DRAFT ================= */
+function poolPlayComplete(){
+  if(!pools) return false;
+  return allSlots().every(s=>gDone(s.p,s.g));
+}
+function startDraft(){
+  const rank=overallRanking();
+  const n=cfg.teams;
+  if(rank.length < n*3){ alert(`Need ${n*3} players for ${n} teams — only ${rank.length} played pools. Lower "Teams in the draft" in Setup.`); return; }
+  const captains=rank.slice(0,n).map(r=>r.i);
+  // snake order across 2 remaining rounds (captains already hold slot 1)
+  const order=[];
+  for(let round=0;round<2;round++){
+    const seq=Array.from({length:n},(_,i)=>i);
+    if(round%2===1) seq.reverse();
+    order.push(...seq);
+  }
+  draft={captains, picks:captains.map(c=>[c]), order, step:0,
+    names:captains.map((c,i)=>`Team ${i+1} · ${pShort(P(c).name)}`)};
+  bracket=null; saveState(); renderDraft(); showTab("draft");
+}
+function draftedSet(){ return new Set(draft?draft.picks.flat():[]); }
+function eligible(){
+  const done=draftedSet();
+  return overallRanking().map(r=>r.i).filter(i=>!done.has(i));
+}
+function pick(pIdx){
+  if(!draft || draft.step>=draft.order.length) return;
+  const team=draft.order[draft.step];
+  draft.picks[team].push(pIdx);
+  draft.step++;
+  saveState(); renderDraft();
+  if(draft.step>=draft.order.length){ buildBracket(); renderBracket(); }
+}
+function undoPick(){
+  if(!draft||draft.step<=0) return;
+  draft.step--;
+  const team=draft.order[draft.step];
+  draft.picks[team].pop();
+  bracket=null; saveState(); renderDraft();
+}
+function autoDraft(){
+  if(!draft) return;
+  while(draft.step<draft.order.length){
+    const el=eligible(); if(!el.length) break;
+    pick(el[0]);
+  }
+}
+function setTeamName(t,v){ if(!draft) return; draft.names[t]=v; saveState(); renderBracket(); }
+function resetDraft(){
+  if(!confirm("Clear the draft and bracket?")) return;
+  draft=null; bracket=null; saveState(); renderDraft(); renderBracket();
+}
+function renderDraft(){
+  const box=$("draftBox");
+  if(!pools){ box.innerHTML=`<div class="empty">Generate pools first.</div>`; return; }
+  if(!draft){
+    const slots=allSlots(), done=slots.filter(s=>gDone(s.p,s.g)).length;
+    const rank=overallRanking();
+    box.innerHTML=`<div class="panel">
+      <div class="note" style="margin-top:0">Pool play: <b>${done} of ${slots.length}</b> games complete.
+      ${poolPlayComplete()?'<span style="color:var(--accent)">All done.</span>':'You can still start the draft early if you want.'}</div>
+      <div class="note">Top <b>${cfg.teams}</b> finishers become captains, then a snake draft fills 3-player teams.</div>
+      <div class="row" style="margin-top:11px"><button class="btn-primary" onclick="startDraft()">Start captains draft</button></div>
+    </div>`
+    + (rank.length?`<div style="margin-top:14px"><div class="cnum">Current overall order</div><table class="stand"><thead><tr><th>#</th><th>Player</th><th>Pool</th><th>W–L</th><th>Pts ±</th></tr></thead><tbody>`+
+      rank.map((r,i)=>`<tr class="${i<cfg.teams?'adv':''}"><td>${i+1}</td><td>${esc(P(r.i).name)}${i<cfg.teams?'<span class="tag">captain</span>':''}</td><td>P${r.pool+1} #${r.rank+1}</td><td>${r.w}–${r.l}</td><td>${r.diff>0?'+':''}${r.diff}</td></tr>`).join("")+
+      `</tbody></table></div>`:"");
+    return;
+  }
+  const onClock = draft.step<draft.order.length ? draft.order[draft.step] : null;
+  const el=eligible();
+  let html=`<div class="panel"><div class="row">
+      <span class="pill">Pick <b>${Math.min(draft.step+1,draft.order.length)}</b> of ${draft.order.length}</span>
+      ${onClock!=null?`<span class="pill" style="border-color:var(--accent)">On the clock: <b>${esc(draft.names[onClock])}</b></span>`:`<span class="pill" style="border-color:var(--accent)"><b>Draft complete</b></span>`}
+      <button class="btn-ghost" onclick="undoPick()">↩ Undo</button>
+      <button class="btn-ghost" onclick="autoDraft()">⚡ Auto-fill rest</button>
+      <button class="btn-red" onclick="resetDraft()">Reset draft</button>
+    </div></div>`;
+  if(onClock!=null){
+    html+=`<div style="margin-top:12px"><div class="cnum">Available players — tap to draft</div><div class="panel">`+
+      (el.length?el.map(i=>{
+        const r=overallRanking().find(x=>x.i===i);
+        return `<div class="prow" style="grid-template-columns:1fr auto;margin-bottom:6px;align-items:center">
+          <span>${esc(P(i).name)} <span style="color:var(--muted);font-size:12px">· ${fmtR(rate(i))} · P${r?r.pool+1:'?'} #${r?r.rank+1:'?'} · ${r?r.w+'–'+r.l:''}</span></span>
+          <button class="btn-primary" onclick="pick(${i})">Draft</button></div>`;
+      }).join(""):`<div class="note">No players left.</div>`)+`</div></div>`;
+  }
+  html+=`<div style="margin-top:14px"><div class="cnum">Teams</div><div class="grid3">`+
+    draft.picks.map((roster,t)=>`<div class="team">
+      <h3><input value="${esc(draft.names[t])}" oninput="setTeamName(${t},this.value)" style="max-width:100%">
+        ${onClock===t?'<span class="tname" style="color:var(--accent);border-color:var(--accent)">ON CLOCK</span>':''}</h3>
+      ${[0,1,2].map(k=>{
+        const i=roster[k];
+        return `<div class="gmrow" style="font-size:13px"><span class="side">${k===0?'C':k===1?'2':'3'}. ${i!=null?esc(P(i).name):'<span style="color:var(--muted)">—</span>'}</span>
+          <span style="color:var(--muted);font-size:12px">${i!=null?fmtR(rate(i)):''}</span></div>`;
+      }).join("")}
+      <div class="rest">Team rating: ${(()=>{const v=roster.map(rate).filter(x=>x!=null);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(3):"NR";})()}</div>
+    </div>`).join("")+`</div></div>`;
+  box.innerHTML=html;
+}
+
+/* ================= BRACKET (3-person MLP teams) ================= */
+/* each matchup = 3 doubles games: A+B, A+C, B+C — every player sits once */
+const TPAIRS=[[0,1,2],[0,2,1],[1,2,0]];
+function tName(t){ return draft&&draft.names[t]!=null?draft.names[t]:("Team "+(t+1)); }
+function tRoster(t){ return draft?draft.picks[t]||[]:[]; }
+function tLineup(t,gi){
+  const r=tRoster(t), [x,y,rest]=TPAIRS[gi];
+  const nm=k=> r[k]!=null?pShort(P(r[k]).name):"—";
+  return { pair:`${nm(x)} & ${nm(y)}`, rest:nm(rest) };
+}
+function buildBracket(){
+  if(!draft) return;
+  const n=draft.picks.length;
+  if(n<2){ bracket=null; return; }
+  const size=1<<Math.ceil(Math.log2(n));
+  const seedOrder=(m=>{ let a=[1,2]; while(a.length<m){ const t=a.length*2+1,o=[]; a.forEach(s=>{o.push(s,t-s);}); a=o; } return a; })(size);
+  const slots=seedOrder.map(s=> s-1 < n ? s-1 : null);   // team index by seed
+  const r1=[];
+  for(let i=0;i<size;i+=2) r1.push({a:slots[i],b:slots[i+1],g:[{sa:"",sb:""},{sa:"",sb:""},{sa:"",sb:""}]});
+  const rounds=[r1]; let cnt=r1.length;
+  while(cnt>1){ cnt=Math.ceil(cnt/2); rounds.push(Array.from({length:cnt},()=>({a:null,b:null,g:[{sa:"",sb:""},{sa:"",sb:""},{sa:"",sb:""}]}))); }
+  bracket={rounds}; propagate(); saveState();
+}
+function bGamesWon(m){
+  let a=0,b=0;
+  m.g.forEach(x=>{ if(x.sa===""||x.sb==="") return; const sa=+x.sa,sb=+x.sb;
+    if(isNaN(sa)||isNaN(sb)) return; if(sa>sb)a++; else if(sb>sa)b++; });
+  return [a,b];
+}
+function bWinner(m){
+  if(m.a!=null&&m.b==null) return m.a;
+  if(m.b!=null&&m.a==null) return m.b;
+  if(m.a==null||m.b==null) return null;
+  const [a,b]=bGamesWon(m);
+  if(a+b<2) return null;
+  return a>=2?m.a : b>=2?m.b : null;
+}
+function propagate(){
+  if(!bracket) return;
+  for(let r=0;r<bracket.rounds.length-1;r++)
+    bracket.rounds[r].forEach((m,i)=>{
+      const w=bWinner(m), nx=bracket.rounds[r+1][Math.floor(i/2)];
+      if(!nx) return;
+      if(i%2===0) nx.a=w; else nx.b=w;
+    });
+}
+function setBGame(r,i,gi,side,v){
+  bracket.rounds[r][i].g[gi][side]=v; propagate(); saveState(); renderBracket();
+}
+function roundName(r,total){
+  const fe=total-1-r;
+  return fe===0?"Final":fe===1?"Semifinals":fe===2?"Quarterfinals":"Round "+(r+1);
+}
+function renderBracket(){
+  const box=$("bracketBox");
+  if(!draft){ box.innerHTML=`<div class="empty">Run the draft first — the bracket is built from the drafted teams.</div>`; return; }
+  if(!bracket){
+    box.innerHTML=`<div class="empty">Bracket builds when the draft finishes.
+      <div style="margin-top:12px"><button class="btn-ghost" onclick="buildBracket();renderBracket()">Build bracket now</button></div></div>`;
+    return;
+  }
+  const total=bracket.rounds.length;
+  const champ=bWinner(bracket.rounds[total-1][0]);
+  let html = champ!=null?`<div class="champ"><div class="lab">🏆 Champion</div><div class="who">${esc(tName(champ))}</div>
+    <div class="note" style="color:#bfe8cd">${tRoster(champ).map(i=>esc(P(i).name)).join(" · ")}</div></div>`:"";
+  html += bracket.rounds.map((rd,r)=>`<div style="margin-top:14px"><div class="cnum">${roundName(r,total)}</div><div class="bracket">`+
+    rd.map((m,i)=>{
+      const w=bWinner(m), [aw,bw]=bGamesWon(m);
+      const nA=m.a!=null?esc(tName(m.a)):`<span style="color:var(--muted)">TBD</span>`;
+      const nB=m.b!=null?esc(tName(m.b)):`<span style="color:var(--muted)">TBD</span>`;
+      const bye=(m.a!=null&&m.b==null)||(m.b!=null&&m.a==null);
+      return `<div class="bmatch">
+        <div class="rd">Match ${i+1}${bye?" · bye":""}</div>
+        <div class="bteam ${w!=null&&w===m.a?'win':''}"><span class="nm">${nA}</span><b>${aw}</b></div>
+        <div class="bteam ${w!=null&&w===m.b?'win':''}"><span class="nm">${nB}</span><b>${bw}</b></div>
+        ${(m.a!=null&&m.b!=null)?m.g.map((g,gi)=>{
+          const la=tLineup(m.a,gi), lb=tLineup(m.b,gi);
+          return `<div class="gmrow" style="font-size:12px">
+            <span class="side">${la.pair}</span>
+            <input class="sbox" type="number" min="0" value="${esc(g.sa)}" oninput="setBGame(${r},${i},${gi},'sa',this.value)">
+            <input class="sbox" type="number" min="0" value="${esc(g.sb)}" oninput="setBGame(${r},${i},${gi},'sb',this.value)">
+            <span class="side" style="text-align:right">${lb.pair}</span></div>
+            <div class="rest">G${gi+1} resting: ${la.rest} · ${lb.rest}</div>`;
+        }).join(""):`<div class="note">Waiting on earlier round.</div>`}
+      </div>`;
+    }).join("")+`</div></div>`).join("");
+  box.innerHTML=html;
+}
+
+/* ================= TABS / BACKUP / INIT ================= */
+function showTab(t){
+  tab=t;
+  ["setup","pools","draft","bracket"].forEach(x=>{const el=$("tab-"+x); if(el) el.classList.toggle("hidden",x!==t);});
+  $("phaseChip").textContent = t==="setup"?"Setup":t==="pools"?"Pool play":t==="draft"?"Draft":"Bracket";
+  if(t==="pools"){ renderPools(); renderStandings(); }
+  if(t==="draft") renderDraft();
+  if(t==="bracket") renderBracket();
+  window.scrollTo({top:0});
+}
+$("backupBtn").onclick=()=>{
+  const data=localStorage.getItem(STORE_KEY)||"{}";
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([data],{type:"application/json"}));
+  a.download=`mlp-team-event-${cfg.date||new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+};
+$("restoreBtn").onclick=()=>$("restoreFile").click();
+$("restoreFile").onchange=e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const rd=new FileReader();
+  rd.onload=()=>{ try{ JSON.parse(rd.result); }catch(err){ alert("Not valid backup JSON."); return; }
+    try{ localStorage.setItem(STORE_KEY,rd.result); }catch(err){ alert("Couldn't save."); return; }
+    loadState(); renderAll(); alert("Restored."); };
+  rd.readAsText(f);
+};
+function renderAll(){ paintCfg(); renderRoster(); renderPlan(); renderPools(); renderStandings(); renderDraft(); renderBracket(); }
+loadState(); renderAll();
+showTab(bracket?"bracket":draft?"draft":pools?"pools":"setup");
+</script>
+<script>
+(function(){
+var KEY='rt-mlp-teams-v1', API="/api/state/mlp-teams", DIRTY="rt-dirty:"+KEY;
+var origSet=localStorage.setItem.bind(localStorage), t=null, pending=null;
+function doPut(v,keep){ return fetch(API,{method:"PUT",keepalive:!!keep,headers:{"content-type":"application/json","x-pin":localStorage.getItem("rt-pin")||""},body:JSON.stringify({data:v})}); }
+function handle(r,v){ if(r.status===403){ var p=prompt("Enter PIN to save changes:"); if(p!==null&&p!==""){ origSet("rt-pin",p); return doPut(v).then(function(r2){ if(r2.ok) localStorage.removeItem(DIRTY); }); } } else if(r.ok){ localStorage.removeItem(DIRTY); } }
+function push(v){ pending=v; clearTimeout(t); t=setTimeout(function(){ pending=null; doPut(v).then(function(r){ return handle(r,v); }).catch(function(){}); },800); }
+localStorage.setItem=function(k,v){ origSet(k,v); if(k===KEY){ origSet(DIRTY,"1"); push(v); } };
+window.addEventListener("pagehide",function(){ if(pending!==null){ clearTimeout(t); doPut(pending,true).catch(function(){}); pending=null; } });
+fetch(API).then(function(r){return r.ok?r.json():null}).then(function(row){
+var local=localStorage.getItem(KEY);
+if(localStorage.getItem(DIRTY)){ if(local!==null) push(local); return; }
+if(!row||typeof row.data!=="string") return;
+if(local===row.data){ sessionStorage.removeItem("rt-cloud-sync"); return; }
+if(!sessionStorage.getItem("rt-cloud-sync")){ origSet(KEY,row.data); sessionStorage.setItem("rt-cloud-sync","1"); location.reload(); }
+else { sessionStorage.removeItem("rt-cloud-sync"); push(local); }
+}).catch(function(){});
+})();
+</script></body>
+</html>
