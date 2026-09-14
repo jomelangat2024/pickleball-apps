@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="RallyTime">
+  <!-- Pickleball on a transparent canvas. The holes are real cut-outs rather
+       than white circles: fill-rule="evenodd" punches the inner subpaths
+       through the outer one, so whatever is behind the mark shows through.
+       That means it sits correctly on the navy bar, on white, or on any
+       future background without needing a second version. -->
+  <path fill="#4BA3E3" fill-rule="evenodd" d="
+    M 2,32 a 30,30 0 1,0 60,0 a 30,30 0 1,0 -60,0 Z
+
+    M 27.8,32    a 4.2,4.2 0 1,0 8.4,0 a 4.2,4.2 0 1,0 -8.4,0 Z
+
+    M 40.8,32    a 4.2,4.2 0 1,0 8.4,0 a 4.2,4.2 0 1,0 -8.4,0 Z
+    M 34.3,20.74 a 4.2,4.2 0 1,0 8.4,0 a 4.2,4.2 0 1,0 -8.4,0 Z
+    M 21.3,20.74 a 4.2,4.2 0 1,0 8.4,0 a 4.2,4.2 0 1,0 -8.4,0 Z
+    M 14.8,32    a 4.2,4.2 0 1,0 8.4,0 a 4.2,4.2 0 1,0 -8.4,0 Z
+    M 21.3,43.26 a 4.2,4.2 0 1,0 8.4,0 a 4.2,4.2 0 1,0 -8.4,0 Z
+    M 34.3,43.26 a 4.2,4.2 0 1,0 8.4,0 a 4.2,4.2 0 1,0 -8.4,0 Z
+
+    M 48.15,20.25 a 4.2,4.2 0 1,0 8.4,0 a 4.2,4.2 0 1,0 -8.4,0 Z
+    M 27.8,8.5    a 4.2,4.2 0 1,0 8.4,0 a 4.2,4.2 0 1,0 -8.4,0 Z
+    M 7.45,20.25  a 4.2,4.2 0 1,0 8.4,0 a 4.2,4.2 0 1,0 -8.4,0 Z
+    M 7.45,43.75  a 4.2,4.2 0 1,0 8.4,0 a 4.2,4.2 0 1,0 -8.4,0 Z
+    M 27.8,55.5   a 4.2,4.2 0 1,0 8.4,0 a 4.2,4.2 0 1,0 -8.4,0 Z
+    M 48.15,43.75 a 4.2,4.2 0 1,0 8.4,0 a 4.2,4.2 0 1,0 -8.4,0 Z
+  "/>
+</svg>
