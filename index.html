@@ -3,144 +3,350 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#07223A">
 <title>RallyTime</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
-    background: linear-gradient(225deg, rgb(75, 151, 254) 0%, rgb(1, 99, 208) 40%, rgb(5, 21, 94) 87%) fixed;
-    min-height: 100vh;
-    padding: 0 0 48px;
+  /* ---------------------------------------------------------------
+     Tour-broadcast look: flat navy and off-white instead of glass,
+     squared cards, heavy uppercase display type, wide-tracked eyebrow
+     labels, and arrows rather than chevrons.
+     --------------------------------------------------------------- */
+  :root{
+    --navy-900:#07223A;
+    --navy-800:#0C2B44;
+    --navy-700:#163E60;
+    --blue:#228BE6;
+    --blue-700:#1B6FB8;
+    --yellow:#E7E700;
+    --paper:#F3F5F7;
+    --line:#E2E8F0;
+    --ink:#0B2138;
+    --muted:#64748B;
   }
-  .topbar {
-    background: #fff;
-    box-shadow: 0 4px 18px rgba(5, 21, 94, 0.25);
-    padding: 16px 28px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    margin: 0 0 40px;
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{
+    font-family:"Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
   }
-  .container, .apps-wrap { padding: 0 16px; }
-  .brand { font-size: 1.35rem; font-weight: 800; color: #0a2151; letter-spacing: -0.02em; }
-  .brand span { color: #2352e8; }
-  .topbar .tag { font-size: 0.8rem; font-weight: 600; color: #6b7ba8; }
-  .container { max-width: 720px; margin: 0 auto; }
-  h1 { color: #fff; font-size: 1.7rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; }
-  .subtitle { color: #c9d8ff; font-size: 0.95rem; margin-bottom: 26px; }
-  .apps { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
-  a.card {
-    background: rgba(255, 255, 255, 0.16);
-    -webkit-backdrop-filter: blur(22px) saturate(1.7);
-    backdrop-filter: blur(22px) saturate(1.7);
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    border-radius: 20px;
-    box-shadow: 0 8px 28px rgba(10, 33, 81, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.45);
-    padding: 18px 20px;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    transition: transform 0.15s, background 0.15s, box-shadow 0.15s;
+  .wrap{ max-width:720px; margin:0 auto; padding:0 20px; }
+
+  /* eyebrow: small square bullet + wide-tracked uppercase label */
+  .eyebrow{
+    display:flex; align-items:center; gap:9px;
+    font-size:.66rem; font-weight:700; text-transform:uppercase;
+    letter-spacing:.14em; color:var(--blue);
   }
-  a.card:hover {
-    transform: translateY(-3px);
-    background: rgba(255, 255, 255, 0.26);
-    box-shadow: 0 14px 34px rgba(10, 33, 81, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.55);
-  }
-  .card img { width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(10, 33, 81, 0.25); }
-  .card .icon {
-    width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
-    background: rgba(255, 255, 255, 0.25); color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.3rem; font-weight: 800;
-  }
-  .card h2 { font-size: 1.02rem; font-weight: 700; color: #fff; margin-bottom: 3px; letter-spacing: -0.01em; text-shadow: 0 1px 2px rgba(10, 33, 81, 0.25); }
-  .card p { font-size: 0.82rem; color: rgba(255, 255, 255, 0.78); font-weight: 500; }
-  .card .chev { margin-left: auto; color: rgba(255, 255, 255, 0.65); font-size: 1.2rem; font-weight: 700; }
-  a.card.done { background: rgba(255, 255, 255, 0.10); }
-  .badge {
-    display: inline-block; vertical-align: 2px; margin-left: 6px;
-    background: rgba(74, 222, 128, 0.25); border: 1px solid rgba(74, 222, 128, 0.5);
-    color: #bbf7d0; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.05em;
-    padding: 2px 7px; border-radius: 999px;
+  .eyebrow::before{ content:""; width:7px; height:7px; background:var(--blue); flex:none; }
+  .eyebrow.on-dark{ color:#7FC0F5; }
+  .eyebrow.on-dark::before{ background:var(--yellow); }
+
+  .display{
+    font-size:clamp(1.9rem, 5.5vw, 3rem);
+    font-weight:900; text-transform:uppercase;
+    letter-spacing:-0.015em; line-height:1.02;
   }
 
-  /* ---- empty state for the active section ---- */
-  .empty {
-    background: rgba(255, 255, 255, 0.10);
-    border: 1px dashed rgba(255, 255, 255, 0.35);
-    border-radius: 20px; padding: 22px 20px; text-align: center;
+  /* ---- utility strip ---- */
+  .strip{ background:var(--navy-900); border-bottom:1px solid rgba(255,255,255,.08); }
+  .strip .wrap{
+    display:flex; align-items:center; gap:12px;
+    min-height:34px; flex-wrap:wrap;
+    font-size:.62rem; font-weight:700; text-transform:uppercase; letter-spacing:.12em;
   }
-  .empty p { color: rgba(255, 255, 255, 0.8); font-size: 0.88rem; font-weight: 500; }
-  .empty p + p { margin-top: 4px; color: rgba(255, 255, 255, 0.6); font-size: 0.8rem; }
+  .chip{ background:var(--blue); color:#fff; padding:3px 8px; }
+  .strip .venue{ color:rgba(255,255,255,.82); }
+  .strip .right{ margin-left:auto; color:var(--yellow); }
 
-  /* ---- collapsible Completed section ----
-     Native <details> so it still opens with JavaScript disabled and is
-     keyboard-reachable; the marker is replaced with our own chevron. */
-  details.sect { margin-top: 36px; }
-  details.sect > summary {
-    list-style: none; cursor: pointer;
-    display: flex; align-items: baseline; gap: 10px;
-    padding: 4px 2px; border-radius: 12px;
+  /* ---- masthead ---- */
+  .mast{ background:var(--navy-900); }
+  .mast .wrap{ display:flex; align-items:center; gap:12px; padding-top:20px; padding-bottom:20px; }
+  .mark{
+    display:flex; align-items:center; gap:10px;
+    font-size:1.3rem; font-weight:900; text-transform:uppercase;
+    letter-spacing:.01em; color:#fff; text-decoration:none;
   }
-  details.sect > summary::-webkit-details-marker { display: none; }
-  details.sect > summary:hover h1 { color: #e8f0ff; }
-  details.sect > summary:focus-visible { outline: 2px solid rgba(255,255,255,.7); outline-offset: 3px; }
-  details.sect > summary h1 { margin-bottom: 0; }
-  .count {
-    background: rgba(255, 255, 255, 0.18); border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #fff; font-size: 0.7rem; font-weight: 700;
-    padding: 2px 9px; border-radius: 999px;
+  .mark img{ width:26px; height:26px; }
+  .mark b{ font-weight:400; color:#9FCBF0; }
+
+  /* ---- hero ---- */
+  .hero{ background:var(--navy-900); color:#fff; padding:26px 0 40px; }
+  .hero .display{ margin:12px 0 10px; }
+  .hero p{ color:#AFC4D8; font-size:.92rem; font-weight:500; max-width:46ch; }
+  .stats{ display:flex; flex-wrap:wrap; gap:0; margin-top:24px; border-top:1px solid rgba(255,255,255,.14); }
+  .stat{ padding:14px 22px 12px 0; margin-right:22px; }
+  .stat .n{ font-size:1.35rem; font-weight:900; color:#fff; line-height:1; }
+  .stat .l{
+    margin-top:5px; font-size:.6rem; font-weight:700; text-transform:uppercase;
+    letter-spacing:.12em; color:#7E9AB5;
   }
-  .twist {
-    margin-left: auto; color: rgba(255, 255, 255, 0.75);
-    font-size: 1.1rem; font-weight: 700; transition: transform 0.18s;
+
+  /* ---- sections ---- */
+  section{ padding:34px 0; }
+  .shead{ display:flex; align-items:flex-end; gap:14px; flex-wrap:wrap; margin-bottom:20px; }
+  .shead .display{ font-size:clamp(1.5rem,4vw,2.1rem); }
+  .count{
+    background:var(--yellow); color:var(--navy-900);
+    font-size:.68rem; font-weight:900; padding:3px 8px; letter-spacing:.04em;
   }
-  details.sect[open] > summary .twist { transform: rotate(90deg); }
-  details.sect > summary .hint { color: #c9d8ff; font-size: 0.82rem; font-weight: 500; }
-  details.sect .apps { margin-top: 18px; }
+  .hint{
+    margin-left:auto; font-size:.63rem; font-weight:700; text-transform:uppercase;
+    letter-spacing:.12em; color:var(--muted);
+  }
+
+  /* ---- empty state ---- */
+  .empty{
+    background:#fff; border:1px solid var(--line); border-left:3px solid var(--blue);
+    border-radius:3px; padding:20px 22px;
+  }
+  .empty h3{ font-size:.95rem; font-weight:800; text-transform:uppercase; letter-spacing:.02em; }
+  .empty p{ margin-top:5px; font-size:.83rem; color:var(--muted); font-weight:500; }
+
+  /* ---- card grid: 1 / 2 / 3 columns ---- */
+  .apps{ display:grid; grid-template-columns:1fr; gap:12px; }
+  @media (min-width:680px){ .apps{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media (min-width:1024px){
+    .wrap{ max-width:1180px; }
+    .apps{ grid-template-columns:repeat(3,minmax(0,1fr)); }
+  }
+
+  a.card{
+    background:#fff; border:1px solid var(--line); border-radius:3px;
+    padding:15px 16px; text-decoration:none; color:inherit;
+    display:flex; align-items:flex-start; gap:13px;
+    position:relative; isolation:isolate;
+    transition:border-color .14s, box-shadow .14s, transform .14s;
+  }
+  /* left accent rail, revealed on hover */
+  a.card::before{
+    content:""; position:absolute; left:-1px; top:-1px; bottom:-1px; width:3px;
+    background:var(--blue); opacity:0; transition:opacity .14s;
+  }
+  a.card:hover{
+    border-color:#C7D6E5; transform:translateY(-2px);
+    box-shadow:0 8px 22px rgba(7,34,58,.10);
+  }
+  a.card:hover::before{ opacity:1; }
+  a.card:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+
+  .card .tile{
+    width:38px; height:38px; flex:none; border-radius:2px;
+    background:var(--navy-900); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:1rem;
+  }
+  .card img.tile{ object-fit:cover; background:#fff; border:1px solid var(--line); }
+  .card .body{ min-width:0; flex:1; }
+  .card h2{
+    font-size:.82rem; font-weight:800; text-transform:uppercase;
+    letter-spacing:.02em; line-height:1.25; color:var(--ink);
+  }
+  .card p{ margin-top:5px; font-size:.72rem; color:var(--muted); font-weight:500; line-height:1.45; }
+  .badge{
+    display:inline-block; margin-left:6px; vertical-align:1px;
+    background:var(--paper); border:1px solid var(--line); color:var(--muted);
+    font-size:.53rem; font-weight:800; letter-spacing:.1em; padding:2px 5px;
+  }
+  .card .go{
+    align-self:center; margin-left:auto; flex:none;
+    color:var(--blue); font-size:.9rem; font-weight:700;
+    transition:transform .14s;
+  }
+  a.card:hover .go{ transform:translateX(3px); }
+
+  /* ---- collapsible archive ----
+     Native <details> so it still works with JavaScript off and is
+     keyboard-reachable; the default marker is swapped for our own. */
+  details.sect > summary{ list-style:none; cursor:pointer; }
+  details.sect > summary::-webkit-details-marker{ display:none; }
+  details.sect > summary:focus-visible{ outline:2px solid var(--blue); outline-offset:3px; }
+  /* The triangle is the only affordance telling you this header is a control,
+     so give it a real box rather than a faint glyph. */
+  .twist{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:26px; height:26px; flex:none; margin-left:12px;
+    border:1px solid var(--line); background:#fff; border-radius:2px;
+    font-size:.7rem; color:var(--navy-900); line-height:1;
+    transition:transform .18s, border-color .14s, background .14s;
+  }
+  details.sect > summary:hover .twist{ border-color:var(--blue); background:var(--blue); color:#fff; }
+  details.sect[open] .twist{ transform:rotate(90deg); }
+  details.sect > summary .hint{ margin-left:auto; }
+
+  footer{
+    background:var(--navy-900); color:#7E9AB5; margin-top:10px;
+    padding:20px 0; font-size:.63rem; font-weight:700;
+    text-transform:uppercase; letter-spacing:.12em;
+  }
+
+  /* One flex item, so the parent .mark gap cannot split RALLY from TIME
+     the way it did when they were two separate text nodes. */
+  .mark .wm{ white-space:nowrap; }
 </style>
 </head>
 <body>
-<div class="topbar">
-  <div class="brand"><img src="rallytime-icon.png" alt="" style="width:30px;height:30px;vertical-align:-7px;margin-right:8px;">Rally<span>Time</span></div>
-  <div class="tag">Life Time Gainesville</div>
-</div>
-<div class="container">
-  <h1>Leagues</h1>
-  <p class="subtitle">Nothing running right now</p>
-  <div class="empty">
-    <p>No active leagues or events.</p>
-    <p>Everything is in the archive below.</p>
-  </div>
 
-  <details class="sect" id="doneSect" open>
-    <summary>
-      <h1>Completed</h1>
-      <span class="count">13</span>
-      <span class="hint">results &amp; archives</span>
-      <span class="twist">&rsaquo;</span>
-    </summary>
-    <div class="apps">
-      <a class="card done" href="night.html"><div class="icon">⚡</div><div><h2>League Night Manager <span class="badge">COMPLETED</span></h2><p>Sep 2 &middot; 14 players &middot; pools, live courts &amp; scoring</p></div><span class="chev">&rsaquo;</span></a>
-      <a class="card done" href="moneyball-tournament.html"><div class="icon">🏆</div><div><h2>Moneyball — Pools, Draft &amp; Bracket <span class="badge">COMPLETED</span></h2><p>Aug 27 &middot; 3 pools of 5 &middot; top 8 advance &middot; scoring</p></div><span class="chev">&rsaquo;</span></a>
-      <a class="card done" href="moneyball.html"><div class="icon">💰</div><div><h2>Moneyball — Men's 3.0–3.75 <span class="badge">COMPLETED</span></h2><p>Aug 27 &middot; entry list &amp; field DUPR</p></div><span class="chev">&rsaquo;</span></a>
-      <a class="card done" href="dupr-night-aug24.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Monday DUPR Night — Aug 24 <span class="badge">COMPLETED</span></h2><p>18 players &middot; 4 pools &middot; score entry</p></div><span class="chev">&rsaquo;</span></a>
-      <a class="card done" href="dupr-night-aug19.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Wednesday DUPR Night — Aug 19 <span class="badge">COMPLETED</span></h2><p>3.5+ &middot; 13 players &middot; 4/4/5 &middot; 13 matches inc. bonus</p></div><span class="chev">&rsaquo;</span></a>
-      <a class="card done" href="dupr-night.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>DUPR Night — Aug 16 <span class="badge">COMPLETED</span></h2><p>Scores entered &middot; not yet sent to DUPR</p></div><span class="chev">&rsaquo;</span></a>
-      <a class="card done" href="mlp-teams.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>MLP Team Event <span class="badge">COMPLETED</span></h2><p>3-person teams &middot; pools &amp; bracket</p></div><span class="chev">&rsaquo;</span></a>
-      <a class="card done" href="thursday-mens-league.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Thursday Men's League <span class="badge">COMPLETED</span></h2><p>Schedules, scores &amp; standings</p></div><span class="chev">›</span></a>
-      <a class="card done" href="singles-challenge.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Singles Challenge Division <span class="badge">COMPLETED</span></h2><p>Challenge ladder &amp; results</p></div><span class="chev">›</span></a>
-      <a class="card done" href="monday-dupr-league.html"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Monday DUPR Match League <span class="badge">COMPLETED</span></h2><p>Season archive — all weeks &amp; standings</p></div><span class="chev">›</span></a>
-      <a class="card done" href="tuesday-womens-league.html?results=1"><img src="logo.png" alt="Life Time Pickleball logo"><div><h2>Tuesday Women's League <span class="badge">COMPLETED</span></h2><p>Final results</p></div><span class="chev">›</span></a>
-      <a class="card done" href="tournament.html"><div class="icon">🏆</div><div><h2>Tournament <span class="badge">COMPLETED</span></h2><p>Brackets &amp; results</p></div><span class="chev">›</span></a>
-      <a class="card done" href="tracker.html"><div class="icon">📊</div><div><h2>Pickleball Tracker <span class="badge">COMPLETED</span></h2><p>Match tracking</p></div><span class="chev">›</span></a>
-    </div>
-  </details>
+<div class="strip">
+  <div class="wrap">
+    <span class="chip">Club</span>
+    <span class="venue">Life Time Gainesville</span>
+    <span class="right">2026 Season</span>
+  </div>
 </div>
+
+<div class="mast">
+  <div class="wrap">
+    <a class="mark" href="index.html">
+      <img src="rallytime-mark.svg" alt=""><span class="wm">Rally<b>Time</b></span>
+    </a>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow on-dark">Season Archive</div>
+    <h1 class="display">Leagues &amp; Events</h1>
+    <p>Schedules, scores and standings from every league night, ladder and tournament we've run.</p>
+    <div class="stats">
+      <div class="stat"><div class="n">13</div><div class="l">Events</div></div>
+      <div class="stat"><div class="n">3</div><div class="l">Courts</div></div>
+      <div class="stat"><div class="n">6:15</div><div class="l">First Ball</div></div>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="shead">
+      <div>
+        <div class="eyebrow">On Court</div>
+        <h2 class="display" style="margin-top:10px">Nothing Running</h2>
+      </div>
+    </div>
+    <div class="empty">
+      <h3>No active leagues or events</h3>
+      <p>Everything is in the archive below. New sessions will appear here when they open.</p>
+    </div>
+
+    <div class="apps" style="margin-top:12px">
+      <a class="card" href="events.html">
+        <div class="tile">🎟️</div>
+        <div class="body"><h2>Events &amp; Registration <span class="badge" style="background:#DCFCE7;border-color:#86EFAC;color:#166534">Live</span></h2>
+          <p>Post an event &middot; automatic waitlist &middot; track who's paid</p></div>
+        <span class="go">&rarr;</span></a>
+
+      <a class="card" href="news.html">
+        <div class="tile">📰</div>
+        <div class="body"><h2>Noticeboard <span class="badge" style="background:#DCFCE7;border-color:#86EFAC;color:#166534">Live</span></h2>
+          <p>Rule changes, DUPR updates, paddle rulings &amp; local tournaments</p></div>
+        <span class="go">&rarr;</span></a>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:6px">
+  <div class="wrap">
+    <details class="sect" id="doneSect" open>
+      <summary>
+        <div class="shead" style="margin-bottom:0">
+          <div>
+            <div class="eyebrow">Archive</div>
+            <h2 class="display" style="margin-top:10px">Completed <span class="count">13</span></h2>
+          </div>
+          <span class="hint">Results &amp; standings</span>
+          <span class="twist">&#9656;</span>
+        </div>
+      </summary>
+
+      <div class="apps" style="margin-top:20px">
+        <a class="card" href="night.html">
+          <div class="tile">⚡</div>
+          <div class="body"><h2>League Night Manager <span class="badge">Completed</span></h2>
+            <p>Sep 2 · 14 players · pools, live courts &amp; scoring</p></div>
+          <span class="go">&rarr;</span></a>
+
+        <a class="card" href="moneyball-tournament.html">
+          <div class="tile">🏆</div>
+          <div class="body"><h2>Moneyball — Pools, Draft &amp; Bracket <span class="badge">Completed</span></h2>
+            <p>Aug 27 · 3 pools of 5 · top 8 advance</p></div>
+          <span class="go">&rarr;</span></a>
+
+        <a class="card" href="moneyball.html">
+          <div class="tile">💰</div>
+          <div class="body"><h2>Moneyball — Men's 3.0–3.75 <span class="badge">Completed</span></h2>
+            <p>Aug 27 · entry list &amp; field DUPR</p></div>
+          <span class="go">&rarr;</span></a>
+
+        <a class="card" href="dupr-night-aug24.html">
+          <img class="tile" src="logo.png" alt="">
+          <div class="body"><h2>Monday DUPR Night — Aug 24 <span class="badge">Completed</span></h2>
+            <p>18 players · 4 pools · score entry</p></div>
+          <span class="go">&rarr;</span></a>
+
+        <a class="card" href="dupr-night-aug19.html">
+          <img class="tile" src="logo.png" alt="">
+          <div class="body"><h2>Wednesday DUPR Night — Aug 19 <span class="badge">Completed</span></h2>
+            <p>3.5+ · 13 players · 4/4/5 · 13 matches</p></div>
+          <span class="go">&rarr;</span></a>
+
+        <a class="card" href="dupr-night.html">
+          <img class="tile" src="logo.png" alt="">
+          <div class="body"><h2>DUPR Night — Aug 16 <span class="badge">Completed</span></h2>
+            <p>Scores entered · not yet sent to DUPR</p></div>
+          <span class="go">&rarr;</span></a>
+
+        <a class="card" href="mlp-teams.html">
+          <img class="tile" src="logo.png" alt="">
+          <div class="body"><h2>MLP Team Event <span class="badge">Completed</span></h2>
+            <p>3-person teams · pools &amp; bracket</p></div>
+          <span class="go">&rarr;</span></a>
+
+        <a class="card" href="thursday-mens-league.html">
+          <img class="tile" src="logo.png" alt="">
+          <div class="body"><h2>Thursday Men's League <span class="badge">Completed</span></h2>
+            <p>Schedules, scores &amp; standings</p></div>
+          <span class="go">&rarr;</span></a>
+
+        <a class="card" href="singles-challenge.html">
+          <img class="tile" src="logo.png" alt="">
+          <div class="body"><h2>Singles Challenge Division <span class="badge">Completed</span></h2>
+            <p>Challenge ladder &amp; results</p></div>
+          <span class="go">&rarr;</span></a>
+
+        <a class="card" href="monday-dupr-league.html">
+          <img class="tile" src="logo.png" alt="">
+          <div class="body"><h2>Monday DUPR Match League <span class="badge">Completed</span></h2>
+            <p>Season archive — all weeks &amp; standings</p></div>
+          <span class="go">&rarr;</span></a>
+
+        <a class="card" href="tuesday-womens-league.html?results=1">
+          <img class="tile" src="logo.png" alt="">
+          <div class="body"><h2>Tuesday Women's League <span class="badge">Completed</span></h2>
+            <p>Final results</p></div>
+          <span class="go">&rarr;</span></a>
+
+        <a class="card" href="tournament.html">
+          <div class="tile">🏆</div>
+          <div class="body"><h2>Tournament <span class="badge">Completed</span></h2>
+            <p>Brackets &amp; results</p></div>
+          <span class="go">&rarr;</span></a>
+
+        <a class="card" href="tracker.html">
+          <div class="tile">📊</div>
+          <div class="body"><h2>Pickleball Tracker <span class="badge">Completed</span></h2>
+            <p>Match tracking</p></div>
+          <span class="go">&rarr;</span></a>
+      </div>
+    </details>
+  </div>
+</section>
+
+<footer><div class="wrap">RallyTime · Life Time Gainesville · 7801 Limestone Drive</div></footer>
+
 <script>
 /* Remember whether the archive was left open or closed. Defaults to open,
    since with no active leagues a collapsed page would look empty. */
@@ -148,8 +354,7 @@
   var d=document.getElementById("doneSect");
   if(!d) return;
   try{
-    var v=localStorage.getItem("rt-done-open");
-    if(v==="0") d.open=false;
+    if(localStorage.getItem("rt-done-open")==="0") d.open=false;
     d.addEventListener("toggle",function(){
       try{ localStorage.setItem("rt-done-open", d.open?"1":"0"); }catch(e){}
     });
